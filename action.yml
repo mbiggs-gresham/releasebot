@@ -1,5 +1,6 @@
 name: 'releasebot'
-description: 'Releasebot is a GitHub Action that automatically creates a release.'
+description:
+  'Releasebot is a GitHub Action that automatically creates a release.'
 author: 'Matt Biggs'
 
 # Add your action's branding here. This will appear on the GitHub Marketplace.
