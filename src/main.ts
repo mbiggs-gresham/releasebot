@@ -14,7 +14,7 @@ export async function run(): Promise<void> {
 
     if (github.context.eventName === 'push') {
       const pushPayload = github.context.payload as PushEvent
-      core.info(`The head commit is: ${pushPayload}`)
+      core.debug(`The head commit is: ${pushPayload}`)
     }
 
     const ms: string = core.getInput('milliseconds')
