@@ -12,6 +12,7 @@ export async function run(): Promise<void> {
     const token = core.getInput('GITHUB_TOKEN');
     const octokit = github.getOctokit(token)
 
+    core.info(`Github Context: ${github.context}`)
     if (github.context.eventName === 'push') {
       const pushPayload = github.context.payload as PushEvent
       core.debug(`The head commit is: ${pushPayload}`)
