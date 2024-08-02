@@ -1,4 +1,6 @@
 import * as core from '@actions/core'
+import * as github from '@actions/github'
+import {PushEvent} from '@octokit/webhooks-types/schema'
 import { wait } from './wait'
 
 /**
@@ -7,6 +9,14 @@ import { wait } from './wait'
  */
 export async function run(): Promise<void> {
   try {
+    const token = core.getInput('GITHUB_TOKEN');
+    const octokit = github.getOctokit(token)
+
+    if (github.context.eventName === 'push') {
+      const pushPayload = github.context.payload as PushEvent
+      core.info(`The head commit is: ${pushPayload}`)
+    }
+
     const ms: string = core.getInput('milliseconds')
 
     // Debug logs are only output if the `ACTIONS_STEP_DEBUG` secret is true
