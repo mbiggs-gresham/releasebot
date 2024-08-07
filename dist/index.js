@@ -33540,7 +33540,7 @@ function getDefaultNextVersion() {
  */
 function getPullRequestBody(project, nextVersion, rebasing = false) {
     const body = [];
-    body.push(`[//]: # (releasebot-project-${project})`);
+    body.push(`[//]: # (releasebot-project:${project})\n`);
     if (rebasing) {
         body.push(`
   [//]: # (releasebot-start)

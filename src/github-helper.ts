@@ -80,7 +80,7 @@ function getDefaultNextVersion(): string {
 function getPullRequestBody(project: string, nextVersion: string, rebasing: boolean = false): string {
   const body: string[] = []
 
-  body.push(`[//]: # (releasebot-project-${project})`)
+  body.push(`[//]: # (releasebot-project:${project})\n`)
 
   if (rebasing) {
     body.push(`
