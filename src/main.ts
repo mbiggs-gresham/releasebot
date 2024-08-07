@@ -20,15 +20,6 @@ export async function run(): Promise<void> {
     const token = core.getInput('token')
     const octokit = github.getOctokit(token)
 
-    // await git.displayInfo()
-
-    // core.startGroup('Git Fetch')
-    // await git.init(token)
-    // await git.clone()
-    // await git.branch('test-branch')
-    // await git.push('test-branch')
-    // core.endGroup()
-
     core.debug(`Github Context: ${JSON.stringify(github.context, null, 2)}`)
 
     /**
@@ -132,6 +123,10 @@ async function issueCommentEvent(octokit: InstanceType<typeof GitHub>): Promise<
   if (commentPayload.comment.body.startsWith(Commands.Rebase)) {
     await issueCommentEventRebase(octokit, commentPayload)
   }
+
+  if (commentPayload.comment.body.startsWith(Commands.Recreate)) {
+    await issueCommentEventRecreate(octokit, commentPayload)
+  }
 }
 
 /**
@@ -177,4 +172,13 @@ async function issueCommentEventRebase(octokit: InstanceType<typeof GitHub>, com
 
   await githubapi.updatePullRequest(octokit, comment.issue.number, 'core', version)
   core.endGroup()
+}
+
+/**
+ * Handles the issue comment event for recreating the branch.
+ * @param octokit
+ * @param comment
+ */
+async function issueCommentEventRecreate(octokit: InstanceType<typeof GitHub>, comment: IssueCommentEvent): Promise<void> {
+  core.info(`Github Context: ${JSON.stringify(github.context, null, 2)}`)
 }

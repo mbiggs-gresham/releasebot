@@ -33425,7 +33425,7 @@ async function push(name, force = false) {
  * @param branch
  */
 async function rebaseBranch(branch) {
-    const output = await execGit(['rebase', `origin/${branch}`]);
+    const output = await execGit(['rebase', '--strategy-option', 'theirs', `origin/${branch}`]);
     core.info(`Git Rebase: ${output.stdout}`);
 }
 
@@ -33838,13 +33838,6 @@ async function run() {
     try {
         const token = core.getInput('token');
         const octokit = github.getOctokit(token);
-        // await git.displayInfo()
-        // core.startGroup('Git Fetch')
-        // await git.init(token)
-        // await git.clone()
-        // await git.branch('test-branch')
-        // await git.push('test-branch')
-        // core.endGroup()
         core.debug(`Github Context: ${JSON.stringify(github.context, null, 2)}`);
         /**
          * Handle commits being pushed to the branch we are monitoring
@@ -33938,6 +33931,9 @@ async function issueCommentEvent(octokit) {
     if (commentPayload.comment.body.startsWith(github_helper_1.Commands.Rebase)) {
         await issueCommentEventRebase(octokit, commentPayload);
     }
+    if (commentPayload.comment.body.startsWith(github_helper_1.Commands.Recreate)) {
+        await issueCommentEventRecreate(octokit, commentPayload);
+    }
 }
 /**
  * Handles the issue comment event for setting the version.
@@ -33979,6 +33975,14 @@ async function issueCommentEventRebase(octokit, comment) {
     await git.push('releasebot-core', true);
     await githubapi.updatePullRequest(octokit, comment.issue.number, 'core', version);
     core.endGroup();
+}
+/**
+ * Handles the issue comment event for recreating the branch.
+ * @param octokit
+ * @param comment
+ */
+async function issueCommentEventRecreate(octokit, comment) {
+    core.info(`Github Context: ${JSON.stringify(github.context, null, 2)}`);
 }
 
 
