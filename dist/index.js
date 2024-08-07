@@ -33705,7 +33705,7 @@ async function recreateReleaseBranch(octokit, project) {
     const branch = await octokit.rest.git.updateRef({
         owner: github.context.repo.owner,
         repo: github.context.repo.repo,
-        ref: releaseBranch,
+        ref: `heads/${releaseBranch}`,
         sha: github.context.sha
     });
     core.debug(`Recreated Branch: ${JSON.stringify(branch, null, 2)}`);
