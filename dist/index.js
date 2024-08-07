@@ -33396,7 +33396,7 @@ async function clone() {
  * @param name
  */
 async function fetchBranch(name) {
-    const output = await execGit(['fetch', '--no-tags', '--prune', '--depth', '1', 'origin', name]);
+    const output = await execGit(['fetch', '--no-tags', '--prune', 'origin', name]);
     core.info(`Git Fetch: ${output.stdout}`);
     return output;
 }

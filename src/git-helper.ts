@@ -99,7 +99,7 @@ export async function clone(): Promise<GitResult> {
  * @param name
  */
 export async function fetchBranch(name: string): Promise<GitResult> {
-  const output = await execGit(['fetch', '--no-tags', '--prune', '--depth', '1', 'origin', name])
+  const output = await execGit(['fetch', '--no-tags', '--prune', 'origin', name])
   core.info(`Git Fetch: ${output.stdout}`)
   return output
 }
