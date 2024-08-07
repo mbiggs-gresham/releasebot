@@ -33527,33 +33527,33 @@ function getPullRequestBody(nextVersion, rebasing = false) {
     const body = [];
     if (rebasing) {
         body.push(`
-      [//]: # (releasebot-start)
-        ⚠️  **Releasebot is rebasing this PR** ⚠️
-        
-        Rebasing might not happen immediately, so don't worry if this takes some time.
-        
-        Note: if you make any changes to this PR yourself, they will take precedence over the rebase.
-        
-        ---
-        
-      [//]: # (releasebot-end)
+    [//]: # (releasebot-start)
+      ⚠️  **Releasebot is rebasing this PR** ⚠️
+      
+      Rebasing might not happen immediately, so don't worry if this takes some time.
+      
+      Note: if you make any changes to this PR yourself, they will take precedence over the rebase.
+      
+      ---
+      
+    [//]: # (releasebot-end)
     `);
     }
     body.push(`
-    This PR was created automatically by the Releasebot to track the next release. 
-    The next version for this release is v${nextVersion}.
+  This PR was created automatically by the Releasebot to track the next release. 
+  The next version for this release is v${nextVersion}.
+
+  ---
+
+  <details>
+  <summary>Releasebot commands and options</summary>
+  <br />
   
-    ---
-  
-    <details>
-    <summary>Releasebot commands and options</summary>
-    <br />
-    
-    You can trigger Releasebot actions by commenting on this PR:
-    - \`@releasebot rebase\` will rebase this PR
-    - \`@releasebot recreate\` will recreate this PR, overwriting any edits that have been made to it
-    - \`@releasebot setversion [major|minor|patch]\` will set the version for this PR
-    </details>
+  You can trigger Releasebot actions by commenting on this PR:
+  - \`@releasebot rebase\` will rebase this PR
+  - \`@releasebot recreate\` will recreate this PR, overwriting any edits that have been made to it
+  - \`@releasebot setversion [major|minor|patch]\` will set the version for this PR
+  </details>
   `);
     return body.join('');
 }
