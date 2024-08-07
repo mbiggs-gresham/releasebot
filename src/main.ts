@@ -84,14 +84,23 @@ async function pushEvent(octokit: InstanceType<typeof GitHub>): Promise<void> {
       if (releaseBranchPR) {
         await githubapi.updatePullRequest(octokit, releaseBranchPR.number, 'core', version, true)
       }
-      const token = core.getInput('token')
-      await git.init(token)
 
-      await git.clone()
-      await git.fetchBranch('releasebot-core')
-      await git.switchBranch('releasebot-core')
-      await git.rebaseBranch('main')
-      await git.push('releasebot-core', true)
+      try {
+        const token = core.getInput('token')
+        await git.init(token)
+        await git.clone()
+        await git.fetchBranch('releasebot-core')
+        await git.switchBranch('releasebot-core')
+        const rebase = await git.rebaseBranch('main')
+        await git.push('releasebot-core', true)
+        core.info(`Git Rebase: ${rebase.stdout}`)
+        core.info(`Git Rebase Error: ${rebase.stderr}`)
+      } catch (error) {
+        if (releaseBranchPR) {
+          await githubapi.addComment(octokit, releaseBranchPR.number, 'Failed to rebase the branch. Please either manually rebase it or use the `recreate` command.')
+        }
+        if (error instanceof Error) core.setFailed(error.message)
+      }
     } finally {
       if (releaseBranchPR) {
         await githubapi.updatePullRequest(octokit, releaseBranchPR.number, 'core', version)
