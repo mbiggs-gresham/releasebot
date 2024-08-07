@@ -105,7 +105,7 @@ async function pushEvent(octokit: InstanceType<typeof GitHub>): Promise<void> {
             await git.rebaseBranch('main')
             await git.push('releasebot-core', true)
           } catch (error) {
-            await githubapi.addOrUpdateComment(octokit, releaseBranchPR.number, 'Failed to rebase the branch. Please either manually rebase it or use the `recreate` command.')
+            await githubapi.addOrUpdateComment(octokit, releaseBranchPR.number, '⚠️ Failed to rebase the branch. Please either manually rebase it or use the `recreate` command. ⚠️')
             if (error instanceof Error) core.setFailed(error.message)
           }
         } finally {
