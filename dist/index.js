@@ -33428,6 +33428,16 @@ async function rebaseBranch(branch) {
     const output = await execGit(['rebase', '--strategy-option', 'theirs', `origin/${branch}`]);
     core.info(`Git Rebase: ${output.stdout}`);
 }
+// [//]: # (dependabot-start)
+// ⚠️  **Dependabot is rebasing this PR** ⚠️
+//
+// Rebasing might not happen immediately, so don't worry if this takes some time.
+//
+// Note: if you make any changes to this PR yourself, they will take precedence over the rebase.
+//
+// ---
+//
+//   [//]: # (dependabot-end)
 
 
 /***/ }),
@@ -33511,24 +33521,41 @@ function getDefaultNextVersion() {
 /**
  * Return the body of the PR text.
  * @param nextVersion
+ * @param rebasing
  */
-function getPullRequestBody(nextVersion) {
-    return `
-  This PR was created automatically by the Releasebot to track the next release. 
-  The next version for this release is v${nextVersion}.
-
-  ---
-
-  <details>
-  <summary>Releasebot commands and options</summary>
-  <br />
+function getPullRequestBody(nextVersion, rebasing = false) {
+    const body = [];
+    if (rebasing) {
+        body.push(`
+      [//]: # (releasebot-start)
+        ⚠️  **Releasebot is rebasing this PR** ⚠️
+        
+        Rebasing might not happen immediately, so don't worry if this takes some time.
+        
+        Note: if you make any changes to this PR yourself, they will take precedence over the rebase.
+        
+        ---
+        
+      [//]: # (releasebot-end)
+    `);
+    }
+    body.push(`
+    This PR was created automatically by the Releasebot to track the next release. 
+    The next version for this release is v${nextVersion}.
   
-  You can trigger Releasebot actions by commenting on this PR:
-  - \`@releasebot rebase\` will rebase this PR
-  - \`@releasebot recreate\` will recreate this PR, overwriting any edits that have been made to it
-  - \`@releasebot setversion [major|minor|patch]\` will set the version for this PR
-  </details>
-  `;
+    ---
+  
+    <details>
+    <summary>Releasebot commands and options</summary>
+    <br />
+    
+    You can trigger Releasebot actions by commenting on this PR:
+    - \`@releasebot rebase\` will rebase this PR
+    - \`@releasebot recreate\` will recreate this PR, overwriting any edits that have been made to it
+    - \`@releasebot setversion [major|minor|patch]\` will set the version for this PR
+    </details>
+  `);
+    return body.join('');
 }
 /**
  * List all files that were added, modified, or removed in the push event.
@@ -33731,8 +33758,9 @@ async function createPullRequest(octokit, project) {
  * @param pull_number
  * @param project
  * @param nextVersion
+ * @param rebasing
  */
-async function updatePullRequest(octokit, pull_number, project, nextVersion) {
+async function updatePullRequest(octokit, pull_number, project, nextVersion, rebasing = false) {
     const releaseBranch = getReleaseBranchName(project);
     const branch = github.context.ref.substring('refs/heads/'.length);
     core.info(`Updating existing PR for branch: ${releaseBranch}`);
@@ -33741,7 +33769,7 @@ async function updatePullRequest(octokit, pull_number, project, nextVersion) {
         repo: github.context.repo.repo,
         pull_number: pull_number,
         title: getPullRequestTitle(project, nextVersion),
-        body: getPullRequestBody(nextVersion),
+        body: getPullRequestBody(nextVersion, rebasing),
         head: releaseBranch,
         base: branch,
         draft: true
@@ -33871,28 +33899,38 @@ async function pushEvent(octokit) {
     filesOfRelevance.forEach(fileOfRelevance => core.info(fileOfRelevance));
     core.endGroup();
     core.startGroup('Checking for Branch');
+    const version = await (0, github_helper_1.getNextVersion)(octokit, 'core', 'patch');
     const releaseBranchExists = await githubapi.releaseBranchExists(octokit, 'core');
+    const releaseBranchPR = await githubapi.findPullRequest(octokit, 'core');
     if (!releaseBranchExists) {
         await githubapi.createReleaseBranch(octokit, 'core');
     }
     else {
         core.info('Release branch already exists. Rebasing...');
-        const token = core.getInput('token');
-        await git.init(token);
-        await git.clone();
-        await git.fetchBranch('releasebot-core');
-        await git.switchBranch('releasebot-core');
-        await git.rebaseBranch('main');
-        await git.push('releasebot-core', true);
+        try {
+            if (releaseBranchPR) {
+                await githubapi.updatePullRequest(octokit, releaseBranchPR.number, 'core', version, true);
+            }
+            const token = core.getInput('token');
+            await git.init(token);
+            await git.clone();
+            await git.fetchBranch('releasebot-core');
+            await git.switchBranch('releasebot-core');
+            await git.rebaseBranch('main');
+            await git.push('releasebot-core', true);
+        }
+        finally {
+            if (releaseBranchPR) {
+                await githubapi.updatePullRequest(octokit, releaseBranchPR.number, 'core', version);
+            }
+        }
     }
     core.endGroup();
     core.startGroup('Checking for Pull Request');
-    const releaseBranchPR = await githubapi.findPullRequest(octokit, 'core');
     if (!releaseBranchPR) {
         await githubapi.createPullRequest(octokit, 'core');
     }
     else {
-        const version = await (0, github_helper_1.getNextVersion)(octokit, 'core', 'patch');
         await githubapi.updatePullRequest(octokit, releaseBranchPR.number, 'core', version);
     }
     core.endGroup();
@@ -33903,23 +33941,54 @@ async function pushEvent(octokit) {
  */
 async function issueCommentEvent(octokit) {
     const commentPayload = github.context.payload;
+    core.info('Issue Comment Found');
     if (commentPayload.comment.body.startsWith(github_helper_1.Commands.SetVersion)) {
-        core.info('Issue Comment');
-        const versionType = commentPayload.comment.body.split(' ')[2];
-        core.debug(`Version Type: ${versionType}`);
-        if (versions.isValidSemverVersionType(versionType)) {
-            const version = await githubapi.getNextVersion(octokit, 'core', versionType);
-            const branch = github.context.ref.substring('refs/heads/'.length);
-            core.startGroup('Setting new version');
-            await githubapi.addReaction(octokit, commentPayload.comment.id, '+1');
-            await githubapi.setVersion(octokit, 'core', 'releasebot-core', version);
-            await githubapi.updatePullRequest(octokit, commentPayload.issue.number, 'core', version);
-            core.endGroup();
-        }
-        else {
-            core.setFailed(`Invalid version type: ${versionType}`);
-        }
+        await issueCommentEventSetVersion(octokit, commentPayload);
     }
+    if (commentPayload.comment.body.startsWith(github_helper_1.Commands.Rebase)) {
+        await issueCommentEventRebase(octokit, commentPayload);
+    }
+}
+/**
+ * Handles the issue comment event for setting the version.
+ * @param octokit
+ * @param comment
+ */
+async function issueCommentEventSetVersion(octokit, comment) {
+    const versionType = comment.comment.body.split(' ')[2];
+    core.debug(`Version Type: ${versionType}`);
+    if (versions.isValidSemverVersionType(versionType)) {
+        const version = await githubapi.getNextVersion(octokit, 'core', versionType);
+        const branch = github.context.ref.substring('refs/heads/'.length);
+        core.startGroup('Setting new version');
+        await githubapi.addReaction(octokit, comment.comment.id, '+1');
+        await githubapi.setVersion(octokit, 'core', 'releasebot-core', version);
+        await githubapi.updatePullRequest(octokit, comment.issue.number, 'core', version);
+        core.endGroup();
+    }
+    else {
+        core.setFailed(`Invalid version type: ${versionType}`);
+    }
+}
+/**
+ * Handles the issue comment event for rebasing the branch.
+ * @param octokit
+ * @param comment
+ */
+async function issueCommentEventRebase(octokit, comment) {
+    core.startGroup('Rebasing');
+    const version = await (0, github_helper_1.getNextVersion)(octokit, 'core', 'patch');
+    await githubapi.addReaction(octokit, comment.comment.id, '+1');
+    await githubapi.updatePullRequest(octokit, comment.issue.number, 'core', version, true);
+    const token = core.getInput('token');
+    await git.init(token);
+    await git.clone();
+    await git.fetchBranch('releasebot-core');
+    await git.switchBranch('releasebot-core');
+    await git.rebaseBranch('main');
+    await git.push('releasebot-core', true);
+    await githubapi.updatePullRequest(octokit, comment.issue.number, 'core', version);
+    core.endGroup();
 }
 
 

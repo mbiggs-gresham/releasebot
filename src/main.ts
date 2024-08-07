@@ -81,27 +81,37 @@ async function pushEvent(octokit: InstanceType<typeof GitHub>): Promise<void> {
   core.endGroup()
 
   core.startGroup('Checking for Branch')
+  const version = await getNextVersion(octokit, 'core', 'patch')
   const releaseBranchExists = await githubapi.releaseBranchExists(octokit, 'core')
+  const releaseBranchPR = await githubapi.findPullRequest(octokit, 'core')
   if (!releaseBranchExists) {
     await githubapi.createReleaseBranch(octokit, 'core')
   } else {
     core.info('Release branch already exists. Rebasing...')
-    const token = core.getInput('token')
-    await git.init(token)
-    await git.clone()
-    await git.fetchBranch('releasebot-core')
-    await git.switchBranch('releasebot-core')
-    await git.rebaseBranch('main')
-    await git.push('releasebot-core', true)
+    try {
+      if (releaseBranchPR) {
+        await githubapi.updatePullRequest(octokit, releaseBranchPR.number, 'core', version, true)
+      }
+      const token = core.getInput('token')
+      await git.init(token)
+
+      await git.clone()
+      await git.fetchBranch('releasebot-core')
+      await git.switchBranch('releasebot-core')
+      await git.rebaseBranch('main')
+      await git.push('releasebot-core', true)
+    } finally {
+      if (releaseBranchPR) {
+        await githubapi.updatePullRequest(octokit, releaseBranchPR.number, 'core', version)
+      }
+    }
   }
   core.endGroup()
 
   core.startGroup('Checking for Pull Request')
-  const releaseBranchPR = await githubapi.findPullRequest(octokit, 'core')
   if (!releaseBranchPR) {
     await githubapi.createPullRequest(octokit, 'core')
   } else {
-    const version = await getNextVersion(octokit, 'core', 'patch')
     await githubapi.updatePullRequest(octokit, releaseBranchPR.number, 'core', version)
   }
   core.endGroup()
@@ -113,22 +123,58 @@ async function pushEvent(octokit: InstanceType<typeof GitHub>): Promise<void> {
  */
 async function issueCommentEvent(octokit: InstanceType<typeof GitHub>): Promise<void> {
   const commentPayload = github.context.payload as IssueCommentEvent
+
+  core.info('Issue Comment Found')
   if (commentPayload.comment.body.startsWith(Commands.SetVersion)) {
-    core.info('Issue Comment')
-
-    const versionType = commentPayload.comment.body.split(' ')[2]
-    core.debug(`Version Type: ${versionType}`)
-    if (versions.isValidSemverVersionType(versionType)) {
-      const version = await githubapi.getNextVersion(octokit, 'core', versionType as Version)
-      const branch = github.context.ref.substring('refs/heads/'.length)
-
-      core.startGroup('Setting new version')
-      await githubapi.addReaction(octokit, commentPayload.comment.id, '+1')
-      await githubapi.setVersion(octokit, 'core', 'releasebot-core', version)
-      await githubapi.updatePullRequest(octokit, commentPayload.issue.number, 'core', version)
-      core.endGroup()
-    } else {
-      core.setFailed(`Invalid version type: ${versionType}`)
-    }
+    await issueCommentEventSetVersion(octokit, commentPayload)
   }
+
+  if (commentPayload.comment.body.startsWith(Commands.Rebase)) {
+    await issueCommentEventRebase(octokit, commentPayload)
+  }
+}
+
+/**
+ * Handles the issue comment event for setting the version.
+ * @param octokit
+ * @param comment
+ */
+async function issueCommentEventSetVersion(octokit: InstanceType<typeof GitHub>, comment: IssueCommentEvent): Promise<void> {
+  const versionType = comment.comment.body.split(' ')[2]
+  core.debug(`Version Type: ${versionType}`)
+  if (versions.isValidSemverVersionType(versionType)) {
+    const version = await githubapi.getNextVersion(octokit, 'core', versionType as Version)
+    const branch = github.context.ref.substring('refs/heads/'.length)
+
+    core.startGroup('Setting new version')
+    await githubapi.addReaction(octokit, comment.comment.id, '+1')
+    await githubapi.setVersion(octokit, 'core', 'releasebot-core', version)
+    await githubapi.updatePullRequest(octokit, comment.issue.number, 'core', version)
+    core.endGroup()
+  } else {
+    core.setFailed(`Invalid version type: ${versionType}`)
+  }
+}
+
+/**
+ * Handles the issue comment event for rebasing the branch.
+ * @param octokit
+ * @param comment
+ */
+async function issueCommentEventRebase(octokit: InstanceType<typeof GitHub>, comment: IssueCommentEvent): Promise<void> {
+  core.startGroup('Rebasing')
+  const version = await getNextVersion(octokit, 'core', 'patch')
+  await githubapi.addReaction(octokit, comment.comment.id, '+1')
+  await githubapi.updatePullRequest(octokit, comment.issue.number, 'core', version, true)
+
+  const token = core.getInput('token')
+  await git.init(token)
+  await git.clone()
+  await git.fetchBranch('releasebot-core')
+  await git.switchBranch('releasebot-core')
+  await git.rebaseBranch('main')
+  await git.push('releasebot-core', true)
+
+  await githubapi.updatePullRequest(octokit, comment.issue.number, 'core', version)
+  core.endGroup()
 }

@@ -52,24 +52,44 @@ function getDefaultNextVersion(): string {
 /**
  * Return the body of the PR text.
  * @param nextVersion
+ * @param rebasing
  */
-function getPullRequestBody(nextVersion: string): string {
-  return `
-  This PR was created automatically by the Releasebot to track the next release. 
-  The next version for this release is v${nextVersion}.
+function getPullRequestBody(nextVersion: string, rebasing: boolean = false): string {
+  const body: string[] = []
 
-  ---
+  if (rebasing) {
+    body.push(`
+      [//]: # (releasebot-start)
+        ⚠️  **Releasebot is rebasing this PR** ⚠️
+        
+        Rebasing might not happen immediately, so don't worry if this takes some time.
+        
+        Note: if you make any changes to this PR yourself, they will take precedence over the rebase.
+        
+        ---
+        
+      [//]: # (releasebot-end)
+    `)
+  }
 
-  <details>
-  <summary>Releasebot commands and options</summary>
-  <br />
+  body.push(`
+    This PR was created automatically by the Releasebot to track the next release. 
+    The next version for this release is v${nextVersion}.
   
-  You can trigger Releasebot actions by commenting on this PR:
-  - \`@releasebot rebase\` will rebase this PR
-  - \`@releasebot recreate\` will recreate this PR, overwriting any edits that have been made to it
-  - \`@releasebot setversion [major|minor|patch]\` will set the version for this PR
-  </details>
-  `
+    ---
+  
+    <details>
+    <summary>Releasebot commands and options</summary>
+    <br />
+    
+    You can trigger Releasebot actions by commenting on this PR:
+    - \`@releasebot rebase\` will rebase this PR
+    - \`@releasebot recreate\` will recreate this PR, overwriting any edits that have been made to it
+    - \`@releasebot setversion [major|minor|patch]\` will set the version for this PR
+    </details>
+  `)
+
+  return body.join('')
 }
 
 /**
@@ -291,8 +311,9 @@ export async function createPullRequest(octokit: InstanceType<typeof GitHub>, pr
  * @param pull_number
  * @param project
  * @param nextVersion
+ * @param rebasing
  */
-export async function updatePullRequest(octokit: InstanceType<typeof GitHub>, pull_number: number, project: string, nextVersion: string): Promise<void> {
+export async function updatePullRequest(octokit: InstanceType<typeof GitHub>, pull_number: number, project: string, nextVersion: string, rebasing: boolean = false): Promise<void> {
   const releaseBranch: string = getReleaseBranchName(project)
   const branch = github.context.ref.substring('refs/heads/'.length)
 
@@ -302,7 +323,7 @@ export async function updatePullRequest(octokit: InstanceType<typeof GitHub>, pu
     repo: github.context.repo.repo,
     pull_number: pull_number,
     title: getPullRequestTitle(project, nextVersion),
-    body: getPullRequestBody(nextVersion),
+    body: getPullRequestBody(nextVersion, rebasing),
     head: releaseBranch,
     base: branch,
     draft: true

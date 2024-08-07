@@ -134,3 +134,14 @@ export async function rebaseBranch(branch: string): Promise<void> {
   const output = await execGit(['rebase', '--strategy-option', 'theirs', `origin/${branch}`])
   core.info(`Git Rebase: ${output.stdout}`)
 }
+
+// [//]: # (dependabot-start)
+// ⚠️  **Dependabot is rebasing this PR** ⚠️
+//
+// Rebasing might not happen immediately, so don't worry if this takes some time.
+//
+// Note: if you make any changes to this PR yourself, they will take precedence over the rebase.
+//
+// ---
+//
+//   [//]: # (dependabot-end)
