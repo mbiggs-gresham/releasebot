@@ -80,19 +80,23 @@ async function pushEvent(octokit: InstanceType<typeof GitHub>): Promise<void> {
   filesOfRelevance.forEach(fileOfRelevance => core.info(fileOfRelevance))
   core.endGroup()
 
-  core.startGroup('Check for Pull Request')
+  core.startGroup('Checking for Branch')
   const releaseBranchExists = await githubapi.releaseBranchExists(octokit, 'core')
   if (!releaseBranchExists) {
     await githubapi.createReleaseBranch(octokit, 'core')
   } else {
+    core.info('Release branch already exists. Rebasing...')
     const token = core.getInput('token')
     await git.init(token)
     await git.clone()
     await git.fetchBranch('releasebot-core')
     await git.switchBranch('releasebot-core')
     await git.rebaseBranch('main')
+    await git.push('releasebot-core', true)
   }
+  core.endGroup()
 
+  core.startGroup('Checking for Pull Request')
   const releaseBranchPR = await githubapi.findPullRequest(octokit, 'core')
   if (!releaseBranchPR) {
     await githubapi.createPullRequest(octokit, 'core')

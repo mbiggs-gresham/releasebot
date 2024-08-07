@@ -33414,9 +33414,10 @@ async function switchBranch(name) {
 /**
  * Push the branch to the remote repository.
  * @param name
+ * @param force
  */
-async function push(name) {
-    const output = await execGit(['push', '-u', 'origin', name]);
+async function push(name, force = false) {
+    const output = await execGit(force ? ['push', '-f', '-u', 'origin', name] : ['push', '-u', 'origin', name]);
     core.info(`Git Push: ${output.stdout}`);
 }
 /**
@@ -33424,10 +33425,8 @@ async function push(name) {
  * @param branch
  */
 async function rebaseBranch(branch) {
-    const rebaseOutput = await execGit(['rebase', '--strategy-option', 'theirs', `origin/${branch}`]);
-    core.info(`Git Rebase: ${rebaseOutput.stdout}`);
-    // const gitPushOutput = await execGit(['push', '-f'])
-    // core.info(`Git Push: ${gitPushOutput.stdout}`)
+    const output = await execGit(['rebase', '--strategy-option', 'theirs', `origin/${branch}`]);
+    core.info(`Git Rebase: ${output.stdout}`);
 }
 
 
@@ -33871,19 +33870,23 @@ async function pushEvent(octokit) {
     const filesOfRelevance = await githubapi.listPushCommitFilesOfRelevance(files);
     filesOfRelevance.forEach(fileOfRelevance => core.info(fileOfRelevance));
     core.endGroup();
-    core.startGroup('Check for Pull Request');
+    core.startGroup('Checking for Branch');
     const releaseBranchExists = await githubapi.releaseBranchExists(octokit, 'core');
     if (!releaseBranchExists) {
         await githubapi.createReleaseBranch(octokit, 'core');
     }
     else {
+        core.info('Release branch already exists. Rebasing...');
         const token = core.getInput('token');
         await git.init(token);
         await git.clone();
         await git.fetchBranch('releasebot-core');
         await git.switchBranch('releasebot-core');
         await git.rebaseBranch('main');
+        await git.push('releasebot-core', true);
     }
+    core.endGroup();
+    core.startGroup('Checking for Pull Request');
     const releaseBranchPR = await githubapi.findPullRequest(octokit, 'core');
     if (!releaseBranchPR) {
         await githubapi.createPullRequest(octokit, 'core');

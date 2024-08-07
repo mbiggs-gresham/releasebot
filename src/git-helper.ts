@@ -119,9 +119,10 @@ export async function switchBranch(name: string): Promise<void> {
 /**
  * Push the branch to the remote repository.
  * @param name
+ * @param force
  */
-export async function push(name: string): Promise<void> {
-  const output = await execGit(['push', '-u', 'origin', name])
+export async function push(name: string, force: boolean = false): Promise<void> {
+  const output = await execGit(force ? ['push', '-f', '-u', 'origin', name] : ['push', '-u', 'origin', name])
   core.info(`Git Push: ${output.stdout}`)
 }
 
@@ -130,9 +131,6 @@ export async function push(name: string): Promise<void> {
  * @param branch
  */
 export async function rebaseBranch(branch: string): Promise<void> {
-  const rebaseOutput = await execGit(['rebase', '--strategy-option', 'theirs', `origin/${branch}`])
-  core.info(`Git Rebase: ${rebaseOutput.stdout}`)
-
-  // const gitPushOutput = await execGit(['push', '-f'])
-  // core.info(`Git Push: ${gitPushOutput.stdout}`)
+  const output = await execGit(['rebase', '--strategy-option', 'theirs', `origin/${branch}`])
+  core.info(`Git Rebase: ${output.stdout}`)
 }
