@@ -5,7 +5,7 @@ import * as git from './git-helper'
 import * as githubapi from './github-helper'
 import * as versions from './version-helper'
 import { wait } from './wait'
-import { Commands, getNextVersion, Version } from './github-helper'
+import { Commands, getNextVersion, setVersion, Version } from './github-helper'
 import { GitHub } from '@actions/github/lib/utils'
 import { fetchBranch } from './git-helper'
 
@@ -77,6 +77,7 @@ async function pushEvent(octokit: InstanceType<typeof GitHub>): Promise<void> {
   const releaseBranchPR = await githubapi.findPullRequest(octokit, 'core')
   if (!releaseBranchExists) {
     await githubapi.createReleaseBranch(octokit, 'core')
+    await githubapi.setVersion(octokit, 'core', `releasebot-core`, version)
   } else {
     core.info('Release branch already exists. Rebasing...')
     try {
@@ -181,6 +182,10 @@ async function issueCommentEventRebase(octokit: InstanceType<typeof GitHub>, com
  */
 async function issueCommentEventRecreate(octokit: InstanceType<typeof GitHub>, comment: IssueCommentEvent): Promise<void> {
   core.startGroup('Recreating Branch')
+  const version = await getNextVersion(octokit, 'core', 'patch')
+  await githubapi.addReaction(octokit, comment.comment.id, '+1')
   await githubapi.recreateReleaseBranch(octokit, 'core')
+  await githubapi.setVersion(octokit, 'core', `releasebot-core`, version)
+  await githubapi.updatePullRequest(octokit, comment.issue.number, 'core', version)
   core.endGroup()
 }

@@ -244,9 +244,6 @@ export async function createReleaseBranch(octokit: InstanceType<typeof GitHub>, 
     sha: github.context.sha
   })
   core.debug(`Created Branch: ${JSON.stringify(branch, null, 2)}`)
-
-  const nextVersion = await getNextVersion(octokit, project, 'patch')
-  await setVersion(octokit, project, releaseBranch, nextVersion)
 }
 
 /**
@@ -266,9 +263,6 @@ export async function recreateReleaseBranch(octokit: InstanceType<typeof GitHub>
     force: true
   })
   core.debug(`Recreated Branch: ${JSON.stringify(branch, null, 2)}`)
-
-  const nextVersion = await getNextVersion(octokit, project, 'patch')
-  await setVersion(octokit, project, releaseBranch, nextVersion)
 }
 
 /**

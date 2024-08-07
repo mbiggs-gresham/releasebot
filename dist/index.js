@@ -33691,8 +33691,6 @@ async function createReleaseBranch(octokit, project) {
         sha: github.context.sha
     });
     core.debug(`Created Branch: ${JSON.stringify(branch, null, 2)}`);
-    const nextVersion = await getNextVersion(octokit, project, 'patch');
-    await setVersion(octokit, project, releaseBranch, nextVersion);
 }
 /**
  * Recreate a release branch for the project and commit the next version.
@@ -33710,8 +33708,6 @@ async function recreateReleaseBranch(octokit, project) {
         force: true
     });
     core.debug(`Recreated Branch: ${JSON.stringify(branch, null, 2)}`);
-    const nextVersion = await getNextVersion(octokit, project, 'patch');
-    await setVersion(octokit, project, releaseBranch, nextVersion);
 }
 /**
  * Find the PR for the release branch.
@@ -33907,6 +33903,7 @@ async function pushEvent(octokit) {
     const releaseBranchPR = await githubapi.findPullRequest(octokit, 'core');
     if (!releaseBranchExists) {
         await githubapi.createReleaseBranch(octokit, 'core');
+        await githubapi.setVersion(octokit, 'core', `releasebot-core`, version);
     }
     else {
         core.info('Release branch already exists. Rebasing...');
@@ -34003,7 +34000,11 @@ async function issueCommentEventRebase(octokit, comment) {
  */
 async function issueCommentEventRecreate(octokit, comment) {
     core.startGroup('Recreating Branch');
+    const version = await (0, github_helper_1.getNextVersion)(octokit, 'core', 'patch');
+    await githubapi.addReaction(octokit, comment.comment.id, '+1');
     await githubapi.recreateReleaseBranch(octokit, 'core');
+    await githubapi.setVersion(octokit, 'core', `releasebot-core`, version);
+    await githubapi.updatePullRequest(octokit, comment.issue.number, 'core', version);
     core.endGroup();
 }
 
