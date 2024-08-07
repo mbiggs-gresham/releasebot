@@ -33624,7 +33624,8 @@ async function getNextVersion(octokit, project, versionType) {
                 const lastCommentBody = comments[i].body;
                 if (lastCommentBody?.startsWith(Commands.SetVersion)) {
                     core.info(`Found setversion command in comment: ${lastCommentBody}`);
-                    const nextVersion = semver.inc(lastTagVersion, versionType);
+                    const nextVersionType = lastCommentBody.split(' ')[2];
+                    const nextVersion = semver.inc(lastTagVersion, nextVersionType);
                     if (nextVersion) {
                         return nextVersion;
                     }
