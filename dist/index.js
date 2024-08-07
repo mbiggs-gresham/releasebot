@@ -33425,7 +33425,7 @@ async function push(name, force = false) {
  * @param branch
  */
 async function rebaseBranch(branch) {
-    const output = await execGit(['rebase', '--strategy-option', 'theirs', `origin/${branch}`]);
+    const output = await execGit(['rebase', '--strategy-option', 'ours', `origin/${branch}`]);
     core.info(`Git Rebase: ${output.stdout}`);
 }
 

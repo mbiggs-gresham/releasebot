@@ -131,6 +131,6 @@ export async function push(name: string, force: boolean = false): Promise<void> 
  * @param branch
  */
 export async function rebaseBranch(branch: string): Promise<void> {
-  const output = await execGit(['rebase', '--strategy-option', 'theirs', `origin/${branch}`])
+  const output = await execGit(['rebase', '--strategy-option', 'ours', `origin/${branch}`])
   core.info(`Git Rebase: ${output.stdout}`)
 }
