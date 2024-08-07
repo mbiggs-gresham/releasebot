@@ -163,15 +163,20 @@ async function issueCommentEventRebase(octokit: InstanceType<typeof GitHub>, com
   await githubapi.addReaction(octokit, comment.comment.id, '+1')
   await githubapi.updatePullRequest(octokit, comment.issue.number, 'core', version, true)
 
-  const token = core.getInput('token')
-  await git.init(token)
-  await git.clone()
-  await git.fetchBranch('releasebot-core')
-  await git.switchBranch('releasebot-core')
-  await git.rebaseBranch('main')
-  await git.push('releasebot-core', true)
+  try {
+    const token = core.getInput('token')
+    await git.init(token)
+    await git.clone()
+    await git.fetchBranch('releasebot-core')
+    await git.switchBranch('releasebot-core')
+    await git.rebaseBranch('main')
+    await git.push('releasebot-core', true)
+    await githubapi.updatePullRequest(octokit, comment.issue.number, 'core', version)
+  } catch (error) {
+    await githubapi.addComment(octokit, comment.issue.number, 'Failed to rebase the branch. Please either manually rebase it or use the `recreate` command.')
+    if (error instanceof Error) core.setFailed(error.message)
+  }
 
-  await githubapi.updatePullRequest(octokit, comment.issue.number, 'core', version)
   core.endGroup()
 }
 

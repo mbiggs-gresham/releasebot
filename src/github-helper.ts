@@ -396,3 +396,19 @@ export async function addReaction(octokit: InstanceType<typeof GitHub>, comment_
   })
   core.debug(`Added Reaction: ${JSON.stringify(result, null, 2)}`)
 }
+
+/**
+ * Add a comment to a PR.
+ * @param octokit
+ * @param pull_number
+ * @param body
+ */
+export async function addComment(octokit: InstanceType<typeof GitHub>, pull_number: number, body: string): Promise<void> {
+  const result = await octokit.rest.issues.createComment({
+    owner: github.context.repo.owner,
+    repo: github.context.repo.repo,
+    issue_number: pull_number,
+    body: body
+  })
+  core.debug(`Added Comment: ${JSON.stringify(result, null, 2)}`)
+}

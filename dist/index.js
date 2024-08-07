@@ -33473,6 +33473,7 @@ exports.findPullRequest = findPullRequest;
 exports.createPullRequest = createPullRequest;
 exports.updatePullRequest = updatePullRequest;
 exports.addReaction = addReaction;
+exports.addComment = addComment;
 const core = __importStar(__nccwpck_require__(2186));
 const github = __importStar(__nccwpck_require__(5438));
 const minimatch_1 = __nccwpck_require__(4501);
@@ -33826,6 +33827,21 @@ async function addReaction(octokit, comment_number, reaction) {
     });
     core.debug(`Added Reaction: ${JSON.stringify(result, null, 2)}`);
 }
+/**
+ * Add a comment to a PR.
+ * @param octokit
+ * @param pull_number
+ * @param body
+ */
+async function addComment(octokit, pull_number, body) {
+    const result = await octokit.rest.issues.createComment({
+        owner: github.context.repo.owner,
+        repo: github.context.repo.repo,
+        issue_number: pull_number,
+        body: body
+    });
+    core.debug(`Added Comment: ${JSON.stringify(result, null, 2)}`);
+}
 
 
 /***/ }),
@@ -34005,14 +34021,21 @@ async function issueCommentEventRebase(octokit, comment) {
     const version = await (0, github_helper_1.getNextVersion)(octokit, 'core', 'patch');
     await githubapi.addReaction(octokit, comment.comment.id, '+1');
     await githubapi.updatePullRequest(octokit, comment.issue.number, 'core', version, true);
-    const token = core.getInput('token');
-    await git.init(token);
-    await git.clone();
-    await git.fetchBranch('releasebot-core');
-    await git.switchBranch('releasebot-core');
-    await git.rebaseBranch('main');
-    await git.push('releasebot-core', true);
-    await githubapi.updatePullRequest(octokit, comment.issue.number, 'core', version);
+    try {
+        const token = core.getInput('token');
+        await git.init(token);
+        await git.clone();
+        await git.fetchBranch('releasebot-core');
+        await git.switchBranch('releasebot-core');
+        await git.rebaseBranch('main');
+        await git.push('releasebot-core', true);
+        await githubapi.updatePullRequest(octokit, comment.issue.number, 'core', version);
+    }
+    catch (error) {
+        await githubapi.addComment(octokit, comment.issue.number, 'Failed to rebase the branch. Please either manually rebase it or use the `recreate` command.');
+        if (error instanceof Error)
+            core.setFailed(error.message);
+    }
     core.endGroup();
 }
 /**
