@@ -161,7 +161,7 @@ export async function getNextVersion(octokit: InstanceType<typeof GitHub>, proje
 
     // Check if there is an existing PR for the release branch
     // and if it has a set version command in the comments
-    const releaseBranchPR = await findPullRequest(octokit, 'core')
+    const releaseBranchPR = await findPullRequest(octokit, project)
     if (releaseBranchPR) {
       const { data: comments } = await octokit.rest.issues.listComments({
         owner: github.context.repo.owner,
@@ -173,6 +173,7 @@ export async function getNextVersion(octokit: InstanceType<typeof GitHub>, proje
       for (let i = comments.length - 1; i >= 0; i--) {
         const lastCommentBody = comments[i].body
         if (lastCommentBody?.startsWith(Commands.SetVersion)) {
+          core.info(`Found setversion command in comment: ${lastCommentBody}`)
           const nextVersion = semver.inc(lastTagVersion, versionType)
           if (nextVersion) {
             return nextVersion

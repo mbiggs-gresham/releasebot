@@ -33369,7 +33369,7 @@ async function displayInfo() {
  */
 async function init(token) {
     const basicCredential = base64.encode(`x-access-token:${token}`);
-    const gitInitOutput = await execGit(['init']);
+    const gitInitOutput = await execGit(['init', '--initial-branch', 'main']);
     core.info(`Git Init: ${gitInitOutput.stdout}`);
     await execGit(['remote', 'add', 'origin', getFetchUrl()]);
     await execGit(['config', '--local', 'http.https://github.com/.extraheader', `AUTHORIZATION: Basic ${basicCredential}`]);
@@ -33612,7 +33612,7 @@ async function getNextVersion(octokit, project, versionType) {
         const lastTagVersion = lastTagName.substring(`${project}@v`.length);
         // Check if there is an existing PR for the release branch
         // and if it has a set version command in the comments
-        const releaseBranchPR = await findPullRequest(octokit, 'core');
+        const releaseBranchPR = await findPullRequest(octokit, project);
         if (releaseBranchPR) {
             const { data: comments } = await octokit.rest.issues.listComments({
                 owner: github.context.repo.owner,
@@ -33623,6 +33623,7 @@ async function getNextVersion(octokit, project, versionType) {
             for (let i = comments.length - 1; i >= 0; i--) {
                 const lastCommentBody = comments[i].body;
                 if (lastCommentBody?.startsWith(Commands.SetVersion)) {
+                    core.info(`Found setversion command in comment: ${lastCommentBody}`);
                     const nextVersion = semver.inc(lastTagVersion, versionType);
                     if (nextVersion) {
                         return nextVersion;

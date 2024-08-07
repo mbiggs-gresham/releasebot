@@ -66,7 +66,7 @@ export async function displayInfo(): Promise<void> {
 export async function init(token: string): Promise<void> {
   const basicCredential = base64.encode(`x-access-token:${token}`)
 
-  const gitInitOutput = await execGit(['init'])
+  const gitInitOutput = await execGit(['init', '--initial-branch', 'main'])
   core.info(`Git Init: ${gitInitOutput.stdout}`)
 
   await execGit(['remote', 'add', 'origin', getFetchUrl()])
