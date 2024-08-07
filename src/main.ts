@@ -5,7 +5,9 @@ import * as git from './git-helper'
 import * as githubapi from './github-helper'
 import * as versions from './version-helper'
 import { wait } from './wait'
-import { getNextVersion, VersionType } from './github-helper'
+import { Commands, getNextVersion, Version } from './github-helper'
+import { GitHub } from '@actions/github/lib/utils'
+import { fetchBranch } from './git-helper'
 
 const projects = ['core', 'grid']
 
@@ -33,59 +35,14 @@ export async function run(): Promise<void> {
      * Handle commits being pushed to the branch we are monitoring
      */
     if (github.context.eventName === 'push') {
-      const pushPayload = github.context.payload as PushEvent
-
-      core.startGroup('Files Changed in Push')
-      const files = await githubapi.listPushCommitFiles(octokit, pushPayload)
-      files.forEach(file => core.info(file))
-      core.endGroup()
-
-      core.startGroup('Files Changed of Relevance:')
-      const filesOfRelevance = await githubapi.listPushCommitFilesOfRelevance(files)
-      filesOfRelevance.forEach(fileOfRelevance => core.info(fileOfRelevance))
-      core.endGroup()
-
-      core.startGroup('Check for PR')
-      const releaseBranch = await githubapi.createReleaseBranch(octokit, 'core')
-      const releaseBranchPR = await githubapi.findPullRequest(octokit, 'core')
-      if (!releaseBranchPR) {
-        await githubapi.createPullRequest(octokit, 'core')
-      } else {
-        const version = await getNextVersion(octokit, 'core', 'patch')
-        if (version) {
-          await githubapi.updatePullRequest(octokit, releaseBranchPR.number, 'core', version)
-        }
-      }
-      core.endGroup()
+      await pushEvent(octokit)
     }
 
     /**
      * Handle PRs being commented on
      */
     if (github.context.eventName === 'issue_comment') {
-      const commentPayload = github.context.payload as IssueCommentEvent
-      if (commentPayload.comment.body.startsWith('@releasebot setversion')) {
-        core.info('Issue Comment')
-
-        const versionType = commentPayload.comment.body.split(' ')[2]
-        core.debug(`Version Type: ${versionType}`)
-        if (versions.isValidSemverVersionType(versionType)) {
-          const version = await githubapi.getNextVersion(octokit, 'core', versionType as VersionType)
-          if (version) {
-            const branch = github.context.ref.substring('refs/heads/'.length)
-
-            core.startGroup('Setting new version')
-            await githubapi.addReaction(octokit, commentPayload.comment.id, '+1')
-            await githubapi.setVersion(octokit, 'core', 'releasebot-core', version)
-            await githubapi.updatePullRequest(octokit, commentPayload.issue.number, 'core', version)
-            core.endGroup()
-          } else {
-            core.setFailed(`Failed to determine next version using: ${versionType}`)
-          }
-        } else {
-          core.setFailed(`Invalid version type: ${versionType}`)
-        }
-      }
+      await issueCommentEvent(octokit)
     }
 
     const ms: string = core.getInput('milliseconds')
@@ -103,5 +60,71 @@ export async function run(): Promise<void> {
   } catch (error) {
     // Fail the workflow run if an error occurs
     if (error instanceof Error) core.setFailed(error.message)
+  }
+}
+
+/**
+ * Handles the push event.
+ * @param octokit
+ */
+async function pushEvent(octokit: InstanceType<typeof GitHub>): Promise<void> {
+  const pushPayload = github.context.payload as PushEvent
+
+  core.startGroup('Files Changed in Push')
+  const files = await githubapi.listPushCommitFiles(octokit, pushPayload)
+  files.forEach(file => core.info(file))
+  core.endGroup()
+
+  core.startGroup('Files Changed of Relevance:')
+  const filesOfRelevance = await githubapi.listPushCommitFilesOfRelevance(files)
+  filesOfRelevance.forEach(fileOfRelevance => core.info(fileOfRelevance))
+  core.endGroup()
+
+  core.startGroup('Check for Pull Request')
+  const releaseBranchExists = await githubapi.releaseBranchExists(octokit, 'core')
+  if (!releaseBranchExists) {
+    await githubapi.createReleaseBranch(octokit, 'core')
+  } else {
+    const token = core.getInput('token')
+    await git.init(token)
+    await git.clone()
+    await git.fetchBranch('releasebot-core')
+    await git.switchBranch('releasebot-core')
+    await git.rebaseBranch('main')
+  }
+
+  const releaseBranchPR = await githubapi.findPullRequest(octokit, 'core')
+  if (!releaseBranchPR) {
+    await githubapi.createPullRequest(octokit, 'core')
+  } else {
+    const version = await getNextVersion(octokit, 'core', 'patch')
+    await githubapi.updatePullRequest(octokit, releaseBranchPR.number, 'core', version)
+  }
+  core.endGroup()
+}
+
+/**
+ * Handles the issue comment event.
+ * @param octokit
+ */
+async function issueCommentEvent(octokit: InstanceType<typeof GitHub>): Promise<void> {
+  const commentPayload = github.context.payload as IssueCommentEvent
+  if (commentPayload.comment.body.startsWith(Commands.SetVersion)) {
+    core.info('Issue Comment')
+
+    const versionType = commentPayload.comment.body.split(' ')[2]
+    core.debug(`Version Type: ${versionType}`)
+    if (versions.isValidSemverVersionType(versionType)) {
+      const version = await githubapi.getNextVersion(octokit, 'core', versionType as Version)
+      const branch = github.context.ref.substring('refs/heads/'.length)
+
+      core.startGroup('Setting new version')
+      await githubapi.addReaction(octokit, commentPayload.comment.id, '+1')
+      await githubapi.setVersion(octokit, 'core', 'releasebot-core', version)
+      await githubapi.updatePullRequest(octokit, commentPayload.issue.number, 'core', version)
+      core.endGroup()
+    } else {
+      core.setFailed(`Invalid version type: ${versionType}`)
+    }
   }
 }

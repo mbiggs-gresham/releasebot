@@ -12,8 +12,14 @@ type GetCommit = Endpoints['GET /repos/{owner}/{repo}/commits/{ref}']['response'
 type Pulls = Endpoints['GET /repos/{owner}/{repo}/pulls']['response']
 type ListPulls = Endpoints['GET /repos/{owner}/{repo}/pulls']['response']
 
-export type VersionType = 'major' | 'minor' | 'patch'
+export type Version = 'major' | 'minor' | 'patch'
 export type Reaction = '+1' | '-1' | 'laugh' | 'confused' | 'heart' | 'hooray' | 'rocket' | 'eyes'
+
+export enum Commands {
+  Rebase = '@releasebot rebase',
+  Recreate = '@releasebot recreate',
+  SetVersion = '@releasebot setversion'
+}
 
 const projects = ['core', 'grid']
 const projectsPaths = ['core/*', 'grid/*']
@@ -34,6 +40,13 @@ function getReleaseBranchName(project: string): string {
  */
 function getPullRequestTitle(project: string, nextVersion: string): string {
   return `Release \`${project}\` v${nextVersion}`
+}
+
+/**
+ * Get the default next version.
+ */
+function getDefaultNextVersion(): string {
+  return '0.0.1'
 }
 
 /**
@@ -96,7 +109,6 @@ export async function listPushCommitFiles(octokit: InstanceType<typeof GitHub>, 
  */
 export async function listPushCommitFilesOfRelevance(files: string[]): Promise<string[]> {
   const relevantFiles = new Set<string>()
-
   files.forEach(file => {
     projects.forEach((project, index) => {
       if (minimatch(file, projectsPaths[index])) {
@@ -104,7 +116,6 @@ export async function listPushCommitFilesOfRelevance(files: string[]): Promise<s
       }
     })
   })
-
   return Array.from(relevantFiles)
 }
 
@@ -114,7 +125,7 @@ export async function listPushCommitFilesOfRelevance(files: string[]): Promise<s
  * @param project
  * @param versionType
  */
-export async function getNextVersion(octokit: InstanceType<typeof GitHub>, project: string, versionType: VersionType): Promise<string | undefined> {
+export async function getNextVersion(octokit: InstanceType<typeof GitHub>, project: string, versionType: Version): Promise<string> {
   const { data: tags } = await octokit.rest.git.listMatchingRefs({
     owner: github.context.repo.owner,
     repo: github.context.repo.repo,
@@ -130,13 +141,13 @@ export async function getNextVersion(octokit: InstanceType<typeof GitHub>, proje
     if (nextTagVersion) {
       return nextTagVersion
     } else {
-      core.setFailed(`Invalid last tag version: ${lastTagVersion}.`)
+      core.setFailed(`Invalid last tag version: ${lastTagVersion}. Must be of the format '${project}@vX.X.X'`)
     }
   } else {
     core.setFailed(`No tags found for project: ${project}. Unable to determine the latest version.`)
   }
 
-  return undefined
+  return getDefaultNextVersion()
 }
 
 /**
@@ -184,32 +195,38 @@ export async function setVersion(octokit: InstanceType<typeof GitHub>, project: 
 }
 
 /**
- * Create a release branch for the project.
+ * Check if the release branch exists for the project.
  * @param octokit
  * @param project
  */
-export async function createReleaseBranch(octokit: InstanceType<typeof GitHub>, project: string): Promise<void> {
+export async function releaseBranchExists(octokit: InstanceType<typeof GitHub>, project: string): Promise<boolean> {
   const releaseBranch: string = getReleaseBranchName(project)
   const { data: branches } = await octokit.rest.repos.listBranches({
     owner: github.context.repo.owner,
     repo: github.context.repo.repo
   })
-  const exists = branches.some(branch => branch.name === releaseBranch)
-  if (!exists) {
-    core.info(`Creating new branch: ${releaseBranch}`)
-    const branch = await octokit.rest.git.createRef({
-      owner: github.context.repo.owner,
-      repo: github.context.repo.repo,
-      ref: `refs/heads/${releaseBranch}`,
-      sha: github.context.sha
-    })
-    core.debug(`Created Branch: ${JSON.stringify(branch, null, 2)}`)
+  return branches.some(branch => branch.name === releaseBranch)
+}
 
-    const nextVersion = await getNextVersion(octokit, project, 'patch')
-    if (nextVersion) {
-      await setVersion(octokit, project, releaseBranch, nextVersion)
-    }
-  }
+/**
+ * Create a release branch for the project and commit the next version.
+ * @param octokit
+ * @param project
+ */
+export async function createReleaseBranch(octokit: InstanceType<typeof GitHub>, project: string): Promise<void> {
+  const releaseBranch: string = getReleaseBranchName(project)
+
+  core.info(`Creating new branch: ${releaseBranch}`)
+  const branch = await octokit.rest.git.createRef({
+    owner: github.context.repo.owner,
+    repo: github.context.repo.repo,
+    ref: `refs/heads/${releaseBranch}`,
+    sha: github.context.sha
+  })
+  core.debug(`Created Branch: ${JSON.stringify(branch, null, 2)}`)
+
+  const nextVersion = await getNextVersion(octokit, project, 'patch')
+  await setVersion(octokit, project, releaseBranch, nextVersion)
 }
 
 /**
@@ -248,26 +265,24 @@ export async function createPullRequest(octokit: InstanceType<typeof GitHub>, pr
 
   core.info(`Creating new PR for branch: ${releaseBranch}`)
   const nextVersion = await getNextVersion(octokit, project, 'patch')
-  if (nextVersion) {
-    const pull = await octokit.rest.pulls.create({
-      owner: github.context.repo.owner,
-      repo: github.context.repo.repo,
-      title: getPullRequestTitle(project, nextVersion),
-      body: getPullRequestBody(nextVersion),
-      head: releaseBranch,
-      base: branch,
-      draft: true
-    })
-    core.debug(`Created Pull: ${JSON.stringify(pull, null, 2)}`)
+  const pull = await octokit.rest.pulls.create({
+    owner: github.context.repo.owner,
+    repo: github.context.repo.repo,
+    title: getPullRequestTitle(project, nextVersion),
+    body: getPullRequestBody(nextVersion),
+    head: releaseBranch,
+    base: branch,
+    draft: true
+  })
+  core.debug(`Created Pull: ${JSON.stringify(pull, null, 2)}`)
 
-    const label = await octokit.rest.issues.addLabels({
-      owner: github.context.repo.owner,
-      repo: github.context.repo.repo,
-      issue_number: pull.data.number,
-      labels: ['release', project]
-    })
-    core.debug(`Added Label: ${JSON.stringify(label, null, 2)}`)
-  }
+  const label = await octokit.rest.issues.addLabels({
+    owner: github.context.repo.owner,
+    repo: github.context.repo.repo,
+    issue_number: pull.data.number,
+    labels: ['release', project]
+  })
+  core.debug(`Added Label: ${JSON.stringify(label, null, 2)}`)
 }
 
 /**

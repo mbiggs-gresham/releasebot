@@ -82,20 +82,38 @@ export async function clone(): Promise<void> {
   const branch = github.context.ref.substring('refs/heads/'.length)
   const ref = `refs/remotes/origin/${branch}`
 
-  const gitCloneOutput = await execGit(['fetch', '--no-tags', '--prune', '--depth', '1', 'origin', `+${github.context.sha}:${ref}`])
-  core.info(`Git Fetch: ${gitCloneOutput.stdout}`)
+  const cloneOutput = await execGit(['fetch', '--no-tags', '--prune', '--depth', '1', 'origin', `+${github.context.sha}:${ref}`])
+  core.info(`Git Fetch: ${cloneOutput.stdout}`)
 
-  const gitBranchOutput1 = await execGit(['checkout', '-b', branch, ref])
-  core.info(`Git Branch: ${gitBranchOutput1.stdout}`)
+  const checkoutOutput = await execGit(['checkout', '-b', branch, ref])
+  core.info(`Git Branch: ${checkoutOutput.stdout}`)
+}
+
+/**
+ * Fetch the specified remote branch.
+ * @param name
+ */
+export async function fetchBranch(name: string): Promise<void> {
+  const output = await execGit(['fetch', '--no-tags', '--prune', '--depth', '1', 'origin', name])
+  core.info(`Git Fetch: ${output.stdout}`)
 }
 
 /**
  * Create a new branch.
  * @param name
  */
-export async function branch(name: string): Promise<void> {
-  const gitBranchOutput2 = await execGit(['checkout', '-b', name])
-  core.info(`Git Branch: ${gitBranchOutput2.stdout}`)
+export async function createBranch(name: string): Promise<void> {
+  const output = await execGit(['checkout', '-b', name])
+  core.info(`Git Branch: ${output.stdout}`)
+}
+
+/**
+ * Switch to the specified branch.
+ * @param name
+ */
+export async function switchBranch(name: string): Promise<void> {
+  const output = await execGit(['switch', name])
+  core.info(`Git Switch: ${output.stdout}`)
 }
 
 /**
@@ -103,6 +121,18 @@ export async function branch(name: string): Promise<void> {
  * @param name
  */
 export async function push(name: string): Promise<void> {
-  const gitPushOutput = await execGit(['push', '-u', 'origin', name])
-  core.info(`Git Push: ${gitPushOutput.stdout}`)
+  const output = await execGit(['push', '-u', 'origin', name])
+  core.info(`Git Push: ${output.stdout}`)
+}
+
+/**
+ * Rebase the release branch.
+ * @param branch
+ */
+export async function rebaseBranch(branch: string): Promise<void> {
+  const rebaseOutput = await execGit(['rebase', '--strategy-option', 'theirs', `origin/${branch}`])
+  core.info(`Git Rebase: ${rebaseOutput.stdout}`)
+
+  // const gitPushOutput = await execGit(['push', '-f'])
+  // core.info(`Git Push: ${gitPushOutput.stdout}`)
 }
