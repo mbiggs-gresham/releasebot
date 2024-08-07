@@ -33383,7 +33383,7 @@ async function init(token) {
 async function clone() {
     const branch = github.context.ref.substring('refs/heads/'.length);
     const ref = `refs/remotes/origin/${branch}`;
-    const cloneOutput = await execGit(['fetch', '--no-tags', '--prune', '--depth', '1', 'origin', `+${github.context.sha}:${ref}`]);
+    const cloneOutput = await execGit(['fetch', '--no-tags', '--prune', '--depth', '2', 'origin', `+${github.context.sha}:${ref}`]);
     core.info(`Git Fetch: ${cloneOutput.stdout}`);
     const checkoutOutput = await execGit(['checkout', '-b', branch, ref]);
     core.info(`Git Branch: ${checkoutOutput.stdout}`);
@@ -33397,7 +33397,7 @@ async function clone() {
  * @param name
  */
 async function fetchBranch(name) {
-    const output = await execGit(['fetch', '--no-tags', '--prune', '--depth', '1', 'origin', name]);
+    const output = await execGit(['fetch', '--no-tags', '--prune', '--depth', '2', 'origin', name]);
     core.info(`Git Fetch: ${output.stdout}`);
     return output;
 }
@@ -34047,7 +34047,7 @@ async function pushEvent(octokit) {
                         await git.clone();
                         await git.fetchBranch('releasebot-core');
                         await git.switchBranch('releasebot-core');
-                        await git.fetchUnshallow();
+                        // await git.fetchUnshallow()
                         await git.rebaseBranch('origin/main');
                         await git.push('releasebot-core', true);
                     }
