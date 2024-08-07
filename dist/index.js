@@ -33468,6 +33468,7 @@ exports.getNextVersion = getNextVersion;
 exports.setVersion = setVersion;
 exports.releaseBranchExists = releaseBranchExists;
 exports.createReleaseBranch = createReleaseBranch;
+exports.recreateReleaseBranch = recreateReleaseBranch;
 exports.findPullRequest = findPullRequest;
 exports.createPullRequest = createPullRequest;
 exports.updatePullRequest = updatePullRequest;
@@ -33690,6 +33691,24 @@ async function createReleaseBranch(octokit, project) {
         sha: github.context.sha
     });
     core.debug(`Created Branch: ${JSON.stringify(branch, null, 2)}`);
+    const nextVersion = await getNextVersion(octokit, project, 'patch');
+    await setVersion(octokit, project, releaseBranch, nextVersion);
+}
+/**
+ * Recreate a release branch for the project and commit the next version.
+ * @param octokit
+ * @param project
+ */
+async function recreateReleaseBranch(octokit, project) {
+    const releaseBranch = getReleaseBranchName(project);
+    core.info(`Recreating existing branch: ${releaseBranch}`);
+    const branch = await octokit.rest.git.updateRef({
+        owner: github.context.repo.owner,
+        repo: github.context.repo.repo,
+        ref: `refs/heads/${releaseBranch}`,
+        sha: github.context.sha
+    });
+    core.debug(`Recreated Branch: ${JSON.stringify(branch, null, 2)}`);
     const nextVersion = await getNextVersion(octokit, project, 'patch');
     await setVersion(octokit, project, releaseBranch, nextVersion);
 }
@@ -33982,7 +34001,9 @@ async function issueCommentEventRebase(octokit, comment) {
  * @param comment
  */
 async function issueCommentEventRecreate(octokit, comment) {
-    core.info(`Github Context: ${JSON.stringify(github.context, null, 2)}`);
+    core.startGroup('Recreating Branch');
+    await githubapi.recreateReleaseBranch(octokit, 'core');
+    core.endGroup();
 }
 
 

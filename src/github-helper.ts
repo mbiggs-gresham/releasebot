@@ -250,6 +250,27 @@ export async function createReleaseBranch(octokit: InstanceType<typeof GitHub>, 
 }
 
 /**
+ * Recreate a release branch for the project and commit the next version.
+ * @param octokit
+ * @param project
+ */
+export async function recreateReleaseBranch(octokit: InstanceType<typeof GitHub>, project: string): Promise<void> {
+  const releaseBranch: string = getReleaseBranchName(project)
+
+  core.info(`Recreating existing branch: ${releaseBranch}`)
+  const branch = await octokit.rest.git.updateRef({
+    owner: github.context.repo.owner,
+    repo: github.context.repo.repo,
+    ref: `refs/heads/${releaseBranch}`,
+    sha: github.context.sha
+  })
+  core.debug(`Recreated Branch: ${JSON.stringify(branch, null, 2)}`)
+
+  const nextVersion = await getNextVersion(octokit, project, 'patch')
+  await setVersion(octokit, project, releaseBranch, nextVersion)
+}
+
+/**
  * Find the PR for the release branch.
  * @param octokit
  * @param project

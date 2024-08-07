@@ -180,5 +180,7 @@ async function issueCommentEventRebase(octokit: InstanceType<typeof GitHub>, com
  * @param comment
  */
 async function issueCommentEventRecreate(octokit: InstanceType<typeof GitHub>, comment: IssueCommentEvent): Promise<void> {
-  core.info(`Github Context: ${JSON.stringify(github.context, null, 2)}`)
+  core.startGroup('Recreating Branch')
+  await githubapi.recreateReleaseBranch(octokit, 'core')
+  core.endGroup()
 }
