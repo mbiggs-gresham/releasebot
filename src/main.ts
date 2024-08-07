@@ -73,44 +73,35 @@ async function pushEvent(octokit: InstanceType<typeof GitHub>): Promise<void> {
   core.endGroup()
 
   core.startGroup('Checking for Branch')
-  const version = await getNextVersion(octokit, 'core', 'patch')
-  const releaseBranchExists = await githubapi.releaseBranchExists(octokit, 'core')
+  const nextVersion = await getNextVersion(octokit, 'core', 'patch')
   const releaseBranchPR = await githubapi.findPullRequest(octokit, 'core')
+  const releaseBranchExists = await githubapi.releaseBranchExists(octokit, 'core')
   if (!releaseBranchExists) {
     await githubapi.createReleaseBranch(octokit, 'core')
-    await githubapi.setVersion(octokit, 'core', `releasebot-core`, version)
+    await githubapi.setVersion(octokit, 'core', `releasebot-core`, nextVersion)
   } else {
-    core.info('Release branch already exists. Rebasing...')
-    try {
-      if (releaseBranchPR) {
-        await githubapi.updatePullRequest(octokit, releaseBranchPR.number, 'core', version, true)
-      }
-
+    if (releaseBranchPR) {
+      core.info(`PR ${releaseBranchPR}`)
+      core.info(`PR date ${releaseBranchPR.created_at} ${releaseBranchPR.updated_at}`)
+      core.info('Release branch already exists. Rebasing...')
       try {
-        const token = core.getInput('token')
-        await git.init(token)
-        await git.clone()
-        await git.fetchBranch('releasebot-core')
-        await git.switchBranch('releasebot-core')
-        core.info('Attempting to rebase branch...')
-        const rebase = await git.rebaseBranch('main')
-        core.info('Attempted to rebase branch...')
-        core.info('Attempting to push branch...')
-        await git.push('releasebot-core', true)
-        core.info('Attempted to push branch...')
-        core.info(`Git Rebase: ${rebase.stdout}`)
-        core.info(`Git Rebase Error: ${rebase.stderr}`)
-      } catch (error) {
-        core.info('Error occurred...')
-        if (releaseBranchPR) {
-          await githubapi.addComment(octokit, releaseBranchPR.number, 'Failed to rebase the branch. Please either manually rebase it or use the `recreate` command.')
+        // Update PR to indicate rebasing
+        await githubapi.updatePullRequest(octokit, releaseBranchPR.number, 'core', nextVersion, true)
+        try {
+          const token = core.getInput('token')
+          await git.init(token)
+          await git.clone()
+          await git.fetchBranch('releasebot-core')
+          await git.switchBranch('releasebot-core')
+          await git.rebaseBranch('main')
+          await git.push('releasebot-core', true)
+        } catch (error) {
+          await githubapi.addOrUpdateComment(octokit, releaseBranchPR.number, 'Failed to rebase the branch. Please either manually rebase it or use the `recreate` command.')
+          if (error instanceof Error) core.setFailed(error.message)
         }
-        if (error instanceof Error) core.setFailed(error.message)
-      }
-    } finally {
-      core.info('Finally...')
-      if (releaseBranchPR) {
-        await githubapi.updatePullRequest(octokit, releaseBranchPR.number, 'core', version)
+      } finally {
+        // Update PR to indicate rebasing is complete
+        await githubapi.updatePullRequest(octokit, releaseBranchPR.number, 'core', nextVersion)
       }
     }
   }
@@ -119,8 +110,6 @@ async function pushEvent(octokit: InstanceType<typeof GitHub>): Promise<void> {
   core.startGroup('Checking for Pull Request')
   if (!releaseBranchPR) {
     await githubapi.createPullRequest(octokit, 'core')
-  } else {
-    await githubapi.updatePullRequest(octokit, releaseBranchPR.number, 'core', version)
   }
   core.endGroup()
 }
@@ -192,7 +181,7 @@ async function issueCommentEventRebase(octokit: InstanceType<typeof GitHub>, com
 
     await githubapi.updatePullRequest(octokit, comment.issue.number, 'core', version)
   } catch (error) {
-    await githubapi.addComment(octokit, comment.issue.number, 'Failed to rebase the branch. Please either manually rebase it or use the `recreate` command.')
+    await githubapi.createComment(octokit, comment.issue.number, 'Failed to rebase the branch. Please either manually rebase it or use the `recreate` command.')
     if (error instanceof Error) core.setFailed(error.message)
   }
 

@@ -33481,8 +33481,12 @@ exports.recreateReleaseBranch = recreateReleaseBranch;
 exports.findPullRequest = findPullRequest;
 exports.createPullRequest = createPullRequest;
 exports.updatePullRequest = updatePullRequest;
+exports.listTags = listTags;
 exports.addReaction = addReaction;
-exports.addComment = addComment;
+exports.addOrUpdateComment = addOrUpdateComment;
+exports.listComments = listComments;
+exports.createComment = createComment;
+exports.updateComment = updateComment;
 const core = __importStar(__nccwpck_require__(2186));
 const github = __importStar(__nccwpck_require__(5438));
 const minimatch_1 = __nccwpck_require__(4501);
@@ -33609,13 +33613,8 @@ async function listPushCommitFilesOfRelevance(files) {
  * @param versionType
  */
 async function getNextVersion(octokit, project, versionType) {
-    // Check if there is an existing tags
-    const { data: tags } = await octokit.rest.git.listMatchingRefs({
-        owner: github.context.repo.owner,
-        repo: github.context.repo.repo,
-        ref: `tags/${project}`
-    });
-    core.debug(`Tags: ${JSON.stringify(tags, null, 2)}`);
+    // Check if there is an existing tag for the project
+    const tags = await listTags(octokit, project);
     if (tags.length > 0) {
         const lastTag = tags[tags.length - 1];
         const lastTagName = lastTag.ref.substring('refs/tags/'.length);
@@ -33624,12 +33623,7 @@ async function getNextVersion(octokit, project, versionType) {
         // and if it has a set version command in the comments
         const releaseBranchPR = await findPullRequest(octokit, project);
         if (releaseBranchPR) {
-            const { data: comments } = await octokit.rest.issues.listComments({
-                owner: github.context.repo.owner,
-                repo: github.context.repo.repo,
-                issue_number: releaseBranchPR.number
-            });
-            core.debug(`Comments: ${JSON.stringify(comments, null, 2)}`);
+            const comments = await listComments(octokit, releaseBranchPR.number);
             for (let i = comments.length - 1; i >= 0; i--) {
                 const lastCommentBody = comments[i].body;
                 if (lastCommentBody?.startsWith(Commands.SetVersion)) {
@@ -33680,7 +33674,7 @@ async function setVersion(octokit, project, branch, version) {
                 core.debug(`New File Contents: ${newFileContents}`);
                 core.endGroup();
             }
-            await octokit.rest.repos.createOrUpdateFileContents({
+            const newFile = await octokit.rest.repos.createOrUpdateFileContents({
                 owner: github.context.repo.owner,
                 repo: github.context.repo.repo,
                 path: `${project}/package.json`,
@@ -33689,6 +33683,7 @@ async function setVersion(octokit, project, branch, version) {
                 message: `Update ${project} version to v${version}`,
                 content: base64.encode(newFileContents)
             });
+            core.debug(`Updated File: ${JSON.stringify(newFile, null, 2)}`);
         }
         else {
             core.setFailed('Existing file is not a file');
@@ -33702,11 +33697,11 @@ async function setVersion(octokit, project, branch, version) {
  */
 async function releaseBranchExists(octokit, project) {
     const releaseBranch = getReleaseBranchName(project);
-    const { data: branches } = await octokit.rest.repos.listBranches({
+    const branches = await octokit.rest.repos.listBranches({
         owner: github.context.repo.owner,
         repo: github.context.repo.repo
     });
-    return branches.some(branch => branch.name === releaseBranch);
+    return branches.data.some(branch => branch.name === releaseBranch);
 }
 /**
  * Create a release branch for the project and commit the next version.
@@ -33748,13 +33743,14 @@ async function recreateReleaseBranch(octokit, project) {
  */
 async function findPullRequest(octokit, project) {
     const releaseBranch = getReleaseBranchName(project);
-    const { data: pulls } = await octokit.rest.pulls.list({
+    const pulls = await octokit.rest.pulls.list({
         owner: github.context.repo.owner,
         repo: github.context.repo.repo,
-        head: `${github.context.repo.owner}:${releaseBranch}`
+        head: `${github.context.repo.owner}:${releaseBranch}`,
+        state: 'open'
     });
     core.debug(`Pulls: ${JSON.stringify(pulls, null, 2)}`);
-    for (const pull of pulls) {
+    for (const pull of pulls.data) {
         if (pull.labels.find(label => label.name === 'release')) {
             core.info(`Found existing PR for branch: ${releaseBranch}`);
             return pull;
@@ -33789,6 +33785,7 @@ async function createPullRequest(octokit, project) {
         labels: ['release', project]
     });
     core.debug(`Added Label: ${JSON.stringify(label, null, 2)}`);
+    return pull.data;
 }
 /**
  * Update the PR for the release branch.
@@ -33822,19 +33819,67 @@ async function updatePullRequest(octokit, pull_number, project, nextVersion, reb
     core.debug(`Added Label: ${JSON.stringify(label, null, 2)}`);
 }
 /**
+ * List all tags for the project.
+ * @param octokit
+ * @param project
+ */
+async function listTags(octokit, project) {
+    const tags = await octokit.rest.git.listMatchingRefs({
+        owner: github.context.repo.owner,
+        repo: github.context.repo.repo,
+        ref: `tags/${project}`
+    });
+    return tags.data;
+}
+/**
  * Add a reaction to a comment.
  * @param octokit
  * @param comment_number
  * @param reaction
  */
 async function addReaction(octokit, comment_number, reaction) {
-    const result = await octokit.rest.reactions.createForIssueComment({
+    const response = await octokit.rest.reactions.createForIssueComment({
         owner: github.context.repo.owner,
         repo: github.context.repo.repo,
         comment_id: comment_number,
         content: reaction
     });
-    core.debug(`Added Reaction: ${JSON.stringify(result, null, 2)}`);
+    core.debug(`Added Reaction: ${JSON.stringify(response, null, 2)}`);
+}
+/**
+ * Add or update a comment on a PR.
+ * @param octokit
+ * @param pull_number
+ * @param body
+ */
+async function addOrUpdateComment(octokit, pull_number, body) {
+    const comments = await listComments(octokit, pull_number);
+    if (comments.length > 0) {
+        const lastComment = comments[comments.length - 1];
+        if (lastComment.body === body) {
+            return await updateComment(octokit, comments[0].id, body);
+        }
+        else {
+            return await createComment(octokit, pull_number, body);
+        }
+    }
+    else {
+        return await createComment(octokit, pull_number, body);
+    }
+}
+/**
+ * List all comments on a PR.
+ * @param octokit
+ * @param pull_number
+ */
+async function listComments(octokit, pull_number) {
+    const comments = await octokit.rest.issues.listComments({
+        owner: github.context.repo.owner,
+        repo: github.context.repo.repo,
+        issue_number: pull_number
+    });
+    core.debug(`List Comments: ${JSON.stringify(comments, null, 2)}`);
+    return comments.data;
 }
 /**
  * Add a comment to a PR.
@@ -33842,14 +33887,31 @@ async function addReaction(octokit, comment_number, reaction) {
  * @param pull_number
  * @param body
  */
-async function addComment(octokit, pull_number, body) {
-    const result = await octokit.rest.issues.createComment({
+async function createComment(octokit, pull_number, body) {
+    const response = await octokit.rest.issues.createComment({
         owner: github.context.repo.owner,
         repo: github.context.repo.repo,
         issue_number: pull_number,
         body: body
     });
-    core.debug(`Added Comment: ${JSON.stringify(result, null, 2)}`);
+    core.debug(`Added Comment: ${JSON.stringify(response, null, 2)}`);
+    return response.data;
+}
+/**
+ * Update a comment on a PR.
+ * @param octokit
+ * @param comment_id
+ * @param body
+ */
+async function updateComment(octokit, comment_id, body) {
+    const response = await octokit.rest.issues.updateComment({
+        owner: github.context.repo.owner,
+        repo: github.context.repo.repo,
+        comment_id: comment_id,
+        body: body
+    });
+    core.debug(`Updated Comment: ${JSON.stringify(response, null, 2)}`);
+    return response.data;
 }
 
 
@@ -33945,47 +34007,39 @@ async function pushEvent(octokit) {
     filesOfRelevance.forEach(fileOfRelevance => core.info(fileOfRelevance));
     core.endGroup();
     core.startGroup('Checking for Branch');
-    const version = await (0, github_helper_1.getNextVersion)(octokit, 'core', 'patch');
-    const releaseBranchExists = await githubapi.releaseBranchExists(octokit, 'core');
+    const nextVersion = await (0, github_helper_1.getNextVersion)(octokit, 'core', 'patch');
     const releaseBranchPR = await githubapi.findPullRequest(octokit, 'core');
+    const releaseBranchExists = await githubapi.releaseBranchExists(octokit, 'core');
     if (!releaseBranchExists) {
         await githubapi.createReleaseBranch(octokit, 'core');
-        await githubapi.setVersion(octokit, 'core', `releasebot-core`, version);
+        await githubapi.setVersion(octokit, 'core', `releasebot-core`, nextVersion);
     }
     else {
-        core.info('Release branch already exists. Rebasing...');
-        try {
-            if (releaseBranchPR) {
-                await githubapi.updatePullRequest(octokit, releaseBranchPR.number, 'core', version, true);
-            }
+        if (releaseBranchPR) {
+            core.info(`PR ${releaseBranchPR}`);
+            core.info(`PR date ${releaseBranchPR.created_at} ${releaseBranchPR.updated_at}`);
+            core.info('Release branch already exists. Rebasing...');
             try {
-                const token = core.getInput('token');
-                await git.init(token);
-                await git.clone();
-                await git.fetchBranch('releasebot-core');
-                await git.switchBranch('releasebot-core');
-                core.info('Attempting to rebase branch...');
-                const rebase = await git.rebaseBranch('main');
-                core.info('Attempted to rebase branch...');
-                core.info('Attempting to push branch...');
-                await git.push('releasebot-core', true);
-                core.info('Attempted to push branch...');
-                core.info(`Git Rebase: ${rebase.stdout}`);
-                core.info(`Git Rebase Error: ${rebase.stderr}`);
-            }
-            catch (error) {
-                core.info('Error occurred...');
-                if (releaseBranchPR) {
-                    await githubapi.addComment(octokit, releaseBranchPR.number, 'Failed to rebase the branch. Please either manually rebase it or use the `recreate` command.');
+                // Update PR to indicate rebasing
+                await githubapi.updatePullRequest(octokit, releaseBranchPR.number, 'core', nextVersion, true);
+                try {
+                    const token = core.getInput('token');
+                    await git.init(token);
+                    await git.clone();
+                    await git.fetchBranch('releasebot-core');
+                    await git.switchBranch('releasebot-core');
+                    await git.rebaseBranch('main');
+                    await git.push('releasebot-core', true);
                 }
-                if (error instanceof Error)
-                    core.setFailed(error.message);
+                catch (error) {
+                    await githubapi.addOrUpdateComment(octokit, releaseBranchPR.number, 'Failed to rebase the branch. Please either manually rebase it or use the `recreate` command.');
+                    if (error instanceof Error)
+                        core.setFailed(error.message);
+                }
             }
-        }
-        finally {
-            core.info('Finally...');
-            if (releaseBranchPR) {
-                await githubapi.updatePullRequest(octokit, releaseBranchPR.number, 'core', version);
+            finally {
+                // Update PR to indicate rebasing is complete
+                await githubapi.updatePullRequest(octokit, releaseBranchPR.number, 'core', nextVersion);
             }
         }
     }
@@ -33993,9 +34047,6 @@ async function pushEvent(octokit) {
     core.startGroup('Checking for Pull Request');
     if (!releaseBranchPR) {
         await githubapi.createPullRequest(octokit, 'core');
-    }
-    else {
-        await githubapi.updatePullRequest(octokit, releaseBranchPR.number, 'core', version);
     }
     core.endGroup();
 }
@@ -34060,7 +34111,7 @@ async function issueCommentEventRebase(octokit, comment) {
         await githubapi.updatePullRequest(octokit, comment.issue.number, 'core', version);
     }
     catch (error) {
-        await githubapi.addComment(octokit, comment.issue.number, 'Failed to rebase the branch. Please either manually rebase it or use the `recreate` command.');
+        await githubapi.createComment(octokit, comment.issue.number, 'Failed to rebase the branch. Please either manually rebase it or use the `recreate` command.');
         if (error instanceof Error)
             core.setFailed(error.message);
     }
