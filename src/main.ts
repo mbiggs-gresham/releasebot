@@ -102,7 +102,7 @@ async function pushEvent(octokit: InstanceType<typeof GitHub>): Promise<void> {
             await git.clone()
             await git.fetchBranch('releasebot-core')
             await git.switchBranch('releasebot-core')
-            // await git.fetchUnshallow()
+            await git.fetchUnshallow()
             await git.rebaseBranch('origin/main')
             await git.push('releasebot-core', true)
           } catch (error) {

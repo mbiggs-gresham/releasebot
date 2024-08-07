@@ -82,7 +82,7 @@ export async function clone(): Promise<GitResult> {
   const branch = github.context.ref.substring('refs/heads/'.length)
   const ref = `refs/remotes/origin/${branch}`
 
-  const cloneOutput = await execGit(['fetch', '--no-tags', '--prune', '--depth', '2', 'origin', `+${github.context.sha}:${ref}`])
+  const cloneOutput = await execGit(['fetch', '--no-tags', '--prune', '--depth', '1', 'origin', `+${github.context.sha}:${ref}`])
   core.info(`Git Fetch: ${cloneOutput.stdout}`)
 
   const checkoutOutput = await execGit(['checkout', '-b', branch, ref])
@@ -99,7 +99,7 @@ export async function clone(): Promise<GitResult> {
  * @param name
  */
 export async function fetchBranch(name: string): Promise<GitResult> {
-  const output = await execGit(['fetch', '--no-tags', '--prune', '--depth', '2', 'origin', name])
+  const output = await execGit(['fetch', '--no-tags', '--prune', '--depth', '1', 'origin', name])
   core.info(`Git Fetch: ${output.stdout}`)
   return output
 }
