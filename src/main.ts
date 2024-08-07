@@ -137,26 +137,30 @@ async function pushEvent(octokit: InstanceType<typeof GitHub>): Promise<void> {
 async function issueCommentEvent(octokit: InstanceType<typeof GitHub>): Promise<void> {
   const commentPayload = github.context.payload as IssueCommentEvent
 
-  core.info('Issue Comment Found')
-  if (commentPayload.comment.body.startsWith(Commands.SetVersion)) {
-    await issueCommentEventSetVersion(octokit, commentPayload)
-  }
+  const project = githubapi.extractProjectNameFromPR(commentPayload.issue.body!)
+  if (project) {
+    core.info('Issue Comment Found')
+    if (commentPayload.comment.body.startsWith(Commands.SetVersion)) {
+      await issueCommentEventSetVersion(octokit, project, commentPayload)
+    }
 
-  if (commentPayload.comment.body.startsWith(Commands.Rebase)) {
-    await issueCommentEventRebase(octokit, commentPayload)
-  }
+    if (commentPayload.comment.body.startsWith(Commands.Rebase)) {
+      await issueCommentEventRebase(octokit, project, commentPayload)
+    }
 
-  if (commentPayload.comment.body.startsWith(Commands.Recreate)) {
-    await issueCommentEventRecreate(octokit, commentPayload)
+    if (commentPayload.comment.body.startsWith(Commands.Recreate)) {
+      await issueCommentEventRecreate(octokit, project, commentPayload)
+    }
   }
 }
 
 /**
  * Handles the issue comment event for setting the version.
  * @param octokit
+ * @param project
  * @param comment
  */
-async function issueCommentEventSetVersion(octokit: InstanceType<typeof GitHub>, comment: IssueCommentEvent): Promise<void> {
+async function issueCommentEventSetVersion(octokit: InstanceType<typeof GitHub>, project: string, comment: IssueCommentEvent): Promise<void> {
   const versionType = comment.comment.body.split(' ')[2]
   core.debug(`Version Type: ${versionType}`)
   if (versions.isValidSemverVersionType(versionType)) {
@@ -176,9 +180,10 @@ async function issueCommentEventSetVersion(octokit: InstanceType<typeof GitHub>,
 /**
  * Handles the issue comment event for rebasing the branch.
  * @param octokit
+ * @param project
  * @param comment
  */
-async function issueCommentEventRebase(octokit: InstanceType<typeof GitHub>, comment: IssueCommentEvent): Promise<void> {
+async function issueCommentEventRebase(octokit: InstanceType<typeof GitHub>, project: string, comment: IssueCommentEvent): Promise<void> {
   core.startGroup('Rebasing')
   const version = await getNextVersion(octokit, 'core', 'patch')
   await githubapi.addReaction(octokit, comment.comment.id, '+1')
@@ -207,9 +212,10 @@ async function issueCommentEventRebase(octokit: InstanceType<typeof GitHub>, com
 /**
  * Handles the issue comment event for recreating the branch.
  * @param octokit
+ * @param project
  * @param comment
  */
-async function issueCommentEventRecreate(octokit: InstanceType<typeof GitHub>, comment: IssueCommentEvent): Promise<void> {
+async function issueCommentEventRecreate(octokit: InstanceType<typeof GitHub>, project: string, comment: IssueCommentEvent): Promise<void> {
   core.startGroup('Recreating Branch')
   const version = await getNextVersion(octokit, 'core', 'patch')
   await githubapi.addReaction(octokit, comment.comment.id, '+1')

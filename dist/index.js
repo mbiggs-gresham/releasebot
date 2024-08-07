@@ -33480,6 +33480,8 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.Commands = void 0;
+exports.extractProjectNameFromPR = extractProjectNameFromPR;
+exports.getReleaseBranchName = getReleaseBranchName;
 exports.listPushCommitFiles = listPushCommitFiles;
 exports.listProjectsOfRelevance = listProjectsOfRelevance;
 exports.getNextVersion = getNextVersion;
@@ -33511,6 +33513,10 @@ var Commands;
 const projects = ['core', 'grid'];
 const projectsPaths = ['core/*', 'grid/*'];
 const projectsEcosystem = (/* unused pure expression or super */ null && (['npm', 'npm']));
+function extractProjectNameFromPR(text) {
+    const match = text.match(/\[\/\/]:\s#\s\(releasebot-project:(\w+)\)/);
+    return match ? match[1] : null;
+}
 /**
  * Get the release branch name for the project.
  * @param project
@@ -34085,23 +34091,27 @@ async function pushEvent(octokit) {
  */
 async function issueCommentEvent(octokit) {
     const commentPayload = github.context.payload;
-    core.info('Issue Comment Found');
-    if (commentPayload.comment.body.startsWith(github_helper_1.Commands.SetVersion)) {
-        await issueCommentEventSetVersion(octokit, commentPayload);
-    }
-    if (commentPayload.comment.body.startsWith(github_helper_1.Commands.Rebase)) {
-        await issueCommentEventRebase(octokit, commentPayload);
-    }
-    if (commentPayload.comment.body.startsWith(github_helper_1.Commands.Recreate)) {
-        await issueCommentEventRecreate(octokit, commentPayload);
+    const project = githubapi.extractProjectNameFromPR(commentPayload.issue.body);
+    if (project) {
+        core.info('Issue Comment Found');
+        if (commentPayload.comment.body.startsWith(github_helper_1.Commands.SetVersion)) {
+            await issueCommentEventSetVersion(octokit, project, commentPayload);
+        }
+        if (commentPayload.comment.body.startsWith(github_helper_1.Commands.Rebase)) {
+            await issueCommentEventRebase(octokit, project, commentPayload);
+        }
+        if (commentPayload.comment.body.startsWith(github_helper_1.Commands.Recreate)) {
+            await issueCommentEventRecreate(octokit, project, commentPayload);
+        }
     }
 }
 /**
  * Handles the issue comment event for setting the version.
  * @param octokit
+ * @param project
  * @param comment
  */
-async function issueCommentEventSetVersion(octokit, comment) {
+async function issueCommentEventSetVersion(octokit, project, comment) {
     const versionType = comment.comment.body.split(' ')[2];
     core.debug(`Version Type: ${versionType}`);
     if (versions.isValidSemverVersionType(versionType)) {
@@ -34120,9 +34130,10 @@ async function issueCommentEventSetVersion(octokit, comment) {
 /**
  * Handles the issue comment event for rebasing the branch.
  * @param octokit
+ * @param project
  * @param comment
  */
-async function issueCommentEventRebase(octokit, comment) {
+async function issueCommentEventRebase(octokit, project, comment) {
     core.startGroup('Rebasing');
     const version = await (0, github_helper_1.getNextVersion)(octokit, 'core', 'patch');
     await githubapi.addReaction(octokit, comment.comment.id, '+1');
@@ -34149,9 +34160,10 @@ async function issueCommentEventRebase(octokit, comment) {
 /**
  * Handles the issue comment event for recreating the branch.
  * @param octokit
+ * @param project
  * @param comment
  */
-async function issueCommentEventRecreate(octokit, comment) {
+async function issueCommentEventRecreate(octokit, project, comment) {
     core.startGroup('Recreating Branch');
     const version = await (0, github_helper_1.getNextVersion)(octokit, 'core', 'patch');
     await githubapi.addReaction(octokit, comment.comment.id, '+1');

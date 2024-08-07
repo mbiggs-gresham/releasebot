@@ -47,11 +47,16 @@ const projects = ['core', 'grid']
 const projectsPaths = ['core/*', 'grid/*']
 const projectsEcosystem = ['npm', 'npm']
 
+export function extractProjectNameFromPR(text: string): string | null {
+  const match = text.match(/\[\/\/]:\s#\s\(releasebot-project:(\w+)\)/)
+  return match ? match[1] : null
+}
+
 /**
  * Get the release branch name for the project.
  * @param project
  */
-function getReleaseBranchName(project: string): string {
+export function getReleaseBranchName(project: string): string {
   return `releasebot-${project}`
 }
 
