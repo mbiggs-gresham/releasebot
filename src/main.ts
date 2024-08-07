@@ -122,11 +122,11 @@ async function pushEvent(octokit: InstanceType<typeof GitHub>): Promise<void> {
     }
     core.endGroup()
 
-    core.startGroup('Checking for Pull Request')
     if (!releaseBranchPR) {
+      core.startGroup('Checking for Pull Request')
       await githubapi.createPullRequest(octokit, project)
+      core.endGroup()
     }
-    core.endGroup()
   }
 }
 

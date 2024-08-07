@@ -33534,11 +33534,13 @@ function getDefaultNextVersion() {
 }
 /**
  * Return the body of the PR text.
+ * @param project
  * @param nextVersion
  * @param rebasing
  */
-function getPullRequestBody(nextVersion, rebasing = false) {
+function getPullRequestBody(project, nextVersion, rebasing = false) {
     const body = [];
+    body.push(`[//]: # (releasebot-project-${project})`);
     if (rebasing) {
         body.push(`
   [//]: # (releasebot-start)
@@ -33781,7 +33783,7 @@ async function createPullRequest(octokit, project) {
         owner: github.context.repo.owner,
         repo: github.context.repo.repo,
         title: getPullRequestTitle(project, nextVersion),
-        body: getPullRequestBody(nextVersion),
+        body: getPullRequestBody(project, nextVersion),
         head: releaseBranch,
         base: branch,
         draft: true
@@ -33813,7 +33815,7 @@ async function updatePullRequest(octokit, pull_number, project, nextVersion, reb
         repo: github.context.repo.repo,
         pull_number: pull_number,
         title: getPullRequestTitle(project, nextVersion),
-        body: getPullRequestBody(nextVersion, rebasing),
+        body: getPullRequestBody(project, nextVersion, rebasing),
         head: releaseBranch,
         base: branch,
         draft: true
@@ -34070,11 +34072,11 @@ async function pushEvent(octokit) {
             }
         }
         core.endGroup();
-        core.startGroup('Checking for Pull Request');
         if (!releaseBranchPR) {
+            core.startGroup('Checking for Pull Request');
             await githubapi.createPullRequest(octokit, project);
+            core.endGroup();
         }
-        core.endGroup();
     }
 }
 /**

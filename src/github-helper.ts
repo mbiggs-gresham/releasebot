@@ -73,11 +73,14 @@ function getDefaultNextVersion(): string {
 
 /**
  * Return the body of the PR text.
+ * @param project
  * @param nextVersion
  * @param rebasing
  */
-function getPullRequestBody(nextVersion: string, rebasing: boolean = false): string {
+function getPullRequestBody(project: string, nextVersion: string, rebasing: boolean = false): string {
   const body: string[] = []
+
+  body.push(`[//]: # (releasebot-project-${project})`)
 
   if (rebasing) {
     body.push(`
@@ -343,7 +346,7 @@ export async function createPullRequest(octokit: InstanceType<typeof GitHub>, pr
     owner: github.context.repo.owner,
     repo: github.context.repo.repo,
     title: getPullRequestTitle(project, nextVersion),
-    body: getPullRequestBody(nextVersion),
+    body: getPullRequestBody(project, nextVersion),
     head: releaseBranch,
     base: branch,
     draft: true
@@ -379,7 +382,7 @@ export async function updatePullRequest(octokit: InstanceType<typeof GitHub>, pu
     repo: github.context.repo.repo,
     pull_number: pull_number,
     title: getPullRequestTitle(project, nextVersion),
-    body: getPullRequestBody(nextVersion, rebasing),
+    body: getPullRequestBody(project, nextVersion, rebasing),
     head: releaseBranch,
     base: branch,
     draft: true
