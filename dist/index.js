@@ -33964,12 +33964,17 @@ async function pushEvent(octokit) {
                 await git.clone();
                 await git.fetchBranch('releasebot-core');
                 await git.switchBranch('releasebot-core');
+                core.info('Attempting to rebase branch...');
                 const rebase = await git.rebaseBranch('main');
+                core.info('Attempted to rebase branch...');
+                core.info('Attempting to push branch...');
                 await git.push('releasebot-core', true);
+                core.info('Attempted to push branch...');
                 core.info(`Git Rebase: ${rebase.stdout}`);
                 core.info(`Git Rebase Error: ${rebase.stderr}`);
             }
             catch (error) {
+                core.info('Error occurred...');
                 if (releaseBranchPR) {
                     await githubapi.addComment(octokit, releaseBranchPR.number, 'Failed to rebase the branch. Please either manually rebase it or use the `recreate` command.');
                 }
@@ -33978,6 +33983,7 @@ async function pushEvent(octokit) {
             }
         }
         finally {
+            core.info('Finally...');
             if (releaseBranchPR) {
                 await githubapi.updatePullRequest(octokit, releaseBranchPR.number, 'core', version);
             }
