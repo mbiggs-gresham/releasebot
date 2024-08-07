@@ -1,21 +1,20 @@
 name: 'releasebot'
-description:
-  'Releasebot is a GitHub Action that automatically creates a release.'
+description: 'Releasebot is a GitHub Action that automatically creates a release.'
 author: 'Matt Biggs'
 
-# Add your action's branding here. This will appear on the GitHub Marketplace.
 branding:
   icon: 'heart'
   color: 'red'
 
-# Define your inputs here.
 inputs:
+  token:
+    description: 'Your github token'
+    required: true
   milliseconds:
     description: 'Your input description here'
     required: true
     default: '1000'
 
-# Define your outputs here.
 outputs:
   time:
     description: 'Your output description here'
