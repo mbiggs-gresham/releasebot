@@ -33527,16 +33527,16 @@ function getPullRequestBody(nextVersion, rebasing = false) {
     const body = [];
     if (rebasing) {
         body.push(`
-    [//]: # (releasebot-start)
-      ⚠️  **Releasebot is rebasing this PR** ⚠️
-      
-      Rebasing might not happen immediately, so don't worry if this takes some time.
-      
-      Note: if you make any changes to this PR yourself, they will take precedence over the rebase.
-      
-      ---
-      
-    [//]: # (releasebot-end)
+  [//]: # (releasebot-start)
+    ⚠️  **Releasebot is rebasing this PR** ⚠️
+    
+    Rebasing might not happen immediately, so don't worry if this takes some time.
+    
+    Note: if you make any changes to this PR yourself, they will take precedence over the rebase.
+    
+    ---
+    
+  [//]: # (releasebot-end)
     `);
     }
     body.push(`
