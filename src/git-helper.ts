@@ -99,7 +99,16 @@ export async function clone(): Promise<GitResult> {
  * @param name
  */
 export async function fetchBranch(name: string): Promise<GitResult> {
-  const output = await execGit(['fetch', '--no-tags', '--prune', 'origin', name])
+  const output = await execGit(['fetch', '--no-tags', '--prune', '--depth', '1', 'origin', name])
+  core.info(`Git Fetch: ${output.stdout}`)
+  return output
+}
+
+/**
+ * Fetch the remote repository without a shallow clone.
+ */
+export async function fetchUnshallow(): Promise<GitResult> {
+  const output = await execGit(['fetch', '--no-tags', '--prune', '--unshallow'])
   core.info(`Git Fetch: ${output.stdout}`)
   return output
 }
@@ -140,7 +149,7 @@ export async function push(name: string, force: boolean = false): Promise<GitRes
  * @param branch
  */
 export async function rebaseBranch(branch: string): Promise<GitResult> {
-  const output = await execGit(['rebase', `origin/${branch}`])
+  const output = await execGit(['rebase', branch])
   core.info(`Git Rebase: ${output.stdout}`)
   return output
 }

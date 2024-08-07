@@ -33311,6 +33311,7 @@ exports.displayInfo = displayInfo;
 exports.init = init;
 exports.clone = clone;
 exports.fetchBranch = fetchBranch;
+exports.fetchUnshallow = fetchUnshallow;
 exports.createBranch = createBranch;
 exports.switchBranch = switchBranch;
 exports.push = push;
@@ -33396,7 +33397,15 @@ async function clone() {
  * @param name
  */
 async function fetchBranch(name) {
-    const output = await execGit(['fetch', '--no-tags', '--prune', 'origin', name]);
+    const output = await execGit(['fetch', '--no-tags', '--prune', '--depth', '1', 'origin', name]);
+    core.info(`Git Fetch: ${output.stdout}`);
+    return output;
+}
+/**
+ * Fetch the remote repository without a shallow clone.
+ */
+async function fetchUnshallow() {
+    const output = await execGit(['fetch', '--no-tags', '--prune', '--unshallow']);
     core.info(`Git Fetch: ${output.stdout}`);
     return output;
 }
@@ -33433,7 +33442,7 @@ async function push(name, force = false) {
  * @param branch
  */
 async function rebaseBranch(branch) {
-    const output = await execGit(['rebase', `origin/${branch}`]);
+    const output = await execGit(['rebase', branch]);
     core.info(`Git Rebase: ${output.stdout}`);
     return output;
 }
@@ -34038,7 +34047,8 @@ async function pushEvent(octokit) {
                         await git.clone();
                         await git.fetchBranch('releasebot-core');
                         await git.switchBranch('releasebot-core');
-                        await git.rebaseBranch('main');
+                        await git.fetchUnshallow();
+                        await git.rebaseBranch('origin/main');
                         await git.push('releasebot-core', true);
                     }
                     catch (error) {
