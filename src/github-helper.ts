@@ -262,7 +262,8 @@ export async function recreateReleaseBranch(octokit: InstanceType<typeof GitHub>
     owner: github.context.repo.owner,
     repo: github.context.repo.repo,
     ref: `heads/${releaseBranch}`,
-    sha: github.context.sha
+    sha: github.context.sha,
+    force: true
   })
   core.debug(`Recreated Branch: ${JSON.stringify(branch, null, 2)}`)
 
