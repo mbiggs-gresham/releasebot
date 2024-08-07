@@ -316,8 +316,8 @@ export async function findPullRequest(octokit: InstanceType<typeof GitHub>, proj
     head: `${github.context.repo.owner}:${releaseBranch}`,
     state: 'open'
   })
-
   core.debug(`Pulls: ${JSON.stringify(pulls, null, 2)}`)
+
   for (const pull of pulls.data) {
     if (pull.labels.find(label => label.name === 'release')) {
       core.info(`Found existing PR for branch: ${releaseBranch}`)

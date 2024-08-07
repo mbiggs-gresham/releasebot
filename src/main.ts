@@ -7,10 +7,19 @@ import * as versions from './version-helper'
 import { wait } from './wait'
 import { Commands, getNextVersion, setVersion, Version } from './github-helper'
 import { GitHub } from '@actions/github/lib/utils'
-import { fetchBranch } from './git-helper'
-import { classicNameResolver } from '@vercel/ncc/dist/ncc/loaders/typescript/lib/typescript'
 
+const DAYS_OLD = 30
 const projects = ['core', 'grid']
+
+/**
+ * Get the number of days between two dates.
+ * @param d1
+ * @param d2
+ */
+function daysBetween(d1: Date, d2: Date) {
+  const diff = Math.abs(d1.getTime() - d2.getTime())
+  return diff / (1000 * 60 * 60 * 24)
+}
 
 /**
  * The main function for the action.
@@ -81,27 +90,30 @@ async function pushEvent(octokit: InstanceType<typeof GitHub>): Promise<void> {
     await githubapi.setVersion(octokit, 'core', `releasebot-core`, nextVersion)
   } else {
     if (releaseBranchPR) {
-      core.info(`PR ${releaseBranchPR}`)
-      core.info(`PR date ${releaseBranchPR.created_at} ${releaseBranchPR.updated_at}`)
-      core.info('Release branch already exists. Rebasing...')
-      try {
-        // Update PR to indicate rebasing
-        await githubapi.updatePullRequest(octokit, releaseBranchPR.number, 'core', nextVersion, true)
+      const daysOld = daysBetween(new Date(releaseBranchPR.created_at), new Date())
+      if (daysOld <= DAYS_OLD) {
+        core.info('Release branch already exists. Rebasing...')
         try {
-          const token = core.getInput('token')
-          await git.init(token)
-          await git.clone()
-          await git.fetchBranch('releasebot-core')
-          await git.switchBranch('releasebot-core')
-          await git.rebaseBranch('main')
-          await git.push('releasebot-core', true)
-        } catch (error) {
-          await githubapi.addOrUpdateComment(octokit, releaseBranchPR.number, 'Failed to rebase the branch. Please either manually rebase it or use the `recreate` command.')
-          if (error instanceof Error) core.setFailed(error.message)
+          // Update PR to indicate rebasing
+          await githubapi.updatePullRequest(octokit, releaseBranchPR.number, 'core', nextVersion, true)
+          try {
+            const token = core.getInput('token')
+            await git.init(token)
+            await git.clone()
+            await git.fetchBranch('releasebot-core')
+            await git.switchBranch('releasebot-core')
+            await git.rebaseBranch('main')
+            await git.push('releasebot-core', true)
+          } catch (error) {
+            await githubapi.addOrUpdateComment(octokit, releaseBranchPR.number, 'Failed to rebase the branch. Please either manually rebase it or use the `recreate` command.')
+            if (error instanceof Error) core.setFailed(error.message)
+          }
+        } finally {
+          // Update PR to indicate rebasing is complete
+          await githubapi.updatePullRequest(octokit, releaseBranchPR.number, 'core', nextVersion)
         }
-      } finally {
-        // Update PR to indicate rebasing is complete
-        await githubapi.updatePullRequest(octokit, releaseBranchPR.number, 'core', nextVersion)
+      } else {
+        core.warning(`Release branch is ${daysOld} days old. Ignoring...`)
       }
     }
   }
