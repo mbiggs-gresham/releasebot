@@ -33599,6 +33599,27 @@ async function listPushCommitFilesOfRelevance(files) {
  * @param versionType
  */
 async function getNextVersion(octokit, project, versionType) {
+    // Check if there is an existing PR for the release branch
+    // and if it has a set version command in the comments
+    const releaseBranchPR = await findPullRequest(octokit, 'core');
+    if (releaseBranchPR) {
+        const { data: comments } = await octokit.rest.issues.listComments({
+            owner: github.context.repo.owner,
+            repo: github.context.repo.repo,
+            issue_number: releaseBranchPR.number
+        });
+        core.debug(`Comments: ${JSON.stringify(comments, null, 2)}`);
+        for (let i = comments.length - 1; i >= 0; i--) {
+            const lastCommentBody = comments[i].body;
+            if (lastCommentBody?.startsWith(Commands.SetVersion)) {
+                const nextVersion = lastCommentBody.substring(lastCommentBody.indexOf('v') + 1);
+                if (nextVersion) {
+                    return nextVersion;
+                }
+            }
+        }
+    }
+    // Check if there is an existing tags
     const { data: tags } = await octokit.rest.git.listMatchingRefs({
         owner: github.context.repo.owner,
         repo: github.context.repo.repo,
@@ -33609,17 +33630,15 @@ async function getNextVersion(octokit, project, versionType) {
         const lastTag = tags[tags.length - 1];
         const lastTagName = lastTag.ref.substring('refs/tags/'.length);
         const lastTagVersion = lastTagName.substring(`${project}@v`.length);
-        const nextTagVersion = semver.inc(lastTagVersion, versionType);
-        if (nextTagVersion) {
-            return nextTagVersion;
+        const nextVersion = semver.inc(lastTagVersion, versionType);
+        if (nextVersion) {
+            return nextVersion;
         }
         else {
             core.setFailed(`Invalid last tag version: ${lastTagVersion}. Must be of the format '${project}@vX.X.X'`);
         }
     }
-    else {
-        core.setFailed(`No tags found for project: ${project}. Unable to determine the latest version.`);
-    }
+    core.warning(`No tags found for project: ${project}. Using default next version.`);
     return getDefaultNextVersion();
 }
 /**
