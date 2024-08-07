@@ -33386,6 +33386,10 @@ async function clone() {
     core.info(`Git Fetch: ${cloneOutput.stdout}`);
     const checkoutOutput = await execGit(['checkout', '-b', branch, ref]);
     core.info(`Git Branch: ${checkoutOutput.stdout}`);
+    return {
+        stderr: cloneOutput.stderr + checkoutOutput.stderr,
+        stdout: cloneOutput.stderr + checkoutOutput.stderr
+    };
 }
 /**
  * Fetch the specified remote branch.
@@ -33394,6 +33398,7 @@ async function clone() {
 async function fetchBranch(name) {
     const output = await execGit(['fetch', '--no-tags', '--prune', '--depth', '1', 'origin', name]);
     core.info(`Git Fetch: ${output.stdout}`);
+    return output;
 }
 /**
  * Create a new branch.
@@ -33402,6 +33407,7 @@ async function fetchBranch(name) {
 async function createBranch(name) {
     const output = await execGit(['checkout', '-b', name]);
     core.info(`Git Branch: ${output.stdout}`);
+    return output;
 }
 /**
  * Switch to the specified branch.
@@ -33410,6 +33416,7 @@ async function createBranch(name) {
 async function switchBranch(name) {
     const output = await execGit(['switch', name]);
     core.info(`Git Switch: ${output.stdout}`);
+    return output;
 }
 /**
  * Push the branch to the remote repository.
@@ -33419,6 +33426,7 @@ async function switchBranch(name) {
 async function push(name, force = false) {
     const output = await execGit(force ? ['push', '-f', '-u', 'origin', name] : ['push', '-u', 'origin', name]);
     core.info(`Git Push: ${output.stdout}`);
+    return output;
 }
 /**
  * Rebase the release branch.
@@ -33427,6 +33435,7 @@ async function push(name, force = false) {
 async function rebaseBranch(branch) {
     const output = await execGit(['rebase', `origin/${branch}`]);
     core.info(`Git Rebase: ${output.stdout}`);
+    return output;
 }
 
 
@@ -34027,8 +34036,10 @@ async function issueCommentEventRebase(octokit, comment) {
         await git.clone();
         await git.fetchBranch('releasebot-core');
         await git.switchBranch('releasebot-core');
-        await git.rebaseBranch('main');
+        const rebase = await git.rebaseBranch('main');
         await git.push('releasebot-core', true);
+        core.info(`Git Rebase: ${rebase.stdout}`);
+        core.info(`Git Rebase Error: ${rebase.stderr}`);
         await githubapi.updatePullRequest(octokit, comment.issue.number, 'core', version);
     }
     catch (error) {
