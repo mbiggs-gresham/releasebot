@@ -33481,7 +33481,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.Commands = void 0;
 exports.listPushCommitFiles = listPushCommitFiles;
-exports.listPushCommitFilesOfRelevance = listPushCommitFilesOfRelevance;
+exports.listProjectsOfRelevance = listProjectsOfRelevance;
 exports.getNextVersion = getNextVersion;
 exports.setVersion = setVersion;
 exports.releaseBranchExists = releaseBranchExists;
@@ -33601,19 +33601,19 @@ async function listPushCommitFiles(octokit, payload) {
     return Array.from(files);
 }
 /**
- * List all files that were added, modified, or removed in the push event that are relevant to the projects defined in config.
+ * List all projects that are relevant to the files that were changed.
  * @param files
  */
-async function listPushCommitFilesOfRelevance(files) {
-    const relevantFiles = new Set();
+async function listProjectsOfRelevance(files) {
+    const relevantProjects = new Set();
     files.forEach(file => {
         projects.forEach((project, index) => {
             if ((0, minimatch_1.minimatch)(file, projectsPaths[index])) {
-                relevantFiles.add(file);
+                relevantProjects.add(project);
             }
         });
     });
-    return Array.from(relevantFiles);
+    return Array.from(relevantProjects);
 }
 /**
  * Get the next version for the project.
@@ -34021,58 +34021,61 @@ async function pushEvent(octokit) {
     const files = await githubapi.listPushCommitFiles(octokit, pushPayload);
     files.forEach(file => core.info(file));
     core.endGroup();
-    core.startGroup('Files Changed of Relevance:');
-    const filesOfRelevance = await githubapi.listPushCommitFilesOfRelevance(files);
-    filesOfRelevance.forEach(fileOfRelevance => core.info(fileOfRelevance));
+    core.startGroup('Projects of Relevance:');
+    const projectsOfRelevance = await githubapi.listProjectsOfRelevance(files);
+    projectsOfRelevance.forEach(projectOfRelevance => core.info(projectOfRelevance));
     core.endGroup();
-    core.startGroup('Checking for Branch');
-    const nextVersion = await (0, github_helper_1.getNextVersion)(octokit, 'core', 'patch');
-    const releaseBranchPR = await githubapi.findPullRequest(octokit, 'core');
-    const releaseBranchExists = await githubapi.releaseBranchExists(octokit, 'core');
-    if (!releaseBranchExists) {
-        await githubapi.createReleaseBranch(octokit, 'core');
-        await githubapi.setVersion(octokit, 'core', `releasebot-core`, nextVersion);
-    }
-    else {
-        if (releaseBranchPR) {
-            const daysOld = daysBetween(new Date(releaseBranchPR.created_at), new Date());
-            if (daysOld <= DAYS_OLD) {
-                core.info('Release branch already exists. Rebasing...');
-                try {
-                    // Update PR to indicate rebasing
-                    await githubapi.updatePullRequest(octokit, releaseBranchPR.number, 'core', nextVersion, true);
+    for (const project of projectsOfRelevance) {
+        core.startGroup('Checking for Branch');
+        const nextVersion = await (0, github_helper_1.getNextVersion)(octokit, project, 'patch');
+        const releaseBranch = `releasebot-${project}`;
+        const releaseBranchPR = await githubapi.findPullRequest(octokit, project);
+        const releaseBranchExists = await githubapi.releaseBranchExists(octokit, project);
+        if (!releaseBranchExists) {
+            await githubapi.createReleaseBranch(octokit, project);
+            await githubapi.setVersion(octokit, project, releaseBranch, nextVersion);
+        }
+        else {
+            if (releaseBranchPR) {
+                const daysOld = daysBetween(new Date(releaseBranchPR.created_at), new Date());
+                if (daysOld <= DAYS_OLD) {
+                    core.info('Release branch already exists. Rebasing...');
                     try {
-                        const token = core.getInput('token');
-                        await git.init(token);
-                        await git.clone();
-                        await git.fetchBranch('releasebot-core');
-                        await git.switchBranch('releasebot-core');
-                        await git.fetchUnshallow();
-                        await git.rebaseBranch('origin/main');
-                        await git.push('releasebot-core', true);
+                        // Update PR to indicate rebasing
+                        await githubapi.updatePullRequest(octokit, releaseBranchPR.number, project, nextVersion, true);
+                        try {
+                            const token = core.getInput('token');
+                            await git.init(token);
+                            await git.clone();
+                            await git.fetchBranch(releaseBranch);
+                            await git.switchBranch(releaseBranch);
+                            await git.fetchUnshallow();
+                            await git.rebaseBranch('origin/main');
+                            await git.push(releaseBranch, true);
+                        }
+                        catch (error) {
+                            await githubapi.addOrUpdateComment(octokit, releaseBranchPR.number, '⚠️ Failed to rebase the branch. Please either manually rebase it or use the `recreate` command. ⚠️');
+                            if (error instanceof Error)
+                                core.setFailed(error.message);
+                        }
                     }
-                    catch (error) {
-                        await githubapi.addOrUpdateComment(octokit, releaseBranchPR.number, '⚠️ Failed to rebase the branch. Please either manually rebase it or use the `recreate` command. ⚠️');
-                        if (error instanceof Error)
-                            core.setFailed(error.message);
+                    finally {
+                        // Update PR to indicate rebasing is complete
+                        await githubapi.updatePullRequest(octokit, releaseBranchPR.number, project, nextVersion);
                     }
                 }
-                finally {
-                    // Update PR to indicate rebasing is complete
-                    await githubapi.updatePullRequest(octokit, releaseBranchPR.number, 'core', nextVersion);
+                else {
+                    core.warning(`Release branch is ${daysOld} days old. Ignoring...`);
                 }
-            }
-            else {
-                core.warning(`Release branch is ${daysOld} days old. Ignoring...`);
             }
         }
+        core.endGroup();
+        core.startGroup('Checking for Pull Request');
+        if (!releaseBranchPR) {
+            await githubapi.createPullRequest(octokit, project);
+        }
+        core.endGroup();
     }
-    core.endGroup();
-    core.startGroup('Checking for Pull Request');
-    if (!releaseBranchPR) {
-        await githubapi.createPullRequest(octokit, 'core');
-    }
-    core.endGroup();
 }
 /**
  * Handles the issue comment event.

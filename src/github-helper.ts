@@ -146,19 +146,19 @@ export async function listPushCommitFiles(octokit: InstanceType<typeof GitHub>, 
 }
 
 /**
- * List all files that were added, modified, or removed in the push event that are relevant to the projects defined in config.
+ * List all projects that are relevant to the files that were changed.
  * @param files
  */
-export async function listPushCommitFilesOfRelevance(files: string[]): Promise<string[]> {
-  const relevantFiles = new Set<string>()
+export async function listProjectsOfRelevance(files: string[]): Promise<string[]> {
+  const relevantProjects = new Set<string>()
   files.forEach(file => {
     projects.forEach((project, index) => {
       if (minimatch(file, projectsPaths[index])) {
-        relevantFiles.add(file)
+        relevantProjects.add(project)
       }
     })
   })
-  return Array.from(relevantFiles)
+  return Array.from(relevantProjects)
 }
 
 /**
