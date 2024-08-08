@@ -33508,15 +33508,15 @@ const base64 = __importStar(__nccwpck_require__(3656));
 const markdown_1 = __nccwpck_require__(4270);
 var Commands;
 (function (Commands) {
-    Commands["Rebase"] = "@releasebot rebase";
-    Commands["Recreate"] = "@releasebot recreate";
-    Commands["SetVersion"] = "@releasebot setversion";
+    Commands["Rebase"] = "@krytenbot rebase";
+    Commands["Recreate"] = "@krytenbot recreate";
+    Commands["SetVersion"] = "@krytenbot setversion";
 })(Commands || (exports.Commands = Commands = {}));
 const projects = ['core', 'grid'];
 const projectsPaths = ['core/*', 'grid/*'];
 const projectsEcosystem = (/* unused pure expression or super */ null && (['npm', 'npm']));
 function extractProjectNameFromPR(text) {
-    const match = text.match(/\[\/\/]:\s#\s\(releasebot-project:(\w+)\)/);
+    const match = text.match(/\[\/\/]:\s#\s\(krytenbot-project:(\w+)\)/);
     return match ? match[1] : null;
 }
 /**
@@ -33548,30 +33548,30 @@ function getDefaultNextVersion() {
  */
 function getPullRequestBody(project, nextVersion, rebasing = false) {
     const body = [];
-    body.push((0, markdown_1.hidden)(`releasebot-project:${project}`));
+    body.push((0, markdown_1.hidden)(`krytenbot-project:${project}`));
     body.push('\n');
     if (rebasing) {
-        body.push((0, markdown_1.hidden)('releasebot-start'));
+        body.push((0, markdown_1.hidden)('krytenbot-start'));
         body.push('\n\n');
-        body.push((0, markdown_1.important)('Releasebot is rebasing this PR'));
+        body.push((0, markdown_1.important)('Krytenbot is rebasing this PR'));
         body.push('\n\n');
-        body.push((0, markdown_1.hidden)('releasebot-end'));
+        body.push((0, markdown_1.hidden)('krytenbot-end'));
         body.push('\n');
     }
     body.push(`
-This PR was created automatically by the Releasebot to track the next release. 
+This PR was created automatically by the Krytenbot to track the next release. 
 The next version for this release is v${nextVersion}.
 
 ---
 
 <details>
-<summary>Releasebot commands and options</summary>
+<summary>Krytenbot commands and options</summary>
 <br />
 
-You can trigger Releasebot actions by commenting on this PR:
-- \`@releasebot rebase\` will rebase this PR
-- \`@releasebot recreate\` will recreate this PR, overwriting any edits that have been made to it
-- \`@releasebot setversion [major|minor|patch]\` will set the version for this PR
+You can trigger Krytenbot actions by commenting on this PR:
+- \`@krytenbot rebase\` will rebase this PR
+- \`@krytenbot recreate\` will recreate this PR, overwriting any edits that have been made to it
+- \`@krytenbot setversion [major|minor|patch]\` will set the version for this PR
 </details>
   `);
     return body.join('');

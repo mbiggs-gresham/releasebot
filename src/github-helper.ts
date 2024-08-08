@@ -40,9 +40,9 @@ export type Version = 'major' | 'minor' | 'patch'
 export type Reaction = '+1' | '-1' | 'laugh' | 'confused' | 'heart' | 'hooray' | 'rocket' | 'eyes'
 
 export enum Commands {
-  Rebase = '@releasebot rebase',
-  Recreate = '@releasebot recreate',
-  SetVersion = '@releasebot setversion'
+  Rebase = '@krytenbot rebase',
+  Recreate = '@krytenbot recreate',
+  SetVersion = '@krytenbot setversion'
 }
 
 const projects = ['core', 'grid']
@@ -50,7 +50,7 @@ const projectsPaths = ['core/*', 'grid/*']
 const projectsEcosystem = ['npm', 'npm']
 
 export function extractProjectNameFromPR(text: string): string | null {
-  const match = text.match(/\[\/\/]:\s#\s\(releasebot-project:(\w+)\)/)
+  const match = text.match(/\[\/\/]:\s#\s\(krytenbot-project:(\w+)\)/)
   return match ? match[1] : null
 }
 
@@ -87,32 +87,32 @@ function getDefaultNextVersion(): string {
 function getPullRequestBody(project: string, nextVersion: string, rebasing: boolean = false): string {
   const body: string[] = []
 
-  body.push(hidden(`releasebot-project:${project}`))
+  body.push(hidden(`krytenbot-project:${project}`))
   body.push('\n')
 
   if (rebasing) {
-    body.push(hidden('releasebot-start'))
+    body.push(hidden('krytenbot-start'))
     body.push('\n\n')
-    body.push(important('Releasebot is rebasing this PR'))
+    body.push(important('Krytenbot is rebasing this PR'))
     body.push('\n\n')
-    body.push(hidden('releasebot-end'))
+    body.push(hidden('krytenbot-end'))
     body.push('\n')
   }
 
   body.push(`
-This PR was created automatically by the Releasebot to track the next release. 
+This PR was created automatically by the Krytenbot to track the next release. 
 The next version for this release is v${nextVersion}.
 
 ---
 
 <details>
-<summary>Releasebot commands and options</summary>
+<summary>Krytenbot commands and options</summary>
 <br />
 
-You can trigger Releasebot actions by commenting on this PR:
-- \`@releasebot rebase\` will rebase this PR
-- \`@releasebot recreate\` will recreate this PR, overwriting any edits that have been made to it
-- \`@releasebot setversion [major|minor|patch]\` will set the version for this PR
+You can trigger Krytenbot actions by commenting on this PR:
+- \`@krytenbot rebase\` will rebase this PR
+- \`@krytenbot recreate\` will recreate this PR, overwriting any edits that have been made to it
+- \`@krytenbot setversion [major|minor|patch]\` will set the version for this PR
 </details>
   `)
 
