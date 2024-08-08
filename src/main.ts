@@ -1,7 +1,7 @@
 import * as core from '@actions/core'
 import * as github from '@actions/github'
 import { App, Octokit } from 'octokit'
-import { type GraphQlQueryResponseData } from '@octokit/graphql'
+import { type GraphQlQueryResponseData, GraphqlResponseError } from '@octokit/graphql'
 import { IssueCommentEvent, PushEvent } from '@octokit/webhooks-types'
 import * as git from './git-helper'
 import * as githubapi from './github-helper'
@@ -181,13 +181,19 @@ async function pushEvent(octokit: Octokit): Promise<void> {
             })
             core.info(`Pull Request ID: ${JSON.stringify(pullRequestId, null, 2)}`)
 
-            const updatePR = await octokit.graphql(updatePullRequestBranchMutation(), {
-              pullRequestId: pullRequestId.id,
-              expectedHeadOid: {
-                id: github.context.sha
+            try {
+              const updatePR = await octokit.graphql(updatePullRequestBranchMutation(), {
+                pullRequestId: pullRequestId.id,
+                expectedHeadOid: {
+                  id: github.context.sha
+                }
+              })
+              core.info(`Update PR: ${JSON.stringify(updatePR, null, 2)}`)
+            } catch (error) {
+              if (error instanceof GraphqlResponseError) {
+                core.setFailed(error.message)
               }
-            })
-            core.info(`Update PR: ${JSON.stringify(updatePR, null, 2)}`)
+            }
 
             // try {
             //   const token = core.getInput('token')

@@ -53633,6 +53633,7 @@ async function deleteComment(octokit, comment_id) {
 
 
 
+
 var Events;
 (function (Events) {
     Events["Push"] = "push";
@@ -53789,13 +53790,20 @@ async function pushEvent(octokit) {
                             pullNumber: 5
                         });
                         lib_core.info(`Pull Request ID: ${JSON.stringify(pullRequestId, null, 2)}`);
-                        const updatePR = await octokit.graphql(updatePullRequestBranchMutation(), {
-                            pullRequestId: pullRequestId.id,
-                            expectedHeadOid: {
-                                id: lib_github.context.sha
+                        try {
+                            const updatePR = await octokit.graphql(updatePullRequestBranchMutation(), {
+                                pullRequestId: pullRequestId.id,
+                                expectedHeadOid: {
+                                    id: lib_github.context.sha
+                                }
+                            });
+                            lib_core.info(`Update PR: ${JSON.stringify(updatePR, null, 2)}`);
+                        }
+                        catch (error) {
+                            if (error instanceof GraphqlResponseError) {
+                                lib_core.setFailed(error.message);
                             }
-                        });
-                        lib_core.info(`Update PR: ${JSON.stringify(updatePR, null, 2)}`);
+                        }
                         // try {
                         //   const token = core.getInput('token')
                         //   await git.init(token)
