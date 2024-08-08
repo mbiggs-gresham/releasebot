@@ -94,7 +94,7 @@ function getPullRequestBody(project: string, nextVersion: string, rebasing: bool
     body.push(hidden('releasebot-start'))
     body.push('\n')
     body.push(important('Releasebot is rebasing this PR'))
-    body.push('\n')
+    body.push('\n\n')
     body.push(hidden('releasebot-end'))
     body.push('\n')
   }
