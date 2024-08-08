@@ -193,7 +193,7 @@ async function issueCommentEventRebase(octokit: InstanceType<typeof GitHub>, pro
     await git.fetchUnshallow()
     await git.rebaseBranch('origin/main')
     await git.push(releaseBranch, true)
-    await githubapi.updatePullRequest(octokit, comment.issue.number, project, version)
+    // await githubapi.updatePullRequest(octokit, comment.issue.number, project, version)
   } catch (error) {
     await githubapi.createComment(octokit, comment.issue.number, caution('Failed to rebase the branch. Please either manually rebase it or use the `recreate` command.'))
     if (error instanceof Error) core.setFailed(error.message)
