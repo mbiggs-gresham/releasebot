@@ -165,12 +165,12 @@ async function issueCommentEventSetVersion(octokit: InstanceType<typeof GitHub>,
   core.debug(`Version Type: ${versionType}`)
   if (versions.isValidSemverVersionType(versionType)) {
     const version = await githubapi.getNextVersion(octokit, 'core', versionType as Version)
-    const branch = github.context.ref.substring('refs/heads/'.length)
+    const releaseBranch = `releasebot-${project}`
 
     core.startGroup('Setting new version')
     await githubapi.addReaction(octokit, comment.comment.id, '+1')
-    await githubapi.setVersion(octokit, 'core', 'releasebot-core', version)
-    await githubapi.updatePullRequest(octokit, comment.issue.number, 'core', version)
+    await githubapi.setVersion(octokit, project, releaseBranch, version)
+    await githubapi.updatePullRequest(octokit, comment.issue.number, project, version)
     core.endGroup()
   } else {
     core.setFailed(`Invalid version type: ${versionType}`)
@@ -185,22 +185,22 @@ async function issueCommentEventSetVersion(octokit: InstanceType<typeof GitHub>,
  */
 async function issueCommentEventRebase(octokit: InstanceType<typeof GitHub>, project: string, comment: IssueCommentEvent): Promise<void> {
   core.startGroup('Rebasing')
-  const version = await getNextVersion(octokit, 'core', 'patch')
+  const version = await getNextVersion(octokit, project, 'patch')
+  const releaseBranch = `releasebot-${project}`
+
   await githubapi.addReaction(octokit, comment.comment.id, '+1')
-  await githubapi.updatePullRequest(octokit, comment.issue.number, 'core', version, true)
+  await githubapi.updatePullRequest(octokit, comment.issue.number, project, version, true)
 
   try {
     const token = core.getInput('token')
     await git.init(token)
     await git.clone()
-    await git.fetchBranch('releasebot-core')
-    await git.switchBranch('releasebot-core')
-    const rebase = await git.rebaseBranch('main')
-    await git.push('releasebot-core', true)
-    core.info(`Git Rebase: ${rebase.stdout}`)
-    core.info(`Git Rebase Error: ${rebase.stderr}`)
-
-    await githubapi.updatePullRequest(octokit, comment.issue.number, 'core', version)
+    await git.fetchBranch(releaseBranch)
+    await git.switchBranch(releaseBranch)
+    await git.fetchUnshallow()
+    await git.rebaseBranch('origin/main')
+    await git.push(releaseBranch, true)
+    await githubapi.updatePullRequest(octokit, comment.issue.number, project, version)
   } catch (error) {
     await githubapi.createComment(octokit, comment.issue.number, 'Failed to rebase the branch. Please either manually rebase it or use the `recreate` command.')
     if (error instanceof Error) core.setFailed(error.message)
@@ -217,10 +217,10 @@ async function issueCommentEventRebase(octokit: InstanceType<typeof GitHub>, pro
  */
 async function issueCommentEventRecreate(octokit: InstanceType<typeof GitHub>, project: string, comment: IssueCommentEvent): Promise<void> {
   core.startGroup('Recreating Branch')
-  const version = await getNextVersion(octokit, 'core', 'patch')
+  const version = await getNextVersion(octokit, project, 'patch')
   await githubapi.addReaction(octokit, comment.comment.id, '+1')
-  await githubapi.recreateReleaseBranch(octokit, 'core')
-  await githubapi.setVersion(octokit, 'core', `releasebot-core`, version)
-  await githubapi.updatePullRequest(octokit, comment.issue.number, 'core', version)
+  await githubapi.recreateReleaseBranch(octokit, project)
+  await githubapi.setVersion(octokit, project, `releasebot-core`, version)
+  await githubapi.updatePullRequest(octokit, comment.issue.number, project, version)
   core.endGroup()
 }
