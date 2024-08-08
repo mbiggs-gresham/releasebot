@@ -33559,20 +33559,20 @@ function getPullRequestBody(project, nextVersion, rebasing = false) {
         body.push('\n');
     }
     body.push(`
-  This PR was created automatically by the Releasebot to track the next release. 
-  The next version for this release is v${nextVersion}.
+This PR was created automatically by the Releasebot to track the next release. 
+The next version for this release is v${nextVersion}.
 
-  ---
+---
 
-  <details>
-  <summary>Releasebot commands and options</summary>
-  <br />
-  
-  You can trigger Releasebot actions by commenting on this PR:
-  - \`@releasebot rebase\` will rebase this PR
-  - \`@releasebot recreate\` will recreate this PR, overwriting any edits that have been made to it
-  - \`@releasebot setversion [major|minor|patch]\` will set the version for this PR
-  </details>
+<details>
+<summary>Releasebot commands and options</summary>
+<br />
+
+You can trigger Releasebot actions by commenting on this PR:
+- \`@releasebot rebase\` will rebase this PR
+- \`@releasebot recreate\` will recreate this PR, overwriting any edits that have been made to it
+- \`@releasebot setversion [major|minor|patch]\` will set the version for this PR
+</details>
   `);
     return body.join('');
 }
