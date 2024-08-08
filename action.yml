@@ -1,6 +1,5 @@
 name: 'krytenbot'
-description:
-  'Krytenbot is a GitHub Action that automatically creates a release.'
+description: 'Krytenbot is a GitHub Action that automatically creates a release.'
 author: 'Matt Biggs'
 
 branding:
