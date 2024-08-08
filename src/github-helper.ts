@@ -87,10 +87,16 @@ function getDefaultNextVersion(): string {
 function getPullRequestBody(project: string, nextVersion: string, rebasing: boolean = false): string {
   const body: string[] = []
 
-  body.push(hidden(`releasebot-project:${project}\n`))
+  body.push(hidden(`releasebot-project:${project}`))
+  body.push('\n')
 
   if (rebasing) {
-    body.push(`${hidden('releasebot-start')}\n${important('Releasebot is rebasing this PR')}\n\n${hidden('releasebot-end')}\n`)
+    body.push(hidden('releasebot-start'))
+    body.push('\n')
+    body.push(important('Releasebot is rebasing this PR'))
+    body.push('\n')
+    body.push(hidden('releasebot-end'))
+    body.push('\n')
   }
 
   body.push(`

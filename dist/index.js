@@ -33548,9 +33548,15 @@ function getDefaultNextVersion() {
  */
 function getPullRequestBody(project, nextVersion, rebasing = false) {
     const body = [];
-    body.push((0, markdown_1.hidden)(`releasebot-project:${project}\n`));
+    body.push((0, markdown_1.hidden)(`releasebot-project:${project}`));
+    body.push('\n');
     if (rebasing) {
-        body.push(`${(0, markdown_1.hidden)('releasebot-start')}\n${(0, markdown_1.important)('Releasebot is rebasing this PR')}\n\n${(0, markdown_1.hidden)('releasebot-end')}\n`);
+        body.push((0, markdown_1.hidden)('releasebot-start'));
+        body.push('\n');
+        body.push((0, markdown_1.important)('Releasebot is rebasing this PR'));
+        body.push('\n');
+        body.push((0, markdown_1.hidden)('releasebot-end'));
+        body.push('\n');
     }
     body.push(`
   This PR was created automatically by the Releasebot to track the next release. 
@@ -34069,7 +34075,7 @@ async function pushEvent(octokit) {
                     }
                     finally {
                         // Update PR to indicate rebasing is complete
-                        await githubapi.updatePullRequest(octokit, releaseBranchPR.number, project, nextVersion);
+                        // await githubapi.updatePullRequest(octokit, releaseBranchPR.number, project, nextVersion)
                     }
                 }
                 else {
