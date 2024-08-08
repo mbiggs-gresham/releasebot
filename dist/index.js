@@ -53652,7 +53652,7 @@ function daysBetween(d1, d2) {
 function updatePullRequestBranchMutation() {
     return `
     mutation UpdatePullRequestBranchMutation($pullRequestId: ID!, $expectedHeadOid: GitObjectID!) {
-        updatePullRequestBranch(input:{ clientMutationId: krytenbot, pullRequestId: $pullRequestId, expectedHeadOid: $expectedHeadOid, updateMethod: REBASE }) {
+        updatePullRequestBranch(input:{ clientMutationId: 'krytenbot', pullRequestId: $pullRequestId, expectedHeadOid: $expectedHeadOid, updateMethod: REBASE }) {
             pullRequest {
                 id
             }
