@@ -37493,6 +37493,10 @@ async function run() {
         });
         lib_core.info(`Pull Request ID: ${JSON.stringify(pullRequestId, null, 2)}`);
         lib_core.info(`Pull Request ID: ${pullRequestId.repository.pullRequest.id}`);
+        const comment = await octokit.graphql(addPullRequestCommentMutation(), {
+            subjectId: pullRequestId.repository.pullRequest.id,
+            body: 'Hello, World!'
+        });
         // const { repository }: GraphQlQueryResponseData = await graphql(
         //   `
         //     {

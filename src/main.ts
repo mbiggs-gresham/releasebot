@@ -72,6 +72,11 @@ export async function run(): Promise<void> {
     core.info(`Pull Request ID: ${JSON.stringify(pullRequestId, null, 2)}`)
     core.info(`Pull Request ID: ${pullRequestId.repository.pullRequest.id}`)
 
+    const comment: GraphQlQueryResponseData = await octokit.graphql(addPullRequestCommentMutation(), {
+      subjectId: pullRequestId.repository.pullRequest.id,
+      body: 'Hello, World!'
+    })
+
     // const { repository }: GraphQlQueryResponseData = await graphql(
     //   `
     //     {
