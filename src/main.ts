@@ -83,13 +83,13 @@ export async function run(): Promise<void> {
 
     const octokit: Octokit = await app.getInstallationOctokit(installation.id)
 
-    const pullRequestId: GraphQlQueryResponseData = await octokit.graphql(findPullRequestIdQuery(), {
-      owner: github.context.repo.owner,
-      repo: github.context.repo.repo,
-      pullNumber: 5
-    })
-    core.info(`Pull Request ID: ${JSON.stringify(pullRequestId, null, 2)}`)
-    core.info(`Pull Request ID: ${pullRequestId.repository.pullRequest.id}`)
+    // const pullRequestId: GraphQlQueryResponseData = await octokit.graphql(findPullRequestIdQuery(), {
+    //   owner: github.context.repo.owner,
+    //   repo: github.context.repo.repo,
+    //   pullNumber: 5
+    // })
+    // core.info(`Pull Request ID: ${JSON.stringify(pullRequestId, null, 2)}`)
+    // core.info(`Pull Request ID: ${pullRequestId.repository.pullRequest.id}`)
 
     // const comment: GraphQlQueryResponseData = await octokit.graphql(addPullRequestCommentMutation(), {
     //   subjectId: pullRequestId.repository.pullRequest.id,
@@ -118,7 +118,7 @@ export async function run(): Promise<void> {
     // )
     // core.info(`Repository: ${JSON.stringify(repository, null, 2)}`)
 
-    core.debug(`Github Context: ${JSON.stringify(github.context, null, 2)}`)
+    core.info(`Github Context: ${JSON.stringify(github.context, null, 2)}`)
 
     /**
      * Handle commits being pushed to the branch we are monitoring
@@ -174,8 +174,15 @@ async function pushEvent(octokit: Octokit): Promise<void> {
             // Update PR to indicate rebasing
             await githubapi.updatePullRequest(octokit, releaseBranchPR.number, project, nextVersion, true)
 
+            const pullRequestId: GraphQlQueryResponseData = await octokit.graphql(findPullRequestIdQuery(), {
+              owner: github.context.repo.owner,
+              repo: github.context.repo.repo,
+              pullNumber: 5
+            })
+            core.info(`Pull Request ID: ${JSON.stringify(pullRequestId, null, 2)}`)
+
             const updatePR = await octokit.graphql(updatePullRequestBranchMutation(), {
-              pullRequestId: releaseBranchPR.id,
+              pullRequestId: pullRequestId.id,
               expectedHeadOid: {
                 id: github.context.sha
               }

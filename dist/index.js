@@ -53699,13 +53699,13 @@ async function run() {
             repo: lib_github.context.repo.repo
         });
         const octokit = await app.getInstallationOctokit(installation.id);
-        const pullRequestId = await octokit.graphql(findPullRequestIdQuery(), {
-            owner: lib_github.context.repo.owner,
-            repo: lib_github.context.repo.repo,
-            pullNumber: 5
-        });
-        lib_core.info(`Pull Request ID: ${JSON.stringify(pullRequestId, null, 2)}`);
-        lib_core.info(`Pull Request ID: ${pullRequestId.repository.pullRequest.id}`);
+        // const pullRequestId: GraphQlQueryResponseData = await octokit.graphql(findPullRequestIdQuery(), {
+        //   owner: github.context.repo.owner,
+        //   repo: github.context.repo.repo,
+        //   pullNumber: 5
+        // })
+        // core.info(`Pull Request ID: ${JSON.stringify(pullRequestId, null, 2)}`)
+        // core.info(`Pull Request ID: ${pullRequestId.repository.pullRequest.id}`)
         // const comment: GraphQlQueryResponseData = await octokit.graphql(addPullRequestCommentMutation(), {
         //   subjectId: pullRequestId.repository.pullRequest.id,
         //   body: 'Hello, World!'
@@ -53731,7 +53731,7 @@ async function run() {
         //   }
         // )
         // core.info(`Repository: ${JSON.stringify(repository, null, 2)}`)
-        lib_core.debug(`Github Context: ${JSON.stringify(lib_github.context, null, 2)}`);
+        lib_core.info(`Github Context: ${JSON.stringify(lib_github.context, null, 2)}`);
         /**
          * Handle commits being pushed to the branch we are monitoring
          */
@@ -53783,8 +53783,14 @@ async function pushEvent(octokit) {
                     try {
                         // Update PR to indicate rebasing
                         await updatePullRequest(octokit, releaseBranchPR.number, project, nextVersion, true);
+                        const pullRequestId = await octokit.graphql(findPullRequestIdQuery(), {
+                            owner: lib_github.context.repo.owner,
+                            repo: lib_github.context.repo.repo,
+                            pullNumber: 5
+                        });
+                        lib_core.info(`Pull Request ID: ${JSON.stringify(pullRequestId, null, 2)}`);
                         const updatePR = await octokit.graphql(updatePullRequestBranchMutation(), {
-                            pullRequestId: releaseBranchPR.id,
+                            pullRequestId: pullRequestId.id,
                             expectedHeadOid: {
                                 id: lib_github.context.sha
                             }
