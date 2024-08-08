@@ -33552,7 +33552,7 @@ function getPullRequestBody(project, nextVersion, rebasing = false) {
     body.push('\n');
     if (rebasing) {
         body.push((0, markdown_1.hidden)('releasebot-start'));
-        body.push('\n');
+        body.push('\n\n');
         body.push((0, markdown_1.important)('Releasebot is rebasing this PR'));
         body.push('\n\n');
         body.push((0, markdown_1.hidden)('releasebot-end'));
