@@ -53786,8 +53786,7 @@ async function pushEvent(octokit) {
                         const updatePR = await octokit.graphql(updatePullRequestBranchMutation(), {
                             pullRequestId: releaseBranchPR.id,
                             expectedHeadOid: {
-                                id: releaseBranchPR.head.sha,
-                                sha: releaseBranchPR.head.sha
+                                id: lib_github.context.sha
                             }
                         });
                         lib_core.info(`Update PR: ${JSON.stringify(updatePR, null, 2)}`);
