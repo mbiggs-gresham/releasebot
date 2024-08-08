@@ -34008,9 +34008,7 @@ async function run() {
         /**
          * Handle PRs being commented on
          */
-        core.info('Event Name: ' + github.context.eventName + (github.context.eventName === Events.IssueComment));
         if (github.context.eventName === Events.IssueComment) {
-            core.info('Issue Comment Event Found');
             await issueCommentEvent(octokit);
         }
     }
@@ -34105,6 +34103,9 @@ async function issueCommentEvent(octokit) {
         if (commentPayload.comment.body.startsWith(github_helper_1.Commands.Recreate)) {
             await issueCommentEventRecreate(octokit, project, commentPayload);
         }
+    }
+    else {
+        core.warning('No issue for comment found');
     }
 }
 /**
