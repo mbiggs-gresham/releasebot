@@ -33498,6 +33498,7 @@ exports.addOrUpdateComment = addOrUpdateComment;
 exports.listComments = listComments;
 exports.createComment = createComment;
 exports.updateComment = updateComment;
+exports.deleteComment = deleteComment;
 const core = __importStar(__nccwpck_require__(2186));
 const github = __importStar(__nccwpck_require__(5438));
 const minimatch_1 = __nccwpck_require__(4501);
@@ -33874,7 +33875,7 @@ async function addOrUpdateComment(octokit, pull_number, body) {
     if (comments.length > 0) {
         const lastComment = comments[comments.length - 1];
         if (lastComment.body === body) {
-            return await updateComment(octokit, comments[0].id, body);
+            return await updateComment(octokit, lastComment.id, body);
         }
         else {
             return await createComment(octokit, pull_number, body);
@@ -33929,6 +33930,19 @@ async function updateComment(octokit, comment_id, body) {
     });
     core.debug(`Updated Comment: ${JSON.stringify(response, null, 2)}`);
     return response.data;
+}
+/**
+ * Delete a comment on a PR.
+ * @param octokit
+ * @param comment_id
+ */
+async function deleteComment(octokit, comment_id) {
+    const response = await octokit.rest.issues.deleteComment({
+        owner: github.context.repo.owner,
+        repo: github.context.repo.repo,
+        comment_id: comment_id
+    });
+    core.debug(`Deleted Comment: ${JSON.stringify(response, null, 2)}`);
 }
 
 

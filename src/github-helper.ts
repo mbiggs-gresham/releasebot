@@ -31,6 +31,7 @@ type PullRequest = ListPullRequestsResponse['data'][0]
 
 type CreateCommentResponse = Endpoints['POST /repos/{owner}/{repo}/issues/{issue_number}/comments']['response']
 type UpdateCommentResponse = Endpoints['PATCH /repos/{owner}/{repo}/issues/comments/{comment_id}']['response']
+type DeleteCommentResponse = Endpoints['DELETE /repos/{owner}/{repo}/issues/comments/{comment_id}']['response']
 type ListCommentsResponse = Endpoints['GET /repos/{owner}/{repo}/issues/{issue_number}/comments']['response']
 type Comment = ListCommentsResponse['data'][0]
 
@@ -444,7 +445,7 @@ export async function addOrUpdateComment(octokit: InstanceType<typeof GitHub>, p
   if (comments.length > 0) {
     const lastComment = comments[comments.length - 1]
     if (lastComment.body === body) {
-      return await updateComment(octokit, comments[0].id, body)
+      return await updateComment(octokit, lastComment.id, body)
     } else {
       return await createComment(octokit, pull_number, body)
     }
@@ -500,4 +501,18 @@ export async function updateComment(octokit: InstanceType<typeof GitHub>, commen
   })
   core.debug(`Updated Comment: ${JSON.stringify(response, null, 2)}`)
   return response.data
+}
+
+/**
+ * Delete a comment on a PR.
+ * @param octokit
+ * @param comment_id
+ */
+export async function deleteComment(octokit: InstanceType<typeof GitHub>, comment_id: number): Promise<void> {
+  const response: DeleteCommentResponse = await octokit.rest.issues.deleteComment({
+    owner: github.context.repo.owner,
+    repo: github.context.repo.repo,
+    comment_id: comment_id
+  })
+  core.debug(`Deleted Comment: ${JSON.stringify(response, null, 2)}`)
 }
