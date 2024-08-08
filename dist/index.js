@@ -33505,6 +33505,7 @@ const minimatch_1 = __nccwpck_require__(4501);
 const semver = __importStar(__nccwpck_require__(1383));
 const versions = __importStar(__nccwpck_require__(4481));
 const base64 = __importStar(__nccwpck_require__(3656));
+const markdown_1 = __nccwpck_require__(4270);
 var Commands;
 (function (Commands) {
     Commands["Rebase"] = "@releasebot rebase";
@@ -33547,20 +33548,8 @@ function getDefaultNextVersion() {
  */
 function getPullRequestBody(project, nextVersion, rebasing = false) {
     const body = [];
-    body.push(`[//]: # (releasebot-project:${project})\n`);
     if (rebasing) {
-        body.push(`
-  [//]: # (releasebot-start)
-  ⚠️  **Releasebot is rebasing this PR** ⚠️
-  
-  Rebasing might not happen immediately, so don't worry if this takes some time.
-  
-  Note: if you make any changes to this PR yourself, they will take precedence over the rebase.
-  
-  ---
-    
-  [//]: # (releasebot-end)
-    `);
+        body.push(`${(0, markdown_1.hidden)('releasebot-start')}\n${(0, markdown_1.important)('Releasebot is rebasing this PR')}\n${(0, markdown_1.hidden)('releasebot-end')}\n`);
     }
     body.push(`
   This PR was created automatically by the Releasebot to track the next release. 
@@ -33983,8 +33972,13 @@ const github = __importStar(__nccwpck_require__(5438));
 const git = __importStar(__nccwpck_require__(1107));
 const githubapi = __importStar(__nccwpck_require__(5366));
 const versions = __importStar(__nccwpck_require__(4481));
-const wait_1 = __nccwpck_require__(5259);
 const github_helper_1 = __nccwpck_require__(5366);
+const markdown_1 = __nccwpck_require__(4270);
+var Events;
+(function (Events) {
+    Events["Push"] = "push";
+    Events["IssueComment"] = "issue_comment";
+})(Events || (Events = {}));
 const DAYS_OLD = 30;
 const projects = (/* unused pure expression or super */ null && (['core', 'grid']));
 /**
@@ -34008,24 +34002,15 @@ async function run() {
         /**
          * Handle commits being pushed to the branch we are monitoring
          */
-        if (github.context.eventName === 'push') {
+        if (github.context.eventName === Events.Push) {
             await pushEvent(octokit);
         }
         /**
          * Handle PRs being commented on
          */
-        if (github.context.eventName === 'issue_comment') {
+        if (github.context.eventName === Events.IssueComment) {
             await issueCommentEvent(octokit);
         }
-        const ms = core.getInput('milliseconds');
-        // Debug logs are only output if the `ACTIONS_STEP_DEBUG` secret is true
-        core.debug(`Waiting ${ms} milliseconds ...`);
-        // Log the current timestamp, wait, then log the new timestamp
-        core.debug(new Date().toTimeString());
-        await (0, wait_1.wait)(parseInt(ms, 10));
-        core.debug(new Date().toTimeString());
-        // Set outputs for other workflow steps to use
-        core.setOutput('time', new Date().toTimeString());
     }
     catch (error) {
         // Fail the workflow run if an error occurs
@@ -34076,7 +34061,7 @@ async function pushEvent(octokit) {
                             await git.push(releaseBranch, true);
                         }
                         catch (error) {
-                            await githubapi.addOrUpdateComment(octokit, releaseBranchPR.number, '⚠️ Failed to rebase the branch. Please either manually rebase it or use the `recreate` command. ⚠️');
+                            await githubapi.addOrUpdateComment(octokit, releaseBranchPR.number, (0, markdown_1.caution)('Failed to rebase the branch. Please either manually rebase it or use the `recreate` command.'));
                             if (error instanceof Error)
                                 core.setFailed(error.message);
                         }
@@ -34087,7 +34072,7 @@ async function pushEvent(octokit) {
                     }
                 }
                 else {
-                    await githubapi.addOrUpdateComment(octokit, releaseBranchPR.number, `⚠️ Branch is now older than the ${DAYS_OLD} day limit. Please manually \`recreate\` and merge it when ready. ⚠️`);
+                    await githubapi.addOrUpdateComment(octokit, releaseBranchPR.number, (0, markdown_1.note)(`Branch is now older than the ${DAYS_OLD} day limit. Please manually \`recreate\` and merge it when ready.`));
                     core.warning(`Release branch is ${daysOld} days old. Ignoring...`);
                 }
             }
@@ -34166,7 +34151,7 @@ async function issueCommentEventRebase(octokit, project, comment) {
         await githubapi.updatePullRequest(octokit, comment.issue.number, project, version);
     }
     catch (error) {
-        await githubapi.createComment(octokit, comment.issue.number, 'Failed to rebase the branch. Please either manually rebase it or use the `recreate` command.');
+        await githubapi.createComment(octokit, comment.issue.number, (0, markdown_1.caution)('Failed to rebase the branch. Please either manually rebase it or use the `recreate` command.'));
         if (error instanceof Error)
             core.setFailed(error.message);
     }
@@ -34191,6 +34176,40 @@ async function issueCommentEventRecreate(octokit, project, comment) {
 
 /***/ }),
 
+/***/ 4270:
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.note = note;
+exports.tip = tip;
+exports.important = important;
+exports.warning = warning;
+exports.caution = caution;
+exports.hidden = hidden;
+function note(message) {
+    return `> [!NOTE]\n> ${message}`;
+}
+function tip(message) {
+    return `> [!TIP]\n> ${message}`;
+}
+function important(message) {
+    return `> [!IMPORTANT]\n> ${message}`;
+}
+function warning(message) {
+    return `> [!WARNING]\n> ${message}`;
+}
+function caution(message) {
+    return `> [!CAUTION]\n> ${message}`;
+}
+function hidden(message) {
+    return `[//]: # (${message})`;
+}
+
+
+/***/ }),
+
 /***/ 4481:
 /***/ ((__unused_webpack_module, exports) => {
 
@@ -34210,30 +34229,6 @@ function patchPackageJson(fileContents, nextVersion) {
 }
 function isValidSemverVersionType(version) {
     return semverVersionTypes.includes(version);
-}
-
-
-/***/ }),
-
-/***/ 5259:
-/***/ ((__unused_webpack_module, exports) => {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.wait = wait;
-/**
- * Wait for a number of milliseconds.
- * @param milliseconds The number of milliseconds to wait.
- * @returns {Promise<string>} Resolves with 'done!' after the wait is over.
- */
-async function wait(milliseconds) {
-    return new Promise(resolve => {
-        if (isNaN(milliseconds)) {
-            throw new Error('milliseconds not a number');
-        }
-        setTimeout(() => resolve('done!'), milliseconds);
-    });
 }
 
 

@@ -4,9 +4,14 @@ import { IssueCommentEvent, PushEvent } from '@octokit/webhooks-types'
 import * as git from './git-helper'
 import * as githubapi from './github-helper'
 import * as versions from './version-helper'
-import { wait } from './wait'
 import { Commands, getNextVersion, setVersion, Version } from './github-helper'
 import { GitHub } from '@actions/github/lib/utils'
+import { note, caution } from './markdown'
+
+enum Events {
+  Push = 'push',
+  IssueComment = 'issue_comment'
+}
 
 const DAYS_OLD = 30
 const projects = ['core', 'grid']
@@ -35,29 +40,16 @@ export async function run(): Promise<void> {
     /**
      * Handle commits being pushed to the branch we are monitoring
      */
-    if (github.context.eventName === 'push') {
+    if (github.context.eventName === Events.Push) {
       await pushEvent(octokit)
     }
 
     /**
      * Handle PRs being commented on
      */
-    if (github.context.eventName === 'issue_comment') {
+    if (github.context.eventName === Events.IssueComment) {
       await issueCommentEvent(octokit)
     }
-
-    const ms: string = core.getInput('milliseconds')
-
-    // Debug logs are only output if the `ACTIONS_STEP_DEBUG` secret is true
-    core.debug(`Waiting ${ms} milliseconds ...`)
-
-    // Log the current timestamp, wait, then log the new timestamp
-    core.debug(new Date().toTimeString())
-    await wait(parseInt(ms, 10))
-    core.debug(new Date().toTimeString())
-
-    // Set outputs for other workflow steps to use
-    core.setOutput('time', new Date().toTimeString())
   } catch (error) {
     // Fail the workflow run if an error occurs
     if (error instanceof Error) core.setFailed(error.message)
@@ -108,7 +100,7 @@ async function pushEvent(octokit: InstanceType<typeof GitHub>): Promise<void> {
               await git.rebaseBranch('origin/main')
               await git.push(releaseBranch, true)
             } catch (error) {
-              await githubapi.addOrUpdateComment(octokit, releaseBranchPR.number, '⚠️ Failed to rebase the branch. Please either manually rebase it or use the `recreate` command. ⚠️')
+              await githubapi.addOrUpdateComment(octokit, releaseBranchPR.number, caution('Failed to rebase the branch. Please either manually rebase it or use the `recreate` command.'))
               if (error instanceof Error) core.setFailed(error.message)
             }
           } finally {
@@ -116,7 +108,7 @@ async function pushEvent(octokit: InstanceType<typeof GitHub>): Promise<void> {
             await githubapi.updatePullRequest(octokit, releaseBranchPR.number, project, nextVersion)
           }
         } else {
-          await githubapi.addOrUpdateComment(octokit, releaseBranchPR.number, `⚠️ Branch is now older than the ${DAYS_OLD} day limit. Please manually \`recreate\` and merge it when ready. ⚠️`)
+          await githubapi.addOrUpdateComment(octokit, releaseBranchPR.number, note(`Branch is now older than the ${DAYS_OLD} day limit. Please manually \`recreate\` and merge it when ready.`))
           core.warning(`Release branch is ${daysOld} days old. Ignoring...`)
         }
       }
@@ -203,7 +195,7 @@ async function issueCommentEventRebase(octokit: InstanceType<typeof GitHub>, pro
     await git.push(releaseBranch, true)
     await githubapi.updatePullRequest(octokit, comment.issue.number, project, version)
   } catch (error) {
-    await githubapi.createComment(octokit, comment.issue.number, 'Failed to rebase the branch. Please either manually rebase it or use the `recreate` command.')
+    await githubapi.createComment(octokit, comment.issue.number, caution('Failed to rebase the branch. Please either manually rebase it or use the `recreate` command.'))
     if (error instanceof Error) core.setFailed(error.message)
   }
 

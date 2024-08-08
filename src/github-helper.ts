@@ -7,6 +7,7 @@ import { minimatch } from 'minimatch'
 import * as semver from 'semver'
 import * as versions from './version-helper'
 import * as base64 from './base64-helper'
+import { hidden, important } from './markdown'
 
 type AddLabelResponse = Endpoints['POST /repos/{owner}/{repo}/issues/{issue_number}/labels']['response']
 
@@ -86,21 +87,8 @@ function getDefaultNextVersion(): string {
 function getPullRequestBody(project: string, nextVersion: string, rebasing: boolean = false): string {
   const body: string[] = []
 
-  body.push(`[//]: # (releasebot-project:${project})\n`)
-
   if (rebasing) {
-    body.push(`
-  [//]: # (releasebot-start)
-  ⚠️  **Releasebot is rebasing this PR** ⚠️
-  
-  Rebasing might not happen immediately, so don't worry if this takes some time.
-  
-  Note: if you make any changes to this PR yourself, they will take precedence over the rebase.
-  
-  ---
-    
-  [//]: # (releasebot-end)
-    `)
+    body.push(`${hidden('releasebot-start')}\n${important('Releasebot is rebasing this PR')}\n${hidden('releasebot-end')}\n`)
   }
 
   body.push(`
