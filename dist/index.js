@@ -37492,6 +37492,7 @@ async function run() {
             pullNumber: 5
         });
         lib_core.info(`Pull Request ID: ${JSON.stringify(pullRequestId, null, 2)}`);
+        lib_core.info(`Pull Request ID: ${pullRequestId.repository.pullRequest.id}`);
         // const { repository }: GraphQlQueryResponseData = await graphql(
         //   `
         //     {
