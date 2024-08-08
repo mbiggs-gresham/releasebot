@@ -1,12 +1,12 @@
 {
-  "name": "releasebot",
-  "description": "GitHub releasebot",
+  "name": "krytenbot",
+  "description": "GitHub Krytenbot",
   "version": "0.0.1",
   "author": "Matt Biggs",
   "private": true,
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/mbiggs-gresham/releasebot.git"
+    "url": "git+https://github.com/mbiggs-gresham/krytenbot.git"
   },
   "exports": {
     ".": "./dist/index.js"

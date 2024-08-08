@@ -1,5 +1,6 @@
-name: 'releasebot'
-description: 'Releasebot is a GitHub Action that automatically creates a release.'
+name: 'krytenbot'
+description:
+  'Krytenbot is a GitHub Action that automatically creates a release.'
 author: 'Matt Biggs'
 
 branding:
@@ -10,6 +11,14 @@ inputs:
   token:
     description: 'Your github token'
     required: true
+  milliseconds:
+    description: 'Your input description here'
+    required: true
+    default: '1000'
+
+outputs:
+  time:
+    description: 'Your output description here'
 
 runs:
   using: node20
