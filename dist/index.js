@@ -43366,9 +43366,19 @@ async function run() {
             appId,
             privateKey
         });
-        const { token } = await auth({ type: 'app' });
+        const { token: jwt } = await auth({ type: 'app' });
+        lib_core.info('JWT: ' + jwt);
         // const token = core.getInput('token')
-        const octokit = lib_github.getOctokit(token);
+        const octokit = lib_github.getOctokit(jwt);
+        const install = await octokit.rest.apps.getRepoInstallation({
+            ...lib_github.context.repo
+        });
+        lib_core.info(`Installation: ${JSON.stringify(install, null, 2)}`);
+        const { token } = await auth({
+            type: 'installation',
+            installationId: install.data.id
+        });
+        lib_core.info('Token: ' + token);
         const pullRequestId = await octokit.graphql(findPullRequestIdQuery(), {
             owner: lib_github.context.repo.owner,
             repo: lib_github.context.repo.repo,

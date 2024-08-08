@@ -70,10 +70,21 @@ export async function run(): Promise<void> {
       privateKey
     })
 
-    const { token } = await auth({ type: 'app' })
-
+    const { token: jwt } = await auth({ type: 'app' })
+    core.info('JWT: ' + jwt)
     // const token = core.getInput('token')
-    const octokit = github.getOctokit(token)
+    const octokit = github.getOctokit(jwt)
+
+    const install = await octokit.rest.apps.getRepoInstallation({
+      ...github.context.repo
+    })
+    core.info(`Installation: ${JSON.stringify(install, null, 2)}`)
+
+    const { token } = await auth({
+      type: 'installation',
+      installationId: install.data.id
+    })
+    core.info('Token: ' + token)
 
     const pullRequestId: GraphQlQueryResponseData = await octokit.graphql(findPullRequestIdQuery(), {
       owner: github.context.repo.owner,
