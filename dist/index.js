@@ -34073,6 +34073,7 @@ async function pushEvent(octokit) {
                     }
                 }
                 else {
+                    await githubapi.addOrUpdateComment(octokit, releaseBranchPR.number, `⚠️ Branch is now older than the ${DAYS_OLD} day limit. Please manually \`recreate\` and merge it when ready. ⚠️`);
                     core.warning(`Release branch is ${daysOld} days old. Ignoring...`);
                 }
             }
