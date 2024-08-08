@@ -1,10 +1,9 @@
-require('./sourcemap-register.js');/******/ (() => { // webpackBootstrap
-/******/ 	var __webpack_modules__ = ({
+import './sourcemap-register.cjs';import { createRequire as __WEBPACK_EXTERNAL_createRequire } from "module";
+/******/ var __webpack_modules__ = ({
 
 /***/ 7351:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
-"use strict";
 
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
@@ -103,7 +102,6 @@ function escapeProperty(s) {
 /***/ 2186:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
-"use strict";
 
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
@@ -446,7 +444,6 @@ Object.defineProperty(exports, "toPlatformPath", ({ enumerable: true, get: funct
 /***/ 717:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
-"use strict";
 
 // For internal use, subject to change.
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
@@ -511,7 +508,6 @@ exports.prepareKeyValueMessage = prepareKeyValueMessage;
 /***/ 8041:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
-"use strict";
 
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
@@ -595,7 +591,6 @@ exports.OidcClient = OidcClient;
 /***/ 2981:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
-"use strict";
 
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
@@ -660,7 +655,6 @@ exports.toPlatformPath = toPlatformPath;
 /***/ 1327:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
-"use strict";
 
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
@@ -950,7 +944,6 @@ exports.summary = _summary;
 /***/ 5278:
 /***/ ((__unused_webpack_module, exports) => {
 
-"use strict";
 
 // We use any as a valid input type
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -997,7 +990,6 @@ exports.toCommandProperties = toCommandProperties;
 /***/ 1514:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
-"use strict";
 
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
@@ -1107,7 +1099,6 @@ exports.getExecOutput = getExecOutput;
 /***/ 8159:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
-"use strict";
 
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
@@ -1732,7 +1723,6 @@ class ExecState extends events.EventEmitter {
 /***/ 4087:
 /***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
-"use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.Context = void 0;
@@ -1794,7 +1784,6 @@ exports.Context = Context;
 /***/ 5438:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
-"use strict";
 
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
@@ -1842,7 +1831,6 @@ exports.getOctokit = getOctokit;
 /***/ 7914:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
-"use strict";
 
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
@@ -1919,7 +1907,6 @@ exports.getApiBaseUrl = getApiBaseUrl;
 /***/ 3030:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
-"use strict";
 
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
@@ -1985,7 +1972,6 @@ exports.getOctokitOptions = getOctokitOptions;
 /***/ 5526:
 /***/ (function(__unused_webpack_module, exports) {
 
-"use strict";
 
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
@@ -2073,7 +2059,6 @@ exports.PersonalAccessTokenCredentialHandler = PersonalAccessTokenCredentialHand
 /***/ 6255:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
-"use strict";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
@@ -2736,7 +2721,6 @@ const lowercaseKeys = (obj) => Object.keys(obj).reduce((c, k) => ((c[k.toLowerCa
 /***/ 9835:
 /***/ ((__unused_webpack_module, exports) => {
 
-"use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.checkBypass = exports.getProxyUrl = void 0;
@@ -2825,7 +2809,6 @@ function isLoopbackAddress(host) {
 /***/ 1962:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
-"use strict";
 
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
@@ -3015,7 +2998,6 @@ exports.getCmdPath = getCmdPath;
 /***/ 7436:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
-"use strict";
 
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
@@ -3321,7 +3303,6 @@ function copyFile(srcFile, destFile, force) {
 /***/ 334:
 /***/ ((module) => {
 
-"use strict";
 
 var __defProp = Object.defineProperty;
 var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
@@ -3406,7 +3387,6 @@ var createTokenAuth = function createTokenAuth2(token) {
 /***/ 6762:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 
 var __defProp = Object.defineProperty;
 var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
@@ -3435,7 +3415,7 @@ module.exports = __toCommonJS(dist_src_exports);
 var import_universal_user_agent = __nccwpck_require__(5030);
 var import_before_after_hook = __nccwpck_require__(3682);
 var import_request = __nccwpck_require__(6234);
-var import_graphql = __nccwpck_require__(8467);
+var import_graphql = __nccwpck_require__(6442);
 var import_auth_token = __nccwpck_require__(334);
 
 // pkg/dist-src/version.js
@@ -3572,10 +3552,166 @@ var Octokit = class {
 
 /***/ }),
 
+/***/ 6442:
+/***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
+
+
+var __defProp = Object.defineProperty;
+var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+var __getOwnPropNames = Object.getOwnPropertyNames;
+var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __export = (target, all) => {
+  for (var name in all)
+    __defProp(target, name, { get: all[name], enumerable: true });
+};
+var __copyProps = (to, from, except, desc) => {
+  if (from && typeof from === "object" || typeof from === "function") {
+    for (let key of __getOwnPropNames(from))
+      if (!__hasOwnProp.call(to, key) && key !== except)
+        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+  }
+  return to;
+};
+var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+
+// pkg/dist-src/index.js
+var dist_src_exports = {};
+__export(dist_src_exports, {
+  GraphqlResponseError: () => GraphqlResponseError,
+  graphql: () => graphql2,
+  withCustomRequest: () => withCustomRequest
+});
+module.exports = __toCommonJS(dist_src_exports);
+var import_request3 = __nccwpck_require__(6234);
+var import_universal_user_agent = __nccwpck_require__(5030);
+
+// pkg/dist-src/version.js
+var VERSION = "7.1.0";
+
+// pkg/dist-src/with-defaults.js
+var import_request2 = __nccwpck_require__(6234);
+
+// pkg/dist-src/graphql.js
+var import_request = __nccwpck_require__(6234);
+
+// pkg/dist-src/error.js
+function _buildMessageForResponseErrors(data) {
+  return `Request failed due to following response errors:
+` + data.errors.map((e) => ` - ${e.message}`).join("\n");
+}
+var GraphqlResponseError = class extends Error {
+  constructor(request2, headers, response) {
+    super(_buildMessageForResponseErrors(response));
+    this.request = request2;
+    this.headers = headers;
+    this.response = response;
+    this.name = "GraphqlResponseError";
+    this.errors = response.errors;
+    this.data = response.data;
+    if (Error.captureStackTrace) {
+      Error.captureStackTrace(this, this.constructor);
+    }
+  }
+};
+
+// pkg/dist-src/graphql.js
+var NON_VARIABLE_OPTIONS = [
+  "method",
+  "baseUrl",
+  "url",
+  "headers",
+  "request",
+  "query",
+  "mediaType"
+];
+var FORBIDDEN_VARIABLE_OPTIONS = ["query", "method", "url"];
+var GHES_V3_SUFFIX_REGEX = /\/api\/v3\/?$/;
+function graphql(request2, query, options) {
+  if (options) {
+    if (typeof query === "string" && "query" in options) {
+      return Promise.reject(
+        new Error(`[@octokit/graphql] "query" cannot be used as variable name`)
+      );
+    }
+    for (const key in options) {
+      if (!FORBIDDEN_VARIABLE_OPTIONS.includes(key))
+        continue;
+      return Promise.reject(
+        new Error(
+          `[@octokit/graphql] "${key}" cannot be used as variable name`
+        )
+      );
+    }
+  }
+  const parsedOptions = typeof query === "string" ? Object.assign({ query }, options) : query;
+  const requestOptions = Object.keys(
+    parsedOptions
+  ).reduce((result, key) => {
+    if (NON_VARIABLE_OPTIONS.includes(key)) {
+      result[key] = parsedOptions[key];
+      return result;
+    }
+    if (!result.variables) {
+      result.variables = {};
+    }
+    result.variables[key] = parsedOptions[key];
+    return result;
+  }, {});
+  const baseUrl = parsedOptions.baseUrl || request2.endpoint.DEFAULTS.baseUrl;
+  if (GHES_V3_SUFFIX_REGEX.test(baseUrl)) {
+    requestOptions.url = baseUrl.replace(GHES_V3_SUFFIX_REGEX, "/api/graphql");
+  }
+  return request2(requestOptions).then((response) => {
+    if (response.data.errors) {
+      const headers = {};
+      for (const key of Object.keys(response.headers)) {
+        headers[key] = response.headers[key];
+      }
+      throw new GraphqlResponseError(
+        requestOptions,
+        headers,
+        response.data
+      );
+    }
+    return response.data.data;
+  });
+}
+
+// pkg/dist-src/with-defaults.js
+function withDefaults(request2, newDefaults) {
+  const newRequest = request2.defaults(newDefaults);
+  const newApi = (query, options) => {
+    return graphql(newRequest, query, options);
+  };
+  return Object.assign(newApi, {
+    defaults: withDefaults.bind(null, newRequest),
+    endpoint: newRequest.endpoint
+  });
+}
+
+// pkg/dist-src/index.js
+var graphql2 = withDefaults(import_request3.request, {
+  headers: {
+    "user-agent": `octokit-graphql.js/${VERSION} ${(0, import_universal_user_agent.getUserAgent)()}`
+  },
+  method: "POST",
+  url: "/graphql"
+});
+function withCustomRequest(customRequest) {
+  return withDefaults(customRequest, {
+    method: "POST",
+    url: "/graphql"
+  });
+}
+// Annotate the CommonJS export names for ESM import in node:
+0 && (0);
+
+
+/***/ }),
+
 /***/ 9440:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 
 var __defProp = Object.defineProperty;
 var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
@@ -3956,168 +4092,9 @@ var endpoint = withDefaults(null, DEFAULTS);
 
 /***/ }),
 
-/***/ 8467:
-/***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
-
-"use strict";
-
-var __defProp = Object.defineProperty;
-var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
-var __getOwnPropNames = Object.getOwnPropertyNames;
-var __hasOwnProp = Object.prototype.hasOwnProperty;
-var __export = (target, all) => {
-  for (var name in all)
-    __defProp(target, name, { get: all[name], enumerable: true });
-};
-var __copyProps = (to, from, except, desc) => {
-  if (from && typeof from === "object" || typeof from === "function") {
-    for (let key of __getOwnPropNames(from))
-      if (!__hasOwnProp.call(to, key) && key !== except)
-        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
-  }
-  return to;
-};
-var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
-
-// pkg/dist-src/index.js
-var dist_src_exports = {};
-__export(dist_src_exports, {
-  GraphqlResponseError: () => GraphqlResponseError,
-  graphql: () => graphql2,
-  withCustomRequest: () => withCustomRequest
-});
-module.exports = __toCommonJS(dist_src_exports);
-var import_request3 = __nccwpck_require__(6234);
-var import_universal_user_agent = __nccwpck_require__(5030);
-
-// pkg/dist-src/version.js
-var VERSION = "7.1.0";
-
-// pkg/dist-src/with-defaults.js
-var import_request2 = __nccwpck_require__(6234);
-
-// pkg/dist-src/graphql.js
-var import_request = __nccwpck_require__(6234);
-
-// pkg/dist-src/error.js
-function _buildMessageForResponseErrors(data) {
-  return `Request failed due to following response errors:
-` + data.errors.map((e) => ` - ${e.message}`).join("\n");
-}
-var GraphqlResponseError = class extends Error {
-  constructor(request2, headers, response) {
-    super(_buildMessageForResponseErrors(response));
-    this.request = request2;
-    this.headers = headers;
-    this.response = response;
-    this.name = "GraphqlResponseError";
-    this.errors = response.errors;
-    this.data = response.data;
-    if (Error.captureStackTrace) {
-      Error.captureStackTrace(this, this.constructor);
-    }
-  }
-};
-
-// pkg/dist-src/graphql.js
-var NON_VARIABLE_OPTIONS = [
-  "method",
-  "baseUrl",
-  "url",
-  "headers",
-  "request",
-  "query",
-  "mediaType"
-];
-var FORBIDDEN_VARIABLE_OPTIONS = ["query", "method", "url"];
-var GHES_V3_SUFFIX_REGEX = /\/api\/v3\/?$/;
-function graphql(request2, query, options) {
-  if (options) {
-    if (typeof query === "string" && "query" in options) {
-      return Promise.reject(
-        new Error(`[@octokit/graphql] "query" cannot be used as variable name`)
-      );
-    }
-    for (const key in options) {
-      if (!FORBIDDEN_VARIABLE_OPTIONS.includes(key))
-        continue;
-      return Promise.reject(
-        new Error(
-          `[@octokit/graphql] "${key}" cannot be used as variable name`
-        )
-      );
-    }
-  }
-  const parsedOptions = typeof query === "string" ? Object.assign({ query }, options) : query;
-  const requestOptions = Object.keys(
-    parsedOptions
-  ).reduce((result, key) => {
-    if (NON_VARIABLE_OPTIONS.includes(key)) {
-      result[key] = parsedOptions[key];
-      return result;
-    }
-    if (!result.variables) {
-      result.variables = {};
-    }
-    result.variables[key] = parsedOptions[key];
-    return result;
-  }, {});
-  const baseUrl = parsedOptions.baseUrl || request2.endpoint.DEFAULTS.baseUrl;
-  if (GHES_V3_SUFFIX_REGEX.test(baseUrl)) {
-    requestOptions.url = baseUrl.replace(GHES_V3_SUFFIX_REGEX, "/api/graphql");
-  }
-  return request2(requestOptions).then((response) => {
-    if (response.data.errors) {
-      const headers = {};
-      for (const key of Object.keys(response.headers)) {
-        headers[key] = response.headers[key];
-      }
-      throw new GraphqlResponseError(
-        requestOptions,
-        headers,
-        response.data
-      );
-    }
-    return response.data.data;
-  });
-}
-
-// pkg/dist-src/with-defaults.js
-function withDefaults(request2, newDefaults) {
-  const newRequest = request2.defaults(newDefaults);
-  const newApi = (query, options) => {
-    return graphql(newRequest, query, options);
-  };
-  return Object.assign(newApi, {
-    defaults: withDefaults.bind(null, newRequest),
-    endpoint: newRequest.endpoint
-  });
-}
-
-// pkg/dist-src/index.js
-var graphql2 = withDefaults(import_request3.request, {
-  headers: {
-    "user-agent": `octokit-graphql.js/${VERSION} ${(0, import_universal_user_agent.getUserAgent)()}`
-  },
-  method: "POST",
-  url: "/graphql"
-});
-function withCustomRequest(customRequest) {
-  return withDefaults(customRequest, {
-    method: "POST",
-    url: "/graphql"
-  });
-}
-// Annotate the CommonJS export names for ESM import in node:
-0 && (0);
-
-
-/***/ }),
-
 /***/ 4193:
 /***/ ((module) => {
 
-"use strict";
 
 var __defProp = Object.defineProperty;
 var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
@@ -4518,7 +4495,6 @@ paginateRest.VERSION = VERSION;
 /***/ 3044:
 /***/ ((module) => {
 
-"use strict";
 
 var __defProp = Object.defineProperty;
 var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
@@ -6688,7 +6664,6 @@ legacyRestEndpointMethods.VERSION = VERSION;
 /***/ 537:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 
 var __create = Object.create;
 var __defProp = Object.defineProperty;
@@ -6786,7 +6761,6 @@ var RequestError = class extends Error {
 /***/ 6234:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 
 var __defProp = Object.defineProperty;
 var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
@@ -7016,7 +6990,6 @@ var request = withDefaults(import_endpoint.endpoint, {
 /***/ 9417:
 /***/ ((module) => {
 
-"use strict";
 
 module.exports = balanced;
 function balanced(a, b, str) {
@@ -7477,7 +7450,6 @@ function expand(str, isTop) {
 /***/ 8932:
 /***/ ((__unused_webpack_module, exports) => {
 
-"use strict";
 
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
@@ -8722,7 +8694,7 @@ module.exports = compareBuild
 
 /***/ }),
 
-/***/ 3398:
+/***/ 2804:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
 const compare = __nccwpck_require__(4309)
@@ -9047,7 +9019,7 @@ const patch = __nccwpck_require__(2866)
 const prerelease = __nccwpck_require__(4016)
 const compare = __nccwpck_require__(4309)
 const rcompare = __nccwpck_require__(6417)
-const compareLoose = __nccwpck_require__(3398)
+const compareLoose = __nccwpck_require__(2804)
 const compareBuild = __nccwpck_require__(2156)
 const sort = __nccwpck_require__(1426)
 const rsort = __nccwpck_require__(8701)
@@ -10111,7 +10083,6 @@ module.exports = __nccwpck_require__(4219);
 /***/ 4219:
 /***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 var net = __nccwpck_require__(1808);
@@ -10383,7 +10354,6 @@ exports.debug = debug; // for test
 /***/ 1773:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 const Client = __nccwpck_require__(3598)
@@ -10558,7 +10528,6 @@ module.exports.mockErrors = mockErrors
 /***/ 7890:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 const { InvalidArgumentError } = __nccwpck_require__(8045)
@@ -10775,7 +10744,6 @@ module.exports = {
 /***/ 9744:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 const { AsyncResource } = __nccwpck_require__(852)
@@ -10887,7 +10855,6 @@ module.exports = connect
 /***/ 8752:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 const {
@@ -11144,7 +11111,6 @@ module.exports = pipeline
 /***/ 5448:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 const Readable = __nccwpck_require__(3858)
@@ -11332,7 +11298,6 @@ module.exports.RequestHandler = RequestHandler
 /***/ 5395:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 const { finished, PassThrough } = __nccwpck_require__(2781)
@@ -11560,7 +11525,6 @@ module.exports = stream
 /***/ 6923:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 const { InvalidArgumentError, RequestAbortedError, SocketError } = __nccwpck_require__(8045)
@@ -11673,7 +11637,6 @@ module.exports = upgrade
 /***/ 4059:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 module.exports.request = __nccwpck_require__(5448)
@@ -11688,7 +11651,6 @@ module.exports.connect = __nccwpck_require__(9744)
 /***/ 3858:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 // Ported from https://github.com/nodejs/undici/pull/907
 
 
@@ -12071,7 +12033,6 @@ module.exports = { getResolveErrorBodyCallback }
 /***/ 7931:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 const {
@@ -12269,7 +12230,6 @@ module.exports = BalancedPool
 /***/ 6101:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 const { kConstruct } = __nccwpck_require__(9174)
@@ -13115,7 +13075,6 @@ module.exports = {
 /***/ 7907:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 const { kConstruct } = __nccwpck_require__(9174)
@@ -13267,7 +13226,6 @@ module.exports = {
 /***/ 9174:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 module.exports = {
@@ -13280,7 +13238,6 @@ module.exports = {
 /***/ 2396:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 const assert = __nccwpck_require__(9491)
@@ -13337,7 +13294,6 @@ module.exports = {
 /***/ 3598:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 // @ts-check
 
 
@@ -15628,7 +15584,6 @@ module.exports = Client
 /***/ 6436:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 /* istanbul ignore file: only for Node 12 */
@@ -15684,7 +15639,6 @@ module.exports = function () {
 /***/ 663:
 /***/ ((module) => {
 
-"use strict";
 
 
 // https://wicg.github.io/cookie-store/#cookie-maximum-attribute-value-size
@@ -15704,7 +15658,6 @@ module.exports = {
 /***/ 1724:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 const { parseSetCookie } = __nccwpck_require__(4408)
@@ -15896,7 +15849,6 @@ module.exports = {
 /***/ 4408:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 const { maxNameValuePairSize, maxAttributeValueSize } = __nccwpck_require__(663)
@@ -16221,7 +16173,6 @@ module.exports = {
 /***/ 3121:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 const assert = __nccwpck_require__(9491)
@@ -16520,7 +16471,6 @@ module.exports = {
 /***/ 2067:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 const net = __nccwpck_require__(1808)
@@ -16717,7 +16667,6 @@ module.exports = buildConnector
 /***/ 4462:
 /***/ ((module) => {
 
-"use strict";
 
 
 /** @type {Record<string, string | undefined>} */
@@ -16843,7 +16792,6 @@ module.exports = {
 /***/ 8045:
 /***/ ((module) => {
 
-"use strict";
 
 
 class UndiciError extends Error {
@@ -17081,7 +17029,6 @@ module.exports = {
 /***/ 2905:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 const {
@@ -17658,7 +17605,6 @@ module.exports = {
 /***/ 3983:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 const assert = __nccwpck_require__(9491)
@@ -18188,7 +18134,6 @@ module.exports = {
 /***/ 4839:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 const Dispatcher = __nccwpck_require__(412)
@@ -18388,7 +18333,6 @@ module.exports = DispatcherBase
 /***/ 412:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 const EventEmitter = __nccwpck_require__(2361)
@@ -18415,7 +18359,6 @@ module.exports = Dispatcher
 /***/ 1472:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 const Busboy = __nccwpck_require__(727)
@@ -19028,7 +18971,6 @@ module.exports = {
 /***/ 1037:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 const { MessageChannel, receiveMessageOnPort } = __nccwpck_require__(1267)
@@ -19821,7 +19763,6 @@ module.exports = {
 /***/ 8511:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 const { Blob, File: NativeFile } = __nccwpck_require__(4300)
@@ -20173,7 +20114,6 @@ module.exports = { File, FileLike, isFileLike }
 /***/ 2015:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 const { isBlobLike, toUSVString, makeIterator } = __nccwpck_require__(2538)
@@ -20446,7 +20386,6 @@ module.exports = { FormData }
 /***/ 1246:
 /***/ ((module) => {
 
-"use strict";
 
 
 // In case of breaking changes, increase the version
@@ -20494,7 +20433,6 @@ module.exports = {
 /***/ 554:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 // https://github.com/Ethan-Arrowood/undici-fetch
 
 
@@ -21091,7 +21029,6 @@ module.exports = {
 /***/ 4881:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 // https://github.com/Ethan-Arrowood/undici-fetch
 
 
@@ -23247,7 +23184,6 @@ module.exports = {
 /***/ 8359:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 /* globals AbortController */
 
 
@@ -24201,7 +24137,6 @@ module.exports = { Request, makeRequest }
 /***/ 7823:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 const { Headers, HeadersList, fill } = __nccwpck_require__(554)
@@ -24780,7 +24715,6 @@ module.exports = {
 /***/ 5861:
 /***/ ((module) => {
 
-"use strict";
 
 
 module.exports = {
@@ -24798,7 +24732,6 @@ module.exports = {
 /***/ 2538:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 const { redirectStatusSet, referrerPolicySet: referrerPolicyTokens, badPortsSet } = __nccwpck_require__(1037)
@@ -25950,7 +25883,6 @@ module.exports = {
 /***/ 1744:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 const { types } = __nccwpck_require__(3837)
@@ -26604,7 +26536,6 @@ module.exports = {
 /***/ 4854:
 /***/ ((module) => {
 
-"use strict";
 
 
 /**
@@ -26902,7 +26833,6 @@ module.exports = {
 /***/ 1446:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 const {
@@ -27254,7 +27184,6 @@ module.exports = {
 /***/ 5504:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 const { webidl } = __nccwpck_require__(1744)
@@ -27340,7 +27269,6 @@ module.exports = {
 /***/ 9054:
 /***/ ((module) => {
 
-"use strict";
 
 
 module.exports = {
@@ -27358,7 +27286,6 @@ module.exports = {
 /***/ 7530:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 const {
@@ -27758,7 +27685,6 @@ module.exports = {
 /***/ 1892:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 // We include a version number for the Dispatcher API. In case of breaking changes,
@@ -27798,7 +27724,6 @@ module.exports = {
 /***/ 6930:
 /***/ ((module) => {
 
-"use strict";
 
 
 module.exports = class DecoratorHandler {
@@ -27841,7 +27766,6 @@ module.exports = class DecoratorHandler {
 /***/ 2860:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 const util = __nccwpck_require__(3983)
@@ -28413,7 +28337,6 @@ module.exports = RetryHandler
 /***/ 8861:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 const RedirectHandler = __nccwpck_require__(2860)
@@ -28442,7 +28365,6 @@ module.exports = createRedirectInterceptor
 /***/ 953:
 /***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
-"use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.SPECIAL_HEADERS = exports.HEADER_STATE = exports.MINOR = exports.MAJOR = exports.CONNECTION_TOKEN_CHARS = exports.HEADER_CHARS = exports.TOKEN = exports.STRICT_TOKEN = exports.HEX = exports.URL_CHAR = exports.STRICT_URL_CHAR = exports.USERINFO_CHARS = exports.MARK = exports.ALPHANUM = exports.NUM = exports.HEX_MAP = exports.NUM_MAP = exports.ALPHA = exports.FINISH = exports.H_METHOD_MAP = exports.METHOD_MAP = exports.METHODS_RTSP = exports.METHODS_ICE = exports.METHODS_HTTP = exports.METHODS = exports.LENIENT_FLAGS = exports.FLAGS = exports.TYPE = exports.ERROR = void 0;
@@ -28743,7 +28665,6 @@ module.exports = 'AGFzbQEAAAABMAhgAX8Bf2ADf39/AX9gBH9/f38Bf2AAAGADf39/AGABfwBgAn
 /***/ 1891:
 /***/ ((__unused_webpack_module, exports) => {
 
-"use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.enumToMap = void 0;
@@ -28765,7 +28686,6 @@ exports.enumToMap = enumToMap;
 /***/ 6771:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 const { kClients } = __nccwpck_require__(2785)
@@ -28944,7 +28864,6 @@ module.exports = MockAgent
 /***/ 8687:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 const { promisify } = __nccwpck_require__(3837)
@@ -29011,7 +28930,6 @@ module.exports = MockClient
 /***/ 888:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 const { UndiciError } = __nccwpck_require__(8045)
@@ -29036,7 +28954,6 @@ module.exports = {
 /***/ 410:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 const { getResponseData, buildKey, addMockDispatch } = __nccwpck_require__(9323)
@@ -29250,7 +29167,6 @@ module.exports.MockScope = MockScope
 /***/ 6193:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 const { promisify } = __nccwpck_require__(3837)
@@ -29317,7 +29233,6 @@ module.exports = MockPool
 /***/ 4347:
 /***/ ((module) => {
 
-"use strict";
 
 
 module.exports = {
@@ -29348,7 +29263,6 @@ module.exports = {
 /***/ 9323:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 const { MockNotMatchedError } = __nccwpck_require__(888)
@@ -29707,7 +29621,6 @@ module.exports = {
 /***/ 6823:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 const { Transform } = __nccwpck_require__(2781)
@@ -29755,7 +29668,6 @@ module.exports = class PendingInterceptorsFormatter {
 /***/ 8891:
 /***/ ((module) => {
 
-"use strict";
 
 
 const singulars = {
@@ -29792,7 +29704,6 @@ module.exports = class Pluralizer {
 /***/ 8266:
 /***/ ((module) => {
 
-"use strict";
 /* eslint-disable */
 
 
@@ -29917,7 +29828,6 @@ module.exports = class FixedQueue {
 /***/ 3198:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 const DispatcherBase = __nccwpck_require__(4839)
@@ -30160,7 +30070,6 @@ module.exports = PoolStats
 /***/ 4634:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 const {
@@ -30262,7 +30171,6 @@ module.exports = Pool
 /***/ 7858:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 const { kProxy, kClose, kDestroy, kInterceptors } = __nccwpck_require__(2785)
@@ -30459,7 +30367,6 @@ module.exports = ProxyAgent
 /***/ 9459:
 /***/ ((module) => {
 
-"use strict";
 
 
 let fastNow = Date.now()
@@ -30564,7 +30471,6 @@ module.exports = {
 /***/ 5354:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 const diagnosticsChannel = __nccwpck_require__(7643)
@@ -30863,7 +30769,6 @@ module.exports = {
 /***/ 9188:
 /***/ ((module) => {
 
-"use strict";
 
 
 // This is a Globally Unique Identifier unique used
@@ -30922,7 +30827,6 @@ module.exports = {
 /***/ 2611:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 const { webidl } = __nccwpck_require__(1744)
@@ -31233,7 +31137,6 @@ module.exports = {
 /***/ 5444:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 const { maxUnsigned16Bit } = __nccwpck_require__(9188)
@@ -31314,7 +31217,6 @@ module.exports = {
 /***/ 1688:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 const { Writable } = __nccwpck_require__(2781)
@@ -31666,7 +31568,6 @@ module.exports = {
 /***/ 7578:
 /***/ ((module) => {
 
-"use strict";
 
 
 module.exports = {
@@ -31686,7 +31587,6 @@ module.exports = {
 /***/ 5515:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 const { kReadyState, kController, kResponse, kBinaryType, kWebSocketURL } = __nccwpck_require__(7578)
@@ -31894,7 +31794,6 @@ module.exports = {
 /***/ 4284:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 const { webidl } = __nccwpck_require__(1744)
@@ -32543,7 +32442,6 @@ module.exports = {
 /***/ 5030:
 /***/ ((__unused_webpack_module, exports) => {
 
-"use strict";
 
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
@@ -32569,7 +32467,6 @@ exports.getUserAgent = getUserAgent;
 /***/ 5840:
 /***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 Object.defineProperty(exports, "__esModule", ({
@@ -32655,7 +32552,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 /***/ 4569:
 /***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 Object.defineProperty(exports, "__esModule", ({
@@ -32685,7 +32581,6 @@ exports["default"] = _default;
 /***/ 5332:
 /***/ ((__unused_webpack_module, exports) => {
 
-"use strict";
 
 
 Object.defineProperty(exports, "__esModule", ({
@@ -32700,7 +32595,6 @@ exports["default"] = _default;
 /***/ 2746:
 /***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 Object.defineProperty(exports, "__esModule", ({
@@ -32752,7 +32646,6 @@ exports["default"] = _default;
 /***/ 814:
 /***/ ((__unused_webpack_module, exports) => {
 
-"use strict";
 
 
 Object.defineProperty(exports, "__esModule", ({
@@ -32767,7 +32660,6 @@ exports["default"] = _default;
 /***/ 807:
 /***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 Object.defineProperty(exports, "__esModule", ({
@@ -32798,7 +32690,6 @@ function rng() {
 /***/ 5274:
 /***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 Object.defineProperty(exports, "__esModule", ({
@@ -32828,7 +32719,6 @@ exports["default"] = _default;
 /***/ 8950:
 /***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 Object.defineProperty(exports, "__esModule", ({
@@ -32874,7 +32764,6 @@ exports["default"] = _default;
 /***/ 8628:
 /***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 Object.defineProperty(exports, "__esModule", ({
@@ -32988,7 +32877,6 @@ exports["default"] = _default;
 /***/ 6409:
 /***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 Object.defineProperty(exports, "__esModule", ({
@@ -33011,7 +32899,6 @@ exports["default"] = _default;
 /***/ 5998:
 /***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 Object.defineProperty(exports, "__esModule", ({
@@ -33096,7 +32983,6 @@ function _default(name, version, hashfunc) {
 /***/ 5122:
 /***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 Object.defineProperty(exports, "__esModule", ({
@@ -33140,7 +33026,6 @@ exports["default"] = _default;
 /***/ 9120:
 /***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 Object.defineProperty(exports, "__esModule", ({
@@ -33163,7 +33048,6 @@ exports["default"] = _default;
 /***/ 6900:
 /***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 Object.defineProperty(exports, "__esModule", ({
@@ -33187,7 +33071,6 @@ exports["default"] = _default;
 /***/ 1595:
 /***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 Object.defineProperty(exports, "__esModule", ({
@@ -33252,1242 +33135,219 @@ function wrappy (fn, cb) {
 
 /***/ }),
 
-/***/ 3656:
-/***/ ((__unused_webpack_module, exports) => {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.encode = encode;
-exports.decode = decode;
-/**
- * Encode a string to base64.
- * @param input
- */
-function encode(input) {
-    return Buffer.from(input, 'utf-8').toString('base64');
-}
-/**
- * Decode a base64 encoded string.
- * @param input
- */
-function decode(input) {
-    return Buffer.from(input, 'base64').toString('utf-8');
-}
-
-
-/***/ }),
-
-/***/ 1107:
-/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
-
-"use strict";
-
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.displayInfo = displayInfo;
-exports.init = init;
-exports.clone = clone;
-exports.fetchBranch = fetchBranch;
-exports.fetchUnshallow = fetchUnshallow;
-exports.createBranch = createBranch;
-exports.switchBranch = switchBranch;
-exports.push = push;
-exports.rebaseBranch = rebaseBranch;
-const exec = __importStar(__nccwpck_require__(1514));
-const core = __importStar(__nccwpck_require__(2186));
-const github = __importStar(__nccwpck_require__(5438));
-const io = __importStar(__nccwpck_require__(7436));
-const base64 = __importStar(__nccwpck_require__(3656));
-/**
- * Get the fetch URL for the repository.
- */
-function getFetchUrl() {
-    const encodedOwner = encodeURIComponent(github.context.repo.owner);
-    const encodedName = encodeURIComponent(github.context.repo.repo);
-    return `https://github.com/${encodedOwner}/${encodedName}`;
-}
-/**
- * Execute a Git command with the given arguments.
- * @param args
- */
-async function execGit(args) {
-    const stdout = [];
-    const stderr = [];
-    const options = {
-        listeners: {
-            stdout: (data) => {
-                stdout.push(data.toString());
-            },
-            stderr: (data) => {
-                stderr.push(data.toString());
-            }
-        }
-    };
-    await exec.exec('git', args, options);
-    return {
-        stdout: stdout.join('\n'),
-        stderr: stderr.join('\n')
-    };
-}
-/**
- * Display information about the Git installation.
- */
-async function displayInfo() {
-    const git = await io.which('git', true);
-    const gitVersionOutput = await execGit(['--version']);
-    const gitVersion = gitVersionOutput.stdout.match(/\d+\.\d+(\.\d+)?/);
-    core.startGroup('Git Info');
-    core.info(`Git Path: ${git}`);
-    core.info(`Git Version: ${gitVersion}`);
-    core.endGroup();
-}
-/**
- * Initialize and configure the repository.
- * @param token The security token to use for authentication.
- */
-async function init(token) {
-    const basicCredential = base64.encode(`x-access-token:${token}`);
-    const gitInitOutput = await execGit(['init', '--initial-branch', 'main']);
-    core.info(`Git Init: ${gitInitOutput.stdout}`);
-    await execGit(['remote', 'add', 'origin', getFetchUrl()]);
-    await execGit(['config', '--local', 'http.https://github.com/.extraheader', `AUTHORIZATION: Basic ${basicCredential}`]);
-    await execGit(['config', '--local', 'user.name', 'github-actions[bot]']);
-    await execGit(['config', '--local', 'user.email', '41898282+github-actions[bot]@users.noreply.github.com']);
-}
-/**
- * Clone the repository.
- */
-async function clone() {
-    const branch = github.context.ref.substring('refs/heads/'.length);
-    const ref = `refs/remotes/origin/${branch}`;
-    const cloneOutput = await execGit(['fetch', '--no-tags', '--prune', '--depth', '1', 'origin', `+${github.context.sha}:${ref}`]);
-    core.info(`Git Fetch: ${cloneOutput.stdout}`);
-    const checkoutOutput = await execGit(['checkout', '-b', branch, ref]);
-    core.info(`Git Branch: ${checkoutOutput.stdout}`);
-    return {
-        stderr: cloneOutput.stderr + checkoutOutput.stderr,
-        stdout: cloneOutput.stderr + checkoutOutput.stderr
-    };
-}
-/**
- * Fetch the specified remote branch.
- * @param name
- */
-async function fetchBranch(name) {
-    const output = await execGit(['fetch', '--no-tags', '--prune', '--depth', '1', 'origin', name]);
-    core.info(`Git Fetch: ${output.stdout}`);
-    return output;
-}
-/**
- * Fetch the remote repository without a shallow clone.
- */
-async function fetchUnshallow() {
-    const output = await execGit(['fetch', '--no-tags', '--prune', '--unshallow']);
-    core.info(`Git Fetch: ${output.stdout}`);
-    return output;
-}
-/**
- * Create a new branch.
- * @param name
- */
-async function createBranch(name) {
-    const output = await execGit(['checkout', '-b', name]);
-    core.info(`Git Branch: ${output.stdout}`);
-    return output;
-}
-/**
- * Switch to the specified branch.
- * @param name
- */
-async function switchBranch(name) {
-    const output = await execGit(['switch', name]);
-    core.info(`Git Switch: ${output.stdout}`);
-    return output;
-}
-/**
- * Push the branch to the remote repository.
- * @param name
- * @param force
- */
-async function push(name, force = false) {
-    const output = await execGit(force ? ['push', '-f', '-u', 'origin', name] : ['push', '-u', 'origin', name]);
-    core.info(`Git Push: ${output.stdout}`);
-    return output;
-}
-/**
- * Rebase the release branch.
- * @param branch
- */
-async function rebaseBranch(branch) {
-    const output = await execGit(['rebase', branch]);
-    core.info(`Git Rebase: ${output.stdout}`);
-    return output;
-}
-
-
-/***/ }),
-
-/***/ 5366:
-/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
-
-"use strict";
-
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.Commands = void 0;
-exports.extractProjectNameFromPR = extractProjectNameFromPR;
-exports.getReleaseBranchName = getReleaseBranchName;
-exports.listPushCommitFiles = listPushCommitFiles;
-exports.listProjectsOfRelevance = listProjectsOfRelevance;
-exports.getNextVersion = getNextVersion;
-exports.setVersion = setVersion;
-exports.releaseBranchExists = releaseBranchExists;
-exports.createReleaseBranch = createReleaseBranch;
-exports.recreateReleaseBranch = recreateReleaseBranch;
-exports.findPullRequest = findPullRequest;
-exports.createPullRequest = createPullRequest;
-exports.updatePullRequest = updatePullRequest;
-exports.listTags = listTags;
-exports.addReaction = addReaction;
-exports.addOrUpdateComment = addOrUpdateComment;
-exports.listComments = listComments;
-exports.createComment = createComment;
-exports.updateComment = updateComment;
-exports.deleteComment = deleteComment;
-const core = __importStar(__nccwpck_require__(2186));
-const github = __importStar(__nccwpck_require__(5438));
-const minimatch_1 = __nccwpck_require__(4501);
-const semver = __importStar(__nccwpck_require__(1383));
-const versions = __importStar(__nccwpck_require__(4481));
-const base64 = __importStar(__nccwpck_require__(3656));
-const markdown_1 = __nccwpck_require__(4270);
-var Commands;
-(function (Commands) {
-    Commands["Rebase"] = "@krytenbot rebase";
-    Commands["Recreate"] = "@krytenbot recreate";
-    Commands["SetVersion"] = "@krytenbot setversion";
-})(Commands || (exports.Commands = Commands = {}));
-const projects = ['core', 'grid'];
-const projectsPaths = ['core/*', 'grid/*'];
-const projectsEcosystem = (/* unused pure expression or super */ null && (['npm', 'npm']));
-function extractProjectNameFromPR(text) {
-    const match = text.match(/\[\/\/]:\s#\s\(krytenbot-project:(\w+)\)/);
-    return match ? match[1] : null;
-}
-/**
- * Get the release branch name for the project.
- * @param project
- */
-function getReleaseBranchName(project) {
-    return `releasebot-${project}`;
-}
-/**
- * Get the title for the PR.
- * @param project
- * @param nextVersion
- */
-function getPullRequestTitle(project, nextVersion) {
-    return `Release \`${project}\` v${nextVersion}`;
-}
-/**
- * Get the default next version.
- */
-function getDefaultNextVersion() {
-    return '0.0.1';
-}
-/**
- * Return the body of the PR text.
- * @param project
- * @param nextVersion
- * @param rebasing
- */
-function getPullRequestBody(project, nextVersion, rebasing = false) {
-    const body = [];
-    body.push((0, markdown_1.hidden)(`krytenbot-project:${project}`));
-    body.push('\n');
-    if (rebasing) {
-        body.push((0, markdown_1.hidden)('krytenbot-start'));
-        body.push('\n\n');
-        body.push((0, markdown_1.important)('Krytenbot is rebasing this PR'));
-        body.push('\n\n');
-        body.push((0, markdown_1.hidden)('krytenbot-end'));
-        body.push('\n');
-    }
-    body.push(`
-This PR was created automatically by the Krytenbot to track the next release. 
-The next version for this release is v${nextVersion}.
-
----
-
-<details>
-<summary>Krytenbot commands and options</summary>
-<br />
-
-You can trigger Krytenbot actions by commenting on this PR:
-- \`@krytenbot rebase\` will rebase this PR
-- \`@krytenbot recreate\` will recreate this PR, overwriting any edits that have been made to it
-- \`@krytenbot setversion [major|minor|patch]\` will set the version for this PR
-</details>
-  `);
-    return body.join('');
-}
-/**
- * List all files that were added, modified, or removed in the push event.
- * @param octokit
- * @param payload
- */
-async function listPushCommitFiles(octokit, payload) {
-    const files = new Set();
-    // If the push event has a list of commits, use that to get the list of files, otherwise
-    // get the list of files from the commit details.
-    for (const commit of payload.commits) {
-        if (commit.added || commit.modified || commit.removed) {
-            core.debug(`Commit contained file details: ${JSON.stringify(commit, null, 2)}`);
-            commit.added.forEach(file => files.add(file));
-            commit.modified.forEach(file => files.add(file));
-            commit.removed.forEach(file => files.add(file));
-        }
-        else {
-            core.debug(`Commit contained no file details. Getting commit details for: ${payload.after}`);
-            const { data: commitDetails } = await octokit.rest.repos.getCommit({
-                owner: github.context.repo.owner,
-                repo: github.context.repo.repo,
-                ref: payload.after
-            });
-            core.debug(`Commit Details: ${JSON.stringify(commitDetails, null, 2)}`);
-            commitDetails.files?.forEach(file => files.add(file.filename));
-        }
-    }
-    return Array.from(files);
-}
-/**
- * List all projects that are relevant to the files that were changed.
- * @param files
- */
-async function listProjectsOfRelevance(files) {
-    const relevantProjects = new Set();
-    files.forEach(file => {
-        projects.forEach((project, index) => {
-            if ((0, minimatch_1.minimatch)(file, projectsPaths[index])) {
-                relevantProjects.add(project);
-            }
-        });
-    });
-    return Array.from(relevantProjects);
-}
-/**
- * Get the next version for the project.
- * @param octokit
- * @param project
- * @param versionType
- */
-async function getNextVersion(octokit, project, versionType) {
-    // Check if there is an existing tag for the project
-    const tags = await listTags(octokit, project);
-    if (tags.length > 0) {
-        const lastTag = tags[tags.length - 1];
-        const lastTagName = lastTag.ref.substring('refs/tags/'.length);
-        const lastTagVersion = lastTagName.substring(`${project}@v`.length);
-        // Check if there is an existing PR for the release branch
-        // and if it has a set version command in the comments
-        const releaseBranchPR = await findPullRequest(octokit, project);
-        if (releaseBranchPR) {
-            const comments = await listComments(octokit, releaseBranchPR.number);
-            for (let i = comments.length - 1; i >= 0; i--) {
-                const lastCommentBody = comments[i].body;
-                if (lastCommentBody?.startsWith(Commands.SetVersion)) {
-                    core.info(`Found setversion command in comment: ${lastCommentBody}`);
-                    const nextVersionType = lastCommentBody.split(' ')[2];
-                    const nextVersion = semver.inc(lastTagVersion, nextVersionType);
-                    if (nextVersion) {
-                        return nextVersion;
-                    }
-                }
-            }
-        }
-        // Bump the version using semver
-        const nextVersion = semver.inc(lastTagVersion, versionType);
-        if (nextVersion) {
-            return nextVersion;
-        }
-        else {
-            core.setFailed(`Invalid last tag version: ${lastTagVersion}. Must be of the format '${project}@vX.X.X'`);
-        }
-    }
-    core.warning(`No tags found for project: ${project}. Using default next version.`);
-    return getDefaultNextVersion();
-}
-/**
- * Update the version for the project.
- * @param octokit
- * @param project
- * @param branch
- * @param version
- */
-async function setVersion(octokit, project, branch, version) {
-    core.info(`Updating ${project} version to ${version}`);
-    const { data: existingFile } = await octokit.rest.repos.getContent({
-        owner: github.context.repo.owner,
-        repo: github.context.repo.repo,
-        path: `${project}/package.json`,
-        ref: branch
-    });
-    core.debug(`Existing File: ${JSON.stringify(existingFile, null, 2)}`);
-    if (!Array.isArray(existingFile)) {
-        if (existingFile.type === 'file' && existingFile.size > 0) {
-            const existingFileContents = base64.decode(existingFile.content);
-            const newFileContents = versions.patchPackageJson(existingFileContents, version);
-            if (core.isDebug()) {
-                core.startGroup('File Contents');
-                core.debug(`Existing File Contents: ${existingFileContents}`);
-                core.debug(`New File Contents: ${newFileContents}`);
-                core.endGroup();
-            }
-            const newFile = await octokit.rest.repos.createOrUpdateFileContents({
-                owner: github.context.repo.owner,
-                repo: github.context.repo.repo,
-                path: `${project}/package.json`,
-                branch: branch,
-                sha: existingFile.sha,
-                message: `Update ${project} version to v${version}`,
-                content: base64.encode(newFileContents)
-            });
-            core.debug(`Updated File: ${JSON.stringify(newFile, null, 2)}`);
-        }
-        else {
-            core.setFailed('Existing file is not a file');
-        }
-    }
-}
-/**
- * Check if the release branch exists for the project.
- * @param octokit
- * @param project
- */
-async function releaseBranchExists(octokit, project) {
-    const releaseBranch = getReleaseBranchName(project);
-    const branches = await octokit.rest.repos.listBranches({
-        owner: github.context.repo.owner,
-        repo: github.context.repo.repo
-    });
-    return branches.data.some(branch => branch.name === releaseBranch);
-}
-/**
- * Create a release branch for the project and commit the next version.
- * @param octokit
- * @param project
- */
-async function createReleaseBranch(octokit, project) {
-    const releaseBranch = getReleaseBranchName(project);
-    core.info(`Creating new branch: ${releaseBranch}`);
-    const branch = await octokit.rest.git.createRef({
-        owner: github.context.repo.owner,
-        repo: github.context.repo.repo,
-        ref: `refs/heads/${releaseBranch}`,
-        sha: github.context.sha
-    });
-    core.debug(`Created Branch: ${JSON.stringify(branch, null, 2)}`);
-}
-/**
- * Recreate a release branch for the project and commit the next version.
- * @param octokit
- * @param project
- */
-async function recreateReleaseBranch(octokit, project) {
-    const releaseBranch = getReleaseBranchName(project);
-    core.info(`Recreating existing branch: ${releaseBranch}`);
-    const branch = await octokit.rest.git.updateRef({
-        owner: github.context.repo.owner,
-        repo: github.context.repo.repo,
-        ref: `heads/${releaseBranch}`,
-        sha: github.context.sha,
-        force: true
-    });
-    core.debug(`Recreated Branch: ${JSON.stringify(branch, null, 2)}`);
-}
-/**
- * Find the PR for the release branch.
- * @param octokit
- * @param project
- */
-async function findPullRequest(octokit, project) {
-    const releaseBranch = getReleaseBranchName(project);
-    const pulls = await octokit.rest.pulls.list({
-        owner: github.context.repo.owner,
-        repo: github.context.repo.repo,
-        head: `${github.context.repo.owner}:${releaseBranch}`,
-        state: 'open'
-    });
-    core.debug(`Pulls: ${JSON.stringify(pulls, null, 2)}`);
-    for (const pull of pulls.data) {
-        if (pull.labels.find(label => label.name === 'release')) {
-            core.info(`Found existing PR for branch: ${releaseBranch}`);
-            return pull;
-        }
-    }
-    return undefined;
-}
-/**
- * Create a draft PR for the release branch.
- * @param octokit
- * @param project
- */
-async function createPullRequest(octokit, project) {
-    const releaseBranch = getReleaseBranchName(project);
-    const branch = github.context.ref.substring('refs/heads/'.length);
-    core.info(`Creating new PR for branch: ${releaseBranch}`);
-    const nextVersion = await getNextVersion(octokit, project, 'patch');
-    const pull = await octokit.rest.pulls.create({
-        owner: github.context.repo.owner,
-        repo: github.context.repo.repo,
-        title: getPullRequestTitle(project, nextVersion),
-        body: getPullRequestBody(project, nextVersion),
-        head: releaseBranch,
-        base: branch,
-        draft: true
-    });
-    core.debug(`Created Pull: ${JSON.stringify(pull, null, 2)}`);
-    const label = await octokit.rest.issues.addLabels({
-        owner: github.context.repo.owner,
-        repo: github.context.repo.repo,
-        issue_number: pull.data.number,
-        labels: ['release', project]
-    });
-    core.debug(`Added Label: ${JSON.stringify(label, null, 2)}`);
-    return pull.data;
-}
-/**
- * Update the PR for the release branch.
- * @param octokit
- * @param pull_number
- * @param project
- * @param nextVersion
- * @param rebasing
- */
-async function updatePullRequest(octokit, pull_number, project, nextVersion, rebasing = false) {
-    const releaseBranch = getReleaseBranchName(project);
-    const branch = github.context.ref.substring('refs/heads/'.length);
-    core.info(`Updating existing PR for branch: ${releaseBranch}`);
-    const pull = await octokit.rest.pulls.update({
-        owner: github.context.repo.owner,
-        repo: github.context.repo.repo,
-        pull_number: pull_number,
-        title: getPullRequestTitle(project, nextVersion),
-        body: getPullRequestBody(project, nextVersion, rebasing),
-        head: releaseBranch,
-        base: branch,
-        draft: true
-    });
-    core.debug(`Updated Pull: ${JSON.stringify(pull, null, 2)}`);
-    const label = await octokit.rest.issues.addLabels({
-        owner: github.context.repo.owner,
-        repo: github.context.repo.repo,
-        issue_number: pull_number,
-        labels: ['release', project]
-    });
-    core.debug(`Added Label: ${JSON.stringify(label, null, 2)}`);
-}
-/**
- * List all tags for the project.
- * @param octokit
- * @param project
- */
-async function listTags(octokit, project) {
-    const tags = await octokit.rest.git.listMatchingRefs({
-        owner: github.context.repo.owner,
-        repo: github.context.repo.repo,
-        ref: `tags/${project}`
-    });
-    return tags.data;
-}
-/**
- * Add a reaction to a comment.
- * @param octokit
- * @param comment_number
- * @param reaction
- */
-async function addReaction(octokit, comment_number, reaction) {
-    const response = await octokit.rest.reactions.createForIssueComment({
-        owner: github.context.repo.owner,
-        repo: github.context.repo.repo,
-        comment_id: comment_number,
-        content: reaction
-    });
-    core.debug(`Added Reaction: ${JSON.stringify(response, null, 2)}`);
-}
-/**
- * Add or update a comment on a PR.
- * @param octokit
- * @param pull_number
- * @param body
- */
-async function addOrUpdateComment(octokit, pull_number, body) {
-    const comments = await listComments(octokit, pull_number);
-    if (comments.length > 0) {
-        const lastComment = comments[comments.length - 1];
-        if (lastComment.body === body) {
-            return await updateComment(octokit, lastComment.id, body);
-        }
-        else {
-            return await createComment(octokit, pull_number, body);
-        }
-    }
-    else {
-        return await createComment(octokit, pull_number, body);
-    }
-}
-/**
- * List all comments on a PR.
- * @param octokit
- * @param pull_number
- */
-async function listComments(octokit, pull_number) {
-    const comments = await octokit.rest.issues.listComments({
-        owner: github.context.repo.owner,
-        repo: github.context.repo.repo,
-        issue_number: pull_number
-    });
-    core.debug(`List Comments: ${JSON.stringify(comments, null, 2)}`);
-    return comments.data;
-}
-/**
- * Add a comment to a PR.
- * @param octokit
- * @param pull_number
- * @param body
- */
-async function createComment(octokit, pull_number, body) {
-    const response = await octokit.rest.issues.createComment({
-        owner: github.context.repo.owner,
-        repo: github.context.repo.repo,
-        issue_number: pull_number,
-        body: body
-    });
-    core.debug(`Added Comment: ${JSON.stringify(response, null, 2)}`);
-    return response.data;
-}
-/**
- * Update a comment on a PR.
- * @param octokit
- * @param comment_id
- * @param body
- */
-async function updateComment(octokit, comment_id, body) {
-    const response = await octokit.rest.issues.updateComment({
-        owner: github.context.repo.owner,
-        repo: github.context.repo.repo,
-        comment_id: comment_id,
-        body: body
-    });
-    core.debug(`Updated Comment: ${JSON.stringify(response, null, 2)}`);
-    return response.data;
-}
-/**
- * Delete a comment on a PR.
- * @param octokit
- * @param comment_id
- */
-async function deleteComment(octokit, comment_id) {
-    const response = await octokit.rest.issues.deleteComment({
-        owner: github.context.repo.owner,
-        repo: github.context.repo.repo,
-        comment_id: comment_id
-    });
-    core.debug(`Deleted Comment: ${JSON.stringify(response, null, 2)}`);
-}
-
-
-/***/ }),
-
-/***/ 399:
-/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
-
-"use strict";
-
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.run = run;
-const core = __importStar(__nccwpck_require__(2186));
-const github = __importStar(__nccwpck_require__(5438));
-const git = __importStar(__nccwpck_require__(1107));
-const githubapi = __importStar(__nccwpck_require__(5366));
-const versions = __importStar(__nccwpck_require__(4481));
-const github_helper_1 = __nccwpck_require__(5366);
-const markdown_1 = __nccwpck_require__(4270);
-var Events;
-(function (Events) {
-    Events["Push"] = "push";
-    Events["IssueComment"] = "issue_comment";
-})(Events || (Events = {}));
-const DAYS_OLD = 30;
-const projects = (/* unused pure expression or super */ null && (['core', 'grid']));
-/**
- * Get the number of days between two dates.
- * @param d1
- * @param d2
- */
-function daysBetween(d1, d2) {
-    const diff = Math.abs(d1.getTime() - d2.getTime());
-    return diff / (1000 * 60 * 60 * 24);
-}
-/**
- * The main function for the action.
- * @returns {Promise<void>} Resolves when the action is complete.
- */
-async function run() {
-    try {
-        const token = core.getInput('token');
-        const octokit = github.getOctokit(token);
-        core.debug(`Github Context: ${JSON.stringify(github.context, null, 2)}`);
-        /**
-         * Handle commits being pushed to the branch we are monitoring
-         */
-        if (github.context.eventName === Events.Push) {
-            await pushEvent(octokit);
-        }
-        /**
-         * Handle PRs being commented on
-         */
-        if (github.context.eventName === Events.IssueComment) {
-            await issueCommentEvent(octokit);
-        }
-    }
-    catch (error) {
-        // Fail the workflow run if an error occurs
-        if (error instanceof Error)
-            core.setFailed(error.message);
-    }
-}
-/**
- * Handles the push event.
- * @param octokit
- */
-async function pushEvent(octokit) {
-    const pushPayload = github.context.payload;
-    core.startGroup('Files Changed in Push');
-    const files = await githubapi.listPushCommitFiles(octokit, pushPayload);
-    files.forEach(file => core.info(file));
-    core.endGroup();
-    core.startGroup('Projects of Relevance:');
-    const projectsOfRelevance = await githubapi.listProjectsOfRelevance(files);
-    projectsOfRelevance.forEach(projectOfRelevance => core.info(projectOfRelevance));
-    core.endGroup();
-    for (const project of projectsOfRelevance) {
-        core.startGroup('Checking for Branch');
-        const nextVersion = await (0, github_helper_1.getNextVersion)(octokit, project, 'patch');
-        const releaseBranch = `releasebot-${project}`;
-        const releaseBranchPR = await githubapi.findPullRequest(octokit, project);
-        const releaseBranchExists = await githubapi.releaseBranchExists(octokit, project);
-        if (!releaseBranchExists) {
-            await githubapi.createReleaseBranch(octokit, project);
-            await githubapi.setVersion(octokit, project, releaseBranch, nextVersion);
-        }
-        else {
-            if (releaseBranchPR) {
-                const daysOld = daysBetween(new Date(releaseBranchPR.created_at), new Date());
-                if (daysOld <= DAYS_OLD) {
-                    core.info('Release branch already exists. Rebasing...');
-                    try {
-                        // Update PR to indicate rebasing
-                        await githubapi.updatePullRequest(octokit, releaseBranchPR.number, project, nextVersion, true);
-                        try {
-                            const token = core.getInput('token');
-                            await git.init(token);
-                            await git.clone();
-                            await git.fetchBranch(releaseBranch);
-                            await git.switchBranch(releaseBranch);
-                            await git.fetchUnshallow();
-                            await git.rebaseBranch('origin/main');
-                            await git.push(releaseBranch, true);
-                        }
-                        catch (error) {
-                            await githubapi.addOrUpdateComment(octokit, releaseBranchPR.number, (0, markdown_1.caution)('Failed to rebase the branch. Please either manually rebase it or use the `recreate` command.'));
-                            if (error instanceof Error)
-                                core.setFailed(error.message);
-                        }
-                    }
-                    finally {
-                        // Update PR to indicate rebasing is complete
-                        await githubapi.updatePullRequest(octokit, releaseBranchPR.number, project, nextVersion);
-                    }
-                }
-                else {
-                    await githubapi.addOrUpdateComment(octokit, releaseBranchPR.number, (0, markdown_1.note)(`Branch is now older than the ${DAYS_OLD} day limit. Please manually \`recreate\` and merge it when ready.`));
-                    core.warning(`Release branch is ${daysOld} days old. Ignoring...`);
-                }
-            }
-        }
-        core.endGroup();
-        if (!releaseBranchPR) {
-            core.startGroup('Checking for Pull Request');
-            await githubapi.createPullRequest(octokit, project);
-            core.endGroup();
-        }
-    }
-}
-/**
- * Handles the issue comment event.
- * @param octokit
- */
-async function issueCommentEvent(octokit) {
-    const commentPayload = github.context.payload;
-    const project = githubapi.extractProjectNameFromPR(commentPayload.issue.body);
-    if (project) {
-        core.info(`Issue comment found for: ${project}`);
-        if (commentPayload.comment.body.startsWith(github_helper_1.Commands.SetVersion)) {
-            await issueCommentEventSetVersion(octokit, project, commentPayload);
-        }
-        if (commentPayload.comment.body.startsWith(github_helper_1.Commands.Rebase)) {
-            await issueCommentEventRebase(octokit, project, commentPayload);
-        }
-        if (commentPayload.comment.body.startsWith(github_helper_1.Commands.Recreate)) {
-            await issueCommentEventRecreate(octokit, project, commentPayload);
-        }
-    }
-    else {
-        core.warning('No issue for comment found');
-    }
-}
-/**
- * Handles the issue comment event for setting the version.
- * @param octokit
- * @param project
- * @param comment
- */
-async function issueCommentEventSetVersion(octokit, project, comment) {
-    const versionType = comment.comment.body.split(' ')[2];
-    core.debug(`Version Type: ${versionType}`);
-    if (versions.isValidSemverVersionType(versionType)) {
-        const version = await githubapi.getNextVersion(octokit, 'core', versionType);
-        const releaseBranch = `releasebot-${project}`;
-        core.startGroup('Setting new version');
-        await githubapi.addReaction(octokit, comment.comment.id, '+1');
-        await githubapi.setVersion(octokit, project, releaseBranch, version);
-        await githubapi.updatePullRequest(octokit, comment.issue.number, project, version);
-        core.endGroup();
-    }
-    else {
-        core.setFailed(`Invalid version type: ${versionType}`);
-    }
-}
-/**
- * Handles the issue comment event for rebasing the branch.
- * @param octokit
- * @param project
- * @param comment
- */
-async function issueCommentEventRebase(octokit, project, comment) {
-    core.startGroup('Rebasing');
-    const version = await (0, github_helper_1.getNextVersion)(octokit, project, 'patch');
-    const releaseBranch = `releasebot-${project}`;
-    await githubapi.addReaction(octokit, comment.comment.id, '+1');
-    await githubapi.updatePullRequest(octokit, comment.issue.number, project, version, true);
-    try {
-        const token = core.getInput('token');
-        await git.init(token);
-        await git.clone();
-        await git.fetchBranch(releaseBranch);
-        await git.switchBranch(releaseBranch);
-        await git.fetchUnshallow();
-        await git.rebaseBranch('origin/main');
-        await git.push(releaseBranch, true);
-        await githubapi.updatePullRequest(octokit, comment.issue.number, project, version);
-    }
-    catch (error) {
-        await githubapi.createComment(octokit, comment.issue.number, (0, markdown_1.caution)('Failed to rebase the branch. Please either manually rebase it or use the `recreate` command.'));
-        if (error instanceof Error)
-            core.setFailed(error.message);
-    }
-    core.endGroup();
-}
-/**
- * Handles the issue comment event for recreating the branch.
- * @param octokit
- * @param project
- * @param comment
- */
-async function issueCommentEventRecreate(octokit, project, comment) {
-    core.startGroup('Recreating Branch');
-    const version = await (0, github_helper_1.getNextVersion)(octokit, project, 'patch');
-    await githubapi.addReaction(octokit, comment.comment.id, '+1');
-    await githubapi.recreateReleaseBranch(octokit, project);
-    await githubapi.setVersion(octokit, project, `releasebot-core`, version);
-    await githubapi.updatePullRequest(octokit, comment.issue.number, project, version);
-    core.endGroup();
-}
-
-
-/***/ }),
-
-/***/ 4270:
-/***/ ((__unused_webpack_module, exports) => {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.note = note;
-exports.tip = tip;
-exports.important = important;
-exports.warning = warning;
-exports.caution = caution;
-exports.hidden = hidden;
-function note(message) {
-    return `> [!NOTE]\n> ${message}`;
-}
-function tip(message) {
-    return `> [!TIP]\n> ${message}`;
-}
-function important(message) {
-    return `> [!IMPORTANT]\n> ${message}`;
-}
-function warning(message) {
-    return `> [!WARNING]\n> ${message}`;
-}
-function caution(message) {
-    return `> [!CAUTION]\n> ${message}`;
-}
-function hidden(message) {
-    return `[//]: # (${message})`;
-}
-
-
-/***/ }),
-
-/***/ 4481:
-/***/ ((__unused_webpack_module, exports) => {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.patchPackageJson = patchPackageJson;
-exports.isValidSemverVersionType = isValidSemverVersionType;
-const semverVersionTypes = ['major', 'minor', 'patch'];
-/**
- * This function will take the contents of a package.json file and replace the version number with the next version number.
- * @param fileContents
- * @param nextVersion
- */
-function patchPackageJson(fileContents, nextVersion) {
-    return fileContents.replace(/"version": "(.*)"/, `"version": "${nextVersion}"`);
-}
-function isValidSemverVersionType(version) {
-    return semverVersionTypes.includes(version);
-}
-
-
-/***/ }),
-
 /***/ 9491:
 /***/ ((module) => {
 
-"use strict";
-module.exports = require("assert");
+module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("assert");
 
 /***/ }),
 
 /***/ 852:
 /***/ ((module) => {
 
-"use strict";
-module.exports = require("async_hooks");
+module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("async_hooks");
 
 /***/ }),
 
 /***/ 4300:
 /***/ ((module) => {
 
-"use strict";
-module.exports = require("buffer");
+module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("buffer");
 
 /***/ }),
 
 /***/ 2081:
 /***/ ((module) => {
 
-"use strict";
-module.exports = require("child_process");
+module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("child_process");
 
 /***/ }),
 
 /***/ 6206:
 /***/ ((module) => {
 
-"use strict";
-module.exports = require("console");
+module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("console");
 
 /***/ }),
 
 /***/ 6113:
 /***/ ((module) => {
 
-"use strict";
-module.exports = require("crypto");
+module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("crypto");
 
 /***/ }),
 
 /***/ 7643:
 /***/ ((module) => {
 
-"use strict";
-module.exports = require("diagnostics_channel");
+module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("diagnostics_channel");
 
 /***/ }),
 
 /***/ 2361:
 /***/ ((module) => {
 
-"use strict";
-module.exports = require("events");
+module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("events");
 
 /***/ }),
 
 /***/ 7147:
 /***/ ((module) => {
 
-"use strict";
-module.exports = require("fs");
+module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("fs");
 
 /***/ }),
 
 /***/ 3685:
 /***/ ((module) => {
 
-"use strict";
-module.exports = require("http");
+module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("http");
 
 /***/ }),
 
 /***/ 5158:
 /***/ ((module) => {
 
-"use strict";
-module.exports = require("http2");
+module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("http2");
 
 /***/ }),
 
 /***/ 5687:
 /***/ ((module) => {
 
-"use strict";
-module.exports = require("https");
+module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("https");
 
 /***/ }),
 
 /***/ 1808:
 /***/ ((module) => {
 
-"use strict";
-module.exports = require("net");
+module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("net");
 
 /***/ }),
 
 /***/ 5673:
 /***/ ((module) => {
 
-"use strict";
-module.exports = require("node:events");
+module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("node:events");
 
 /***/ }),
 
 /***/ 4492:
 /***/ ((module) => {
 
-"use strict";
-module.exports = require("node:stream");
+module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("node:stream");
 
 /***/ }),
 
 /***/ 7261:
 /***/ ((module) => {
 
-"use strict";
-module.exports = require("node:util");
+module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("node:util");
 
 /***/ }),
 
 /***/ 2037:
 /***/ ((module) => {
 
-"use strict";
-module.exports = require("os");
+module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("os");
 
 /***/ }),
 
 /***/ 1017:
 /***/ ((module) => {
 
-"use strict";
-module.exports = require("path");
+module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("path");
 
 /***/ }),
 
 /***/ 4074:
 /***/ ((module) => {
 
-"use strict";
-module.exports = require("perf_hooks");
+module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("perf_hooks");
 
 /***/ }),
 
 /***/ 3477:
 /***/ ((module) => {
 
-"use strict";
-module.exports = require("querystring");
+module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("querystring");
 
 /***/ }),
 
 /***/ 2781:
 /***/ ((module) => {
 
-"use strict";
-module.exports = require("stream");
+module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("stream");
 
 /***/ }),
 
 /***/ 5356:
 /***/ ((module) => {
 
-"use strict";
-module.exports = require("stream/web");
+module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("stream/web");
 
 /***/ }),
 
 /***/ 1576:
 /***/ ((module) => {
 
-"use strict";
-module.exports = require("string_decoder");
+module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("string_decoder");
 
 /***/ }),
 
 /***/ 9512:
 /***/ ((module) => {
 
-"use strict";
-module.exports = require("timers");
+module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("timers");
 
 /***/ }),
 
 /***/ 4404:
 /***/ ((module) => {
 
-"use strict";
-module.exports = require("tls");
+module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("tls");
 
 /***/ }),
 
 /***/ 7310:
 /***/ ((module) => {
 
-"use strict";
-module.exports = require("url");
+module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("url");
 
 /***/ }),
 
 /***/ 3837:
 /***/ ((module) => {
 
-"use strict";
-module.exports = require("util");
+module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("util");
 
 /***/ }),
 
 /***/ 9830:
 /***/ ((module) => {
 
-"use strict";
-module.exports = require("util/types");
+module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("util/types");
 
 /***/ }),
 
 /***/ 1267:
 /***/ ((module) => {
 
-"use strict";
-module.exports = require("worker_threads");
+module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("worker_threads");
 
 /***/ }),
 
 /***/ 9796:
 /***/ ((module) => {
 
-"use strict";
-module.exports = require("zlib");
+module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("zlib");
 
 /***/ }),
 
 /***/ 2960:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 const WritableStream = (__nccwpck_require__(4492).Writable)
@@ -34708,7 +33568,6 @@ module.exports = Dicer
 /***/ 2032:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 const EventEmitter = (__nccwpck_require__(5673).EventEmitter)
@@ -34816,7 +33675,6 @@ module.exports = HeaderParser
 /***/ 1620:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 const inherits = (__nccwpck_require__(7261).inherits)
@@ -34837,7 +33695,6 @@ module.exports = PartStream
 /***/ 1142:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 /**
@@ -35073,7 +33930,6 @@ module.exports = SBMH
 /***/ 727:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 const WritableStream = (__nccwpck_require__(4492).Writable)
@@ -35166,7 +34022,6 @@ module.exports.Dicer = Dicer
 /***/ 2183:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 // TODO:
@@ -35480,7 +34335,6 @@ module.exports = Multipart
 /***/ 8306:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 const Decoder = __nccwpck_require__(7100)
@@ -35678,7 +34532,6 @@ module.exports = UrlEncoded
 /***/ 7100:
 /***/ ((module) => {
 
-"use strict";
 
 
 const RE_PLUS = /\+/g
@@ -35740,7 +34593,6 @@ module.exports = Decoder
 /***/ 8647:
 /***/ ((module) => {
 
-"use strict";
 
 
 module.exports = function basename (path) {
@@ -35762,7 +34614,6 @@ module.exports = function basename (path) {
 /***/ 4619:
 /***/ (function(module) {
 
-"use strict";
 
 
 // Node has always utf-8
@@ -35884,7 +34735,6 @@ module.exports = decodeText
 /***/ 1467:
 /***/ ((module) => {
 
-"use strict";
 
 
 module.exports = function getLimit (limits, name, defaultLimit) {
@@ -35908,7 +34758,6 @@ module.exports = function getLimit (limits, name, defaultLimit) {
 /***/ 1854:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 /* eslint-disable object-property-newline */
 
 
@@ -36107,15 +34956,922 @@ function parseParams (str) {
 module.exports = parseParams
 
 
-/***/ }),
+/***/ })
 
-/***/ 4149:
-/***/ ((__unused_webpack_module, exports) => {
+/******/ });
+/************************************************************************/
+/******/ // The module cache
+/******/ var __webpack_module_cache__ = {};
+/******/ 
+/******/ // The require function
+/******/ function __nccwpck_require__(moduleId) {
+/******/ 	// Check if module is in cache
+/******/ 	var cachedModule = __webpack_module_cache__[moduleId];
+/******/ 	if (cachedModule !== undefined) {
+/******/ 		return cachedModule.exports;
+/******/ 	}
+/******/ 	// Create a new module (and put it into the cache)
+/******/ 	var module = __webpack_module_cache__[moduleId] = {
+/******/ 		// no module.id needed
+/******/ 		// no module.loaded needed
+/******/ 		exports: {}
+/******/ 	};
+/******/ 
+/******/ 	// Execute the module function
+/******/ 	var threw = true;
+/******/ 	try {
+/******/ 		__webpack_modules__[moduleId].call(module.exports, module, module.exports, __nccwpck_require__);
+/******/ 		threw = false;
+/******/ 	} finally {
+/******/ 		if(threw) delete __webpack_module_cache__[moduleId];
+/******/ 	}
+/******/ 
+/******/ 	// Return the exports of the module
+/******/ 	return module.exports;
+/******/ }
+/******/ 
+/************************************************************************/
+/******/ /* webpack/runtime/compat */
+/******/ 
+/******/ if (typeof __nccwpck_require__ !== 'undefined') __nccwpck_require__.ab = new URL('.', import.meta.url).pathname.slice(import.meta.url.match(/^file:\/\/\/\w:/) ? 1 : 0, -1) + "/";
+/******/ 
+/************************************************************************/
+var __webpack_exports__ = {};
+// This entry need to be wrapped in an IIFE because it need to be isolated against other modules in the chunk.
+(() => {
 
-"use strict";
+// EXTERNAL MODULE: ./node_modules/@actions/core/lib/core.js
+var lib_core = __nccwpck_require__(2186);
+// EXTERNAL MODULE: ./node_modules/@actions/github/lib/github.js
+var lib_github = __nccwpck_require__(5438);
+;// CONCATENATED MODULE: ./node_modules/@octokit/graphql/node_modules/universal-user-agent/index.js
+function getUserAgent() {
+  if (typeof navigator === "object" && "userAgent" in navigator) {
+    return navigator.userAgent;
+  }
 
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.assertValidPattern = void 0;
+  if (typeof process === "object" && process.version !== undefined) {
+    return `Node.js/${process.version.substr(1)} (${process.platform}; ${
+      process.arch
+    })`;
+  }
+
+  return "<environment undetectable>";
+}
+
+;// CONCATENATED MODULE: ./node_modules/@octokit/graphql/node_modules/@octokit/endpoint/dist-bundle/index.js
+// pkg/dist-src/defaults.js
+
+
+// pkg/dist-src/version.js
+var VERSION = "0.0.0-development";
+
+// pkg/dist-src/defaults.js
+var userAgent = `octokit-endpoint.js/${VERSION} ${getUserAgent()}`;
+var DEFAULTS = {
+  method: "GET",
+  baseUrl: "https://api.github.com",
+  headers: {
+    accept: "application/vnd.github.v3+json",
+    "user-agent": userAgent
+  },
+  mediaType: {
+    format: ""
+  }
+};
+
+// pkg/dist-src/util/lowercase-keys.js
+function lowercaseKeys(object) {
+  if (!object) {
+    return {};
+  }
+  return Object.keys(object).reduce((newObj, key) => {
+    newObj[key.toLowerCase()] = object[key];
+    return newObj;
+  }, {});
+}
+
+// pkg/dist-src/util/is-plain-object.js
+function isPlainObject(value) {
+  if (typeof value !== "object" || value === null)
+    return false;
+  if (Object.prototype.toString.call(value) !== "[object Object]")
+    return false;
+  const proto = Object.getPrototypeOf(value);
+  if (proto === null)
+    return true;
+  const Ctor = Object.prototype.hasOwnProperty.call(proto, "constructor") && proto.constructor;
+  return typeof Ctor === "function" && Ctor instanceof Ctor && Function.prototype.call(Ctor) === Function.prototype.call(value);
+}
+
+// pkg/dist-src/util/merge-deep.js
+function mergeDeep(defaults, options) {
+  const result = Object.assign({}, defaults);
+  Object.keys(options).forEach((key) => {
+    if (isPlainObject(options[key])) {
+      if (!(key in defaults))
+        Object.assign(result, { [key]: options[key] });
+      else
+        result[key] = mergeDeep(defaults[key], options[key]);
+    } else {
+      Object.assign(result, { [key]: options[key] });
+    }
+  });
+  return result;
+}
+
+// pkg/dist-src/util/remove-undefined-properties.js
+function removeUndefinedProperties(obj) {
+  for (const key in obj) {
+    if (obj[key] === void 0) {
+      delete obj[key];
+    }
+  }
+  return obj;
+}
+
+// pkg/dist-src/merge.js
+function merge(defaults, route, options) {
+  if (typeof route === "string") {
+    let [method, url] = route.split(" ");
+    options = Object.assign(url ? { method, url } : { url: method }, options);
+  } else {
+    options = Object.assign({}, route);
+  }
+  options.headers = lowercaseKeys(options.headers);
+  removeUndefinedProperties(options);
+  removeUndefinedProperties(options.headers);
+  const mergedOptions = mergeDeep(defaults || {}, options);
+  if (options.url === "/graphql") {
+    if (defaults && defaults.mediaType.previews?.length) {
+      mergedOptions.mediaType.previews = defaults.mediaType.previews.filter(
+        (preview) => !mergedOptions.mediaType.previews.includes(preview)
+      ).concat(mergedOptions.mediaType.previews);
+    }
+    mergedOptions.mediaType.previews = (mergedOptions.mediaType.previews || []).map((preview) => preview.replace(/-preview/, ""));
+  }
+  return mergedOptions;
+}
+
+// pkg/dist-src/util/add-query-parameters.js
+function addQueryParameters(url, parameters) {
+  const separator = /\?/.test(url) ? "&" : "?";
+  const names = Object.keys(parameters);
+  if (names.length === 0) {
+    return url;
+  }
+  return url + separator + names.map((name) => {
+    if (name === "q") {
+      return "q=" + parameters.q.split("+").map(encodeURIComponent).join("+");
+    }
+    return `${name}=${encodeURIComponent(parameters[name])}`;
+  }).join("&");
+}
+
+// pkg/dist-src/util/extract-url-variable-names.js
+var urlVariableRegex = /\{[^}]+\}/g;
+function removeNonChars(variableName) {
+  return variableName.replace(/^\W+|\W+$/g, "").split(/,/);
+}
+function extractUrlVariableNames(url) {
+  const matches = url.match(urlVariableRegex);
+  if (!matches) {
+    return [];
+  }
+  return matches.map(removeNonChars).reduce((a, b) => a.concat(b), []);
+}
+
+// pkg/dist-src/util/omit.js
+function omit(object, keysToOmit) {
+  const result = { __proto__: null };
+  for (const key of Object.keys(object)) {
+    if (keysToOmit.indexOf(key) === -1) {
+      result[key] = object[key];
+    }
+  }
+  return result;
+}
+
+// pkg/dist-src/util/url-template.js
+function encodeReserved(str) {
+  return str.split(/(%[0-9A-Fa-f]{2})/g).map(function(part) {
+    if (!/%[0-9A-Fa-f]/.test(part)) {
+      part = encodeURI(part).replace(/%5B/g, "[").replace(/%5D/g, "]");
+    }
+    return part;
+  }).join("");
+}
+function encodeUnreserved(str) {
+  return encodeURIComponent(str).replace(/[!'()*]/g, function(c) {
+    return "%" + c.charCodeAt(0).toString(16).toUpperCase();
+  });
+}
+function encodeValue(operator, value, key) {
+  value = operator === "+" || operator === "#" ? encodeReserved(value) : encodeUnreserved(value);
+  if (key) {
+    return encodeUnreserved(key) + "=" + value;
+  } else {
+    return value;
+  }
+}
+function isDefined(value) {
+  return value !== void 0 && value !== null;
+}
+function isKeyOperator(operator) {
+  return operator === ";" || operator === "&" || operator === "?";
+}
+function getValues(context, operator, key, modifier) {
+  var value = context[key], result = [];
+  if (isDefined(value) && value !== "") {
+    if (typeof value === "string" || typeof value === "number" || typeof value === "boolean") {
+      value = value.toString();
+      if (modifier && modifier !== "*") {
+        value = value.substring(0, parseInt(modifier, 10));
+      }
+      result.push(
+        encodeValue(operator, value, isKeyOperator(operator) ? key : "")
+      );
+    } else {
+      if (modifier === "*") {
+        if (Array.isArray(value)) {
+          value.filter(isDefined).forEach(function(value2) {
+            result.push(
+              encodeValue(operator, value2, isKeyOperator(operator) ? key : "")
+            );
+          });
+        } else {
+          Object.keys(value).forEach(function(k) {
+            if (isDefined(value[k])) {
+              result.push(encodeValue(operator, value[k], k));
+            }
+          });
+        }
+      } else {
+        const tmp = [];
+        if (Array.isArray(value)) {
+          value.filter(isDefined).forEach(function(value2) {
+            tmp.push(encodeValue(operator, value2));
+          });
+        } else {
+          Object.keys(value).forEach(function(k) {
+            if (isDefined(value[k])) {
+              tmp.push(encodeUnreserved(k));
+              tmp.push(encodeValue(operator, value[k].toString()));
+            }
+          });
+        }
+        if (isKeyOperator(operator)) {
+          result.push(encodeUnreserved(key) + "=" + tmp.join(","));
+        } else if (tmp.length !== 0) {
+          result.push(tmp.join(","));
+        }
+      }
+    }
+  } else {
+    if (operator === ";") {
+      if (isDefined(value)) {
+        result.push(encodeUnreserved(key));
+      }
+    } else if (value === "" && (operator === "&" || operator === "?")) {
+      result.push(encodeUnreserved(key) + "=");
+    } else if (value === "") {
+      result.push("");
+    }
+  }
+  return result;
+}
+function parseUrl(template) {
+  return {
+    expand: expand.bind(null, template)
+  };
+}
+function expand(template, context) {
+  var operators = ["+", "#", ".", "/", ";", "?", "&"];
+  template = template.replace(
+    /\{([^\{\}]+)\}|([^\{\}]+)/g,
+    function(_, expression, literal) {
+      if (expression) {
+        let operator = "";
+        const values = [];
+        if (operators.indexOf(expression.charAt(0)) !== -1) {
+          operator = expression.charAt(0);
+          expression = expression.substr(1);
+        }
+        expression.split(/,/g).forEach(function(variable) {
+          var tmp = /([^:\*]*)(?::(\d+)|(\*))?/.exec(variable);
+          values.push(getValues(context, operator, tmp[1], tmp[2] || tmp[3]));
+        });
+        if (operator && operator !== "+") {
+          var separator = ",";
+          if (operator === "?") {
+            separator = "&";
+          } else if (operator !== "#") {
+            separator = operator;
+          }
+          return (values.length !== 0 ? operator : "") + values.join(separator);
+        } else {
+          return values.join(",");
+        }
+      } else {
+        return encodeReserved(literal);
+      }
+    }
+  );
+  if (template === "/") {
+    return template;
+  } else {
+    return template.replace(/\/$/, "");
+  }
+}
+
+// pkg/dist-src/parse.js
+function parse(options) {
+  let method = options.method.toUpperCase();
+  let url = (options.url || "/").replace(/:([a-z]\w+)/g, "{$1}");
+  let headers = Object.assign({}, options.headers);
+  let body;
+  let parameters = omit(options, [
+    "method",
+    "baseUrl",
+    "url",
+    "headers",
+    "request",
+    "mediaType"
+  ]);
+  const urlVariableNames = extractUrlVariableNames(url);
+  url = parseUrl(url).expand(parameters);
+  if (!/^http/.test(url)) {
+    url = options.baseUrl + url;
+  }
+  const omittedParameters = Object.keys(options).filter((option) => urlVariableNames.includes(option)).concat("baseUrl");
+  const remainingParameters = omit(parameters, omittedParameters);
+  const isBinaryRequest = /application\/octet-stream/i.test(headers.accept);
+  if (!isBinaryRequest) {
+    if (options.mediaType.format) {
+      headers.accept = headers.accept.split(/,/).map(
+        (format) => format.replace(
+          /application\/vnd(\.\w+)(\.v3)?(\.\w+)?(\+json)?$/,
+          `application/vnd$1$2.${options.mediaType.format}`
+        )
+      ).join(",");
+    }
+    if (url.endsWith("/graphql")) {
+      if (options.mediaType.previews?.length) {
+        const previewsFromAcceptHeader = headers.accept.match(/[\w-]+(?=-preview)/g) || [];
+        headers.accept = previewsFromAcceptHeader.concat(options.mediaType.previews).map((preview) => {
+          const format = options.mediaType.format ? `.${options.mediaType.format}` : "+json";
+          return `application/vnd.github.${preview}-preview${format}`;
+        }).join(",");
+      }
+    }
+  }
+  if (["GET", "HEAD"].includes(method)) {
+    url = addQueryParameters(url, remainingParameters);
+  } else {
+    if ("data" in remainingParameters) {
+      body = remainingParameters.data;
+    } else {
+      if (Object.keys(remainingParameters).length) {
+        body = remainingParameters;
+      }
+    }
+  }
+  if (!headers["content-type"] && typeof body !== "undefined") {
+    headers["content-type"] = "application/json; charset=utf-8";
+  }
+  if (["PATCH", "PUT"].includes(method) && typeof body === "undefined") {
+    body = "";
+  }
+  return Object.assign(
+    { method, url, headers },
+    typeof body !== "undefined" ? { body } : null,
+    options.request ? { request: options.request } : null
+  );
+}
+
+// pkg/dist-src/endpoint-with-defaults.js
+function endpointWithDefaults(defaults, route, options) {
+  return parse(merge(defaults, route, options));
+}
+
+// pkg/dist-src/with-defaults.js
+function withDefaults(oldDefaults, newDefaults) {
+  const DEFAULTS2 = merge(oldDefaults, newDefaults);
+  const endpoint2 = endpointWithDefaults.bind(null, DEFAULTS2);
+  return Object.assign(endpoint2, {
+    DEFAULTS: DEFAULTS2,
+    defaults: withDefaults.bind(null, DEFAULTS2),
+    merge: merge.bind(null, DEFAULTS2),
+    parse
+  });
+}
+
+// pkg/dist-src/index.js
+var endpoint = withDefaults(null, DEFAULTS);
+
+
+;// CONCATENATED MODULE: ./node_modules/@octokit/graphql/node_modules/@octokit/request-error/dist-src/index.js
+class RequestError extends Error {
+  name;
+  /**
+   * http status code
+   */
+  status;
+  /**
+   * Request options that lead to the error.
+   */
+  request;
+  /**
+   * Response object if a response was received
+   */
+  response;
+  constructor(message, statusCode, options) {
+    super(message);
+    this.name = "HttpError";
+    this.status = Number.parseInt(statusCode);
+    if (Number.isNaN(this.status)) {
+      this.status = 0;
+    }
+    if ("response" in options) {
+      this.response = options.response;
+    }
+    const requestCopy = Object.assign({}, options.request);
+    if (options.request.headers.authorization) {
+      requestCopy.headers = Object.assign({}, options.request.headers, {
+        authorization: options.request.headers.authorization.replace(
+          / .*$/,
+          " [REDACTED]"
+        )
+      });
+    }
+    requestCopy.url = requestCopy.url.replace(/\bclient_secret=\w+/g, "client_secret=[REDACTED]").replace(/\baccess_token=\w+/g, "access_token=[REDACTED]");
+    this.request = requestCopy;
+  }
+}
+
+
+;// CONCATENATED MODULE: ./node_modules/@octokit/graphql/node_modules/@octokit/request/dist-bundle/index.js
+// pkg/dist-src/index.js
+
+
+// pkg/dist-src/defaults.js
+
+
+// pkg/dist-src/version.js
+var dist_bundle_VERSION = "0.0.0-development";
+
+// pkg/dist-src/defaults.js
+var defaults_default = {
+  headers: {
+    "user-agent": `octokit-request.js/${dist_bundle_VERSION} ${getUserAgent()}`
+  }
+};
+
+// pkg/dist-src/is-plain-object.js
+function dist_bundle_isPlainObject(value) {
+  if (typeof value !== "object" || value === null) return false;
+  if (Object.prototype.toString.call(value) !== "[object Object]") return false;
+  const proto = Object.getPrototypeOf(value);
+  if (proto === null) return true;
+  const Ctor = Object.prototype.hasOwnProperty.call(proto, "constructor") && proto.constructor;
+  return typeof Ctor === "function" && Ctor instanceof Ctor && Function.prototype.call(Ctor) === Function.prototype.call(value);
+}
+
+// pkg/dist-src/fetch-wrapper.js
+
+async function fetchWrapper(requestOptions) {
+  const fetch = requestOptions.request?.fetch || globalThis.fetch;
+  if (!fetch) {
+    throw new Error(
+      "fetch is not set. Please pass a fetch implementation as new Octokit({ request: { fetch }}). Learn more at https://github.com/octokit/octokit.js/#fetch-missing"
+    );
+  }
+  const log = requestOptions.request?.log || console;
+  const parseSuccessResponseBody = requestOptions.request?.parseSuccessResponseBody !== false;
+  const body = dist_bundle_isPlainObject(requestOptions.body) || Array.isArray(requestOptions.body) ? JSON.stringify(requestOptions.body) : requestOptions.body;
+  const requestHeaders = Object.fromEntries(
+    Object.entries(requestOptions.headers).map(([name, value]) => [
+      name,
+      String(value)
+    ])
+  );
+  let fetchResponse;
+  try {
+    fetchResponse = await fetch(requestOptions.url, {
+      method: requestOptions.method,
+      body,
+      redirect: requestOptions.request?.redirect,
+      headers: requestHeaders,
+      signal: requestOptions.request?.signal,
+      // duplex must be set if request.body is ReadableStream or Async Iterables.
+      // See https://fetch.spec.whatwg.org/#dom-requestinit-duplex.
+      ...requestOptions.body && { duplex: "half" }
+    });
+  } catch (error) {
+    let message = "Unknown Error";
+    if (error instanceof Error) {
+      if (error.name === "AbortError") {
+        error.status = 500;
+        throw error;
+      }
+      message = error.message;
+      if (error.name === "TypeError" && "cause" in error) {
+        if (error.cause instanceof Error) {
+          message = error.cause.message;
+        } else if (typeof error.cause === "string") {
+          message = error.cause;
+        }
+      }
+    }
+    const requestError = new RequestError(message, 500, {
+      request: requestOptions
+    });
+    requestError.cause = error;
+    throw requestError;
+  }
+  const status = fetchResponse.status;
+  const url = fetchResponse.url;
+  const responseHeaders = {};
+  for (const [key, value] of fetchResponse.headers) {
+    responseHeaders[key] = value;
+  }
+  const octokitResponse = {
+    url,
+    status,
+    headers: responseHeaders,
+    data: ""
+  };
+  if ("deprecation" in responseHeaders) {
+    const matches = responseHeaders.link && responseHeaders.link.match(/<([^>]+)>; rel="deprecation"/);
+    const deprecationLink = matches && matches.pop();
+    log.warn(
+      `[@octokit/request] "${requestOptions.method} ${requestOptions.url}" is deprecated. It is scheduled to be removed on ${responseHeaders.sunset}${deprecationLink ? `. See ${deprecationLink}` : ""}`
+    );
+  }
+  if (status === 204 || status === 205) {
+    return octokitResponse;
+  }
+  if (requestOptions.method === "HEAD") {
+    if (status < 400) {
+      return octokitResponse;
+    }
+    throw new RequestError(fetchResponse.statusText, status, {
+      response: octokitResponse,
+      request: requestOptions
+    });
+  }
+  if (status === 304) {
+    octokitResponse.data = await getResponseData(fetchResponse);
+    throw new RequestError("Not modified", status, {
+      response: octokitResponse,
+      request: requestOptions
+    });
+  }
+  if (status >= 400) {
+    octokitResponse.data = await getResponseData(fetchResponse);
+    throw new RequestError(toErrorMessage(octokitResponse.data), status, {
+      response: octokitResponse,
+      request: requestOptions
+    });
+  }
+  octokitResponse.data = parseSuccessResponseBody ? await getResponseData(fetchResponse) : fetchResponse.body;
+  return octokitResponse;
+}
+async function getResponseData(response) {
+  const contentType = response.headers.get("content-type");
+  if (/application\/json/.test(contentType)) {
+    return response.json().catch(() => response.text()).catch(() => "");
+  }
+  if (!contentType || /^text\/|charset=utf-8$/.test(contentType)) {
+    return response.text();
+  }
+  return response.arrayBuffer();
+}
+function toErrorMessage(data) {
+  if (typeof data === "string") {
+    return data;
+  }
+  if (data instanceof ArrayBuffer) {
+    return "Unknown error";
+  }
+  if ("message" in data) {
+    const suffix = "documentation_url" in data ? ` - ${data.documentation_url}` : "";
+    return Array.isArray(data.errors) ? `${data.message}: ${data.errors.map((v) => JSON.stringify(v)).join(", ")}${suffix}` : `${data.message}${suffix}`;
+  }
+  return `Unknown error: ${JSON.stringify(data)}`;
+}
+
+// pkg/dist-src/with-defaults.js
+function dist_bundle_withDefaults(oldEndpoint, newDefaults) {
+  const endpoint2 = oldEndpoint.defaults(newDefaults);
+  const newApi = function(route, parameters) {
+    const endpointOptions = endpoint2.merge(route, parameters);
+    if (!endpointOptions.request || !endpointOptions.request.hook) {
+      return fetchWrapper(endpoint2.parse(endpointOptions));
+    }
+    const request2 = (route2, parameters2) => {
+      return fetchWrapper(
+        endpoint2.parse(endpoint2.merge(route2, parameters2))
+      );
+    };
+    Object.assign(request2, {
+      endpoint: endpoint2,
+      defaults: dist_bundle_withDefaults.bind(null, endpoint2)
+    });
+    return endpointOptions.request.hook(request2, endpointOptions);
+  };
+  return Object.assign(newApi, {
+    endpoint: endpoint2,
+    defaults: dist_bundle_withDefaults.bind(null, endpoint2)
+  });
+}
+
+// pkg/dist-src/index.js
+var request = dist_bundle_withDefaults(endpoint, defaults_default);
+
+
+;// CONCATENATED MODULE: ./node_modules/@octokit/graphql/dist-bundle/index.js
+// pkg/dist-src/index.js
+
+
+
+// pkg/dist-src/version.js
+var graphql_dist_bundle_VERSION = "0.0.0-development";
+
+// pkg/dist-src/with-defaults.js
+
+
+// pkg/dist-src/graphql.js
+
+
+// pkg/dist-src/error.js
+function _buildMessageForResponseErrors(data) {
+  return `Request failed due to following response errors:
+` + data.errors.map((e) => ` - ${e.message}`).join("\n");
+}
+var GraphqlResponseError = class extends Error {
+  constructor(request2, headers, response) {
+    super(_buildMessageForResponseErrors(response));
+    this.request = request2;
+    this.headers = headers;
+    this.response = response;
+    this.errors = response.errors;
+    this.data = response.data;
+    if (Error.captureStackTrace) {
+      Error.captureStackTrace(this, this.constructor);
+    }
+  }
+  name = "GraphqlResponseError";
+  errors;
+  data;
+};
+
+// pkg/dist-src/graphql.js
+var NON_VARIABLE_OPTIONS = [
+  "method",
+  "baseUrl",
+  "url",
+  "headers",
+  "request",
+  "query",
+  "mediaType"
+];
+var FORBIDDEN_VARIABLE_OPTIONS = ["query", "method", "url"];
+var GHES_V3_SUFFIX_REGEX = /\/api\/v3\/?$/;
+function graphql(request2, query, options) {
+  if (options) {
+    if (typeof query === "string" && "query" in options) {
+      return Promise.reject(
+        new Error(`[@octokit/graphql] "query" cannot be used as variable name`)
+      );
+    }
+    for (const key in options) {
+      if (!FORBIDDEN_VARIABLE_OPTIONS.includes(key))
+        continue;
+      return Promise.reject(
+        new Error(
+          `[@octokit/graphql] "${key}" cannot be used as variable name`
+        )
+      );
+    }
+  }
+  const parsedOptions = typeof query === "string" ? Object.assign({ query }, options) : query;
+  const requestOptions = Object.keys(
+    parsedOptions
+  ).reduce((result, key) => {
+    if (NON_VARIABLE_OPTIONS.includes(key)) {
+      result[key] = parsedOptions[key];
+      return result;
+    }
+    if (!result.variables) {
+      result.variables = {};
+    }
+    result.variables[key] = parsedOptions[key];
+    return result;
+  }, {});
+  const baseUrl = parsedOptions.baseUrl || request2.endpoint.DEFAULTS.baseUrl;
+  if (GHES_V3_SUFFIX_REGEX.test(baseUrl)) {
+    requestOptions.url = baseUrl.replace(GHES_V3_SUFFIX_REGEX, "/api/graphql");
+  }
+  return request2(requestOptions).then((response) => {
+    if (response.data.errors) {
+      const headers = {};
+      for (const key of Object.keys(response.headers)) {
+        headers[key] = response.headers[key];
+      }
+      throw new GraphqlResponseError(
+        requestOptions,
+        headers,
+        response.data
+      );
+    }
+    return response.data.data;
+  });
+}
+
+// pkg/dist-src/with-defaults.js
+function graphql_dist_bundle_withDefaults(request2, newDefaults) {
+  const newRequest = request2.defaults(newDefaults);
+  const newApi = (query, options) => {
+    return graphql(newRequest, query, options);
+  };
+  return Object.assign(newApi, {
+    defaults: graphql_dist_bundle_withDefaults.bind(null, newRequest),
+    endpoint: newRequest.endpoint
+  });
+}
+
+// pkg/dist-src/index.js
+var graphql2 = graphql_dist_bundle_withDefaults(request, {
+  headers: {
+    "user-agent": `octokit-graphql.js/${graphql_dist_bundle_VERSION} ${getUserAgent()}`
+  },
+  method: "POST",
+  url: "/graphql"
+});
+function withCustomRequest(customRequest) {
+  return graphql_dist_bundle_withDefaults(customRequest, {
+    method: "POST",
+    url: "/graphql"
+  });
+}
+
+
+// EXTERNAL MODULE: ./node_modules/@actions/exec/lib/exec.js
+var exec = __nccwpck_require__(1514);
+// EXTERNAL MODULE: ./node_modules/@actions/io/lib/io.js
+var lib_io = __nccwpck_require__(7436);
+;// CONCATENATED MODULE: ./src/base64-helper.ts
+/**
+ * Encode a string to base64.
+ * @param input
+ */
+function encode(input) {
+    return Buffer.from(input, 'utf-8').toString('base64');
+}
+/**
+ * Decode a base64 encoded string.
+ * @param input
+ */
+function decode(input) {
+    return Buffer.from(input, 'base64').toString('utf-8');
+}
+
+;// CONCATENATED MODULE: ./src/git-helper.ts
+
+
+
+
+
+/**
+ * Get the fetch URL for the repository.
+ */
+function getFetchUrl() {
+    const encodedOwner = encodeURIComponent(lib_github.context.repo.owner);
+    const encodedName = encodeURIComponent(lib_github.context.repo.repo);
+    return `https://github.com/${encodedOwner}/${encodedName}`;
+}
+/**
+ * Execute a Git command with the given arguments.
+ * @param args
+ */
+async function execGit(args) {
+    const stdout = [];
+    const stderr = [];
+    const options = {
+        listeners: {
+            stdout: (data) => {
+                stdout.push(data.toString());
+            },
+            stderr: (data) => {
+                stderr.push(data.toString());
+            }
+        }
+    };
+    await exec.exec('git', args, options);
+    return {
+        stdout: stdout.join('\n'),
+        stderr: stderr.join('\n')
+    };
+}
+/**
+ * Display information about the Git installation.
+ */
+async function displayInfo() {
+    const git = await io.which('git', true);
+    const gitVersionOutput = await execGit(['--version']);
+    const gitVersion = gitVersionOutput.stdout.match(/\d+\.\d+(\.\d+)?/);
+    core.startGroup('Git Info');
+    core.info(`Git Path: ${git}`);
+    core.info(`Git Version: ${gitVersion}`);
+    core.endGroup();
+}
+/**
+ * Initialize and configure the repository.
+ * @param token The security token to use for authentication.
+ */
+async function init(token) {
+    const basicCredential = encode(`x-access-token:${token}`);
+    const gitInitOutput = await execGit(['init', '--initial-branch', 'main']);
+    lib_core.info(`Git Init: ${gitInitOutput.stdout}`);
+    await execGit(['remote', 'add', 'origin', getFetchUrl()]);
+    await execGit(['config', '--local', 'http.https://github.com/.extraheader', `AUTHORIZATION: Basic ${basicCredential}`]);
+    await execGit(['config', '--local', 'user.name', 'github-actions[bot]']);
+    await execGit(['config', '--local', 'user.email', '41898282+github-actions[bot]@users.noreply.github.com']);
+}
+/**
+ * Clone the repository.
+ */
+async function clone() {
+    const branch = lib_github.context.ref.substring('refs/heads/'.length);
+    const ref = `refs/remotes/origin/${branch}`;
+    const cloneOutput = await execGit(['fetch', '--no-tags', '--prune', '--depth', '1', 'origin', `+${lib_github.context.sha}:${ref}`]);
+    lib_core.info(`Git Fetch: ${cloneOutput.stdout}`);
+    const checkoutOutput = await execGit(['checkout', '-b', branch, ref]);
+    lib_core.info(`Git Branch: ${checkoutOutput.stdout}`);
+    return {
+        stderr: cloneOutput.stderr + checkoutOutput.stderr,
+        stdout: cloneOutput.stderr + checkoutOutput.stderr
+    };
+}
+/**
+ * Fetch the specified remote branch.
+ * @param name
+ */
+async function fetchBranch(name) {
+    const output = await execGit(['fetch', '--no-tags', '--prune', '--depth', '1', 'origin', name]);
+    lib_core.info(`Git Fetch: ${output.stdout}`);
+    return output;
+}
+/**
+ * Fetch the remote repository without a shallow clone.
+ */
+async function fetchUnshallow() {
+    const output = await execGit(['fetch', '--no-tags', '--prune', '--unshallow']);
+    lib_core.info(`Git Fetch: ${output.stdout}`);
+    return output;
+}
+/**
+ * Create a new branch.
+ * @param name
+ */
+async function createBranch(name) {
+    const output = await execGit(['checkout', '-b', name]);
+    core.info(`Git Branch: ${output.stdout}`);
+    return output;
+}
+/**
+ * Switch to the specified branch.
+ * @param name
+ */
+async function switchBranch(name) {
+    const output = await execGit(['switch', name]);
+    lib_core.info(`Git Switch: ${output.stdout}`);
+    return output;
+}
+/**
+ * Push the branch to the remote repository.
+ * @param name
+ * @param force
+ */
+async function push(name, force = false) {
+    const output = await execGit(force ? ['push', '-f', '-u', 'origin', name] : ['push', '-u', 'origin', name]);
+    lib_core.info(`Git Push: ${output.stdout}`);
+    return output;
+}
+/**
+ * Rebase the release branch.
+ * @param branch
+ */
+async function rebaseBranch(branch) {
+    const output = await execGit(['rebase', branch]);
+    lib_core.info(`Git Rebase: ${output.stdout}`);
+    return output;
+}
+
+// EXTERNAL MODULE: ./node_modules/brace-expansion/index.js
+var brace_expansion = __nccwpck_require__(3717);
+;// CONCATENATED MODULE: ./node_modules/minimatch/dist/esm/assert-valid-pattern.js
 const MAX_PATTERN_LENGTH = 1024 * 64;
 const assertValidPattern = (pattern) => {
     if (typeof pattern !== 'string') {
@@ -36125,21 +35881,181 @@ const assertValidPattern = (pattern) => {
         throw new TypeError('pattern is too long');
     }
 };
-exports.assertValidPattern = assertValidPattern;
 //# sourceMappingURL=assert-valid-pattern.js.map
-
-/***/ }),
-
-/***/ 5136:
-/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
-
-"use strict";
-
+;// CONCATENATED MODULE: ./node_modules/minimatch/dist/esm/brace-expressions.js
+// translate the various posix character classes into unicode properties
+// this works across all unicode locales
+// { <posix class>: [<translation>, /u flag required, negated]
+const posixClasses = {
+    '[:alnum:]': ['\\p{L}\\p{Nl}\\p{Nd}', true],
+    '[:alpha:]': ['\\p{L}\\p{Nl}', true],
+    '[:ascii:]': ['\\x' + '00-\\x' + '7f', false],
+    '[:blank:]': ['\\p{Zs}\\t', true],
+    '[:cntrl:]': ['\\p{Cc}', true],
+    '[:digit:]': ['\\p{Nd}', true],
+    '[:graph:]': ['\\p{Z}\\p{C}', true, true],
+    '[:lower:]': ['\\p{Ll}', true],
+    '[:print:]': ['\\p{C}', true],
+    '[:punct:]': ['\\p{P}', true],
+    '[:space:]': ['\\p{Z}\\t\\r\\n\\v\\f', true],
+    '[:upper:]': ['\\p{Lu}', true],
+    '[:word:]': ['\\p{L}\\p{Nl}\\p{Nd}\\p{Pc}', true],
+    '[:xdigit:]': ['A-Fa-f0-9', false],
+};
+// only need to escape a few things inside of brace expressions
+// escapes: [ \ ] -
+const braceEscape = (s) => s.replace(/[[\]\\-]/g, '\\$&');
+// escape all regexp magic characters
+const regexpEscape = (s) => s.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
+// everything has already been escaped, we just have to join
+const rangesToString = (ranges) => ranges.join('');
+// takes a glob string at a posix brace expression, and returns
+// an equivalent regular expression source, and boolean indicating
+// whether the /u flag needs to be applied, and the number of chars
+// consumed to parse the character class.
+// This also removes out of order ranges, and returns ($.) if the
+// entire class just no good.
+const parseClass = (glob, position) => {
+    const pos = position;
+    /* c8 ignore start */
+    if (glob.charAt(pos) !== '[') {
+        throw new Error('not in a brace expression');
+    }
+    /* c8 ignore stop */
+    const ranges = [];
+    const negs = [];
+    let i = pos + 1;
+    let sawStart = false;
+    let uflag = false;
+    let escaping = false;
+    let negate = false;
+    let endPos = pos;
+    let rangeStart = '';
+    WHILE: while (i < glob.length) {
+        const c = glob.charAt(i);
+        if ((c === '!' || c === '^') && i === pos + 1) {
+            negate = true;
+            i++;
+            continue;
+        }
+        if (c === ']' && sawStart && !escaping) {
+            endPos = i + 1;
+            break;
+        }
+        sawStart = true;
+        if (c === '\\') {
+            if (!escaping) {
+                escaping = true;
+                i++;
+                continue;
+            }
+            // escaped \ char, fall through and treat like normal char
+        }
+        if (c === '[' && !escaping) {
+            // either a posix class, a collation equivalent, or just a [
+            for (const [cls, [unip, u, neg]] of Object.entries(posixClasses)) {
+                if (glob.startsWith(cls, i)) {
+                    // invalid, [a-[] is fine, but not [a-[:alpha]]
+                    if (rangeStart) {
+                        return ['$.', false, glob.length - pos, true];
+                    }
+                    i += cls.length;
+                    if (neg)
+                        negs.push(unip);
+                    else
+                        ranges.push(unip);
+                    uflag = uflag || u;
+                    continue WHILE;
+                }
+            }
+        }
+        // now it's just a normal character, effectively
+        escaping = false;
+        if (rangeStart) {
+            // throw this range away if it's not valid, but others
+            // can still match.
+            if (c > rangeStart) {
+                ranges.push(braceEscape(rangeStart) + '-' + braceEscape(c));
+            }
+            else if (c === rangeStart) {
+                ranges.push(braceEscape(c));
+            }
+            rangeStart = '';
+            i++;
+            continue;
+        }
+        // now might be the start of a range.
+        // can be either c-d or c-] or c<more...>] or c] at this point
+        if (glob.startsWith('-]', i + 1)) {
+            ranges.push(braceEscape(c + '-'));
+            i += 2;
+            continue;
+        }
+        if (glob.startsWith('-', i + 1)) {
+            rangeStart = c;
+            i += 2;
+            continue;
+        }
+        // not the start of a range, just a single character
+        ranges.push(braceEscape(c));
+        i++;
+    }
+    if (endPos < i) {
+        // didn't see the end of the class, not a valid class,
+        // but might still be valid as a literal match.
+        return ['', false, 0, false];
+    }
+    // if we got no ranges and no negates, then we have a range that
+    // cannot possibly match anything, and that poisons the whole glob
+    if (!ranges.length && !negs.length) {
+        return ['$.', false, glob.length - pos, true];
+    }
+    // if we got one positive range, and it's a single character, then that's
+    // not actually a magic pattern, it's just that one literal character.
+    // we should not treat that as "magic", we should just return the literal
+    // character. [_] is a perfectly valid way to escape glob magic chars.
+    if (negs.length === 0 &&
+        ranges.length === 1 &&
+        /^\\?.$/.test(ranges[0]) &&
+        !negate) {
+        const r = ranges[0].length === 2 ? ranges[0].slice(-1) : ranges[0];
+        return [regexpEscape(r), false, endPos - pos, false];
+    }
+    const sranges = '[' + (negate ? '^' : '') + rangesToString(ranges) + ']';
+    const snegs = '[' + (negate ? '' : '^') + rangesToString(negs) + ']';
+    const comb = ranges.length && negs.length
+        ? '(' + sranges + '|' + snegs + ')'
+        : ranges.length
+            ? sranges
+            : snegs;
+    return [comb, uflag, endPos - pos, true];
+};
+//# sourceMappingURL=brace-expressions.js.map
+;// CONCATENATED MODULE: ./node_modules/minimatch/dist/esm/unescape.js
+/**
+ * Un-escape a string that has been escaped with {@link escape}.
+ *
+ * If the {@link windowsPathsNoEscape} option is used, then square-brace
+ * escapes are removed, but not backslash escapes.  For example, it will turn
+ * the string `'[*]'` into `*`, but it will not turn `'\\*'` into `'*'`,
+ * becuase `\` is a path separator in `windowsPathsNoEscape` mode.
+ *
+ * When `windowsPathsNoEscape` is not set, then both brace escapes and
+ * backslash escapes are removed.
+ *
+ * Slashes (and backslashes in `windowsPathsNoEscape` mode) cannot be escaped
+ * or unescaped.
+ */
+const unescape_unescape = (s, { windowsPathsNoEscape = false, } = {}) => {
+    return windowsPathsNoEscape
+        ? s.replace(/\[([^\/\\])\]/g, '$1')
+        : s.replace(/((?!\\).|^)\[([^\/\\])\]/g, '$1$2').replace(/\\([^\/])/g, '$1');
+};
+//# sourceMappingURL=unescape.js.map
+;// CONCATENATED MODULE: ./node_modules/minimatch/dist/esm/ast.js
 // parse a single path portion
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.AST = void 0;
-const brace_expressions_js_1 = __nccwpck_require__(1812);
-const unescape_js_1 = __nccwpck_require__(5698);
+
+
 const types = new Set(['!', '?', '+', '*', '@']);
 const isExtglobType = (c) => types.has(c);
 // Patterns that get prepended to bind to the start of either the
@@ -36598,7 +36514,7 @@ class AST {
             const final = start + src + end;
             return [
                 final,
-                (0, unescape_js_1.unescape)(src),
+                unescape_unescape(src),
                 (this.#hasMagic = !!this.#hasMagic),
                 this.#uflag,
             ];
@@ -36617,7 +36533,7 @@ class AST {
             this.#parts = [s];
             this.type = null;
             this.#hasMagic = undefined;
-            return [s, (0, unescape_js_1.unescape)(this.toString()), false, false];
+            return [s, unescape_unescape(this.toString()), false, false];
         }
         // XXX abstract out this map method
         let bodyDotAllowed = !repeated || allowDot || dot || !startNoDot
@@ -36654,7 +36570,7 @@ class AST {
         }
         return [
             final,
-            (0, unescape_js_1.unescape)(body),
+            unescape_unescape(body),
             (this.#hasMagic = !!this.#hasMagic),
             this.#uflag,
         ];
@@ -36697,7 +36613,7 @@ class AST {
                 continue;
             }
             if (c === '[') {
-                const [src, needUflag, consumed, magic] = (0, brace_expressions_js_1.parseClass)(glob, i);
+                const [src, needUflag, consumed, magic] = parseClass(glob, i);
                 if (consumed) {
                     re += src;
                     uflag = uflag || needUflag;
@@ -36721,180 +36637,11 @@ class AST {
             }
             re += regExpEscape(c);
         }
-        return [re, (0, unescape_js_1.unescape)(glob), !!hasMagic, uflag];
+        return [re, unescape_unescape(glob), !!hasMagic, uflag];
     }
 }
-exports.AST = AST;
 //# sourceMappingURL=ast.js.map
-
-/***/ }),
-
-/***/ 1812:
-/***/ ((__unused_webpack_module, exports) => {
-
-"use strict";
-
-// translate the various posix character classes into unicode properties
-// this works across all unicode locales
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.parseClass = void 0;
-// { <posix class>: [<translation>, /u flag required, negated]
-const posixClasses = {
-    '[:alnum:]': ['\\p{L}\\p{Nl}\\p{Nd}', true],
-    '[:alpha:]': ['\\p{L}\\p{Nl}', true],
-    '[:ascii:]': ['\\x' + '00-\\x' + '7f', false],
-    '[:blank:]': ['\\p{Zs}\\t', true],
-    '[:cntrl:]': ['\\p{Cc}', true],
-    '[:digit:]': ['\\p{Nd}', true],
-    '[:graph:]': ['\\p{Z}\\p{C}', true, true],
-    '[:lower:]': ['\\p{Ll}', true],
-    '[:print:]': ['\\p{C}', true],
-    '[:punct:]': ['\\p{P}', true],
-    '[:space:]': ['\\p{Z}\\t\\r\\n\\v\\f', true],
-    '[:upper:]': ['\\p{Lu}', true],
-    '[:word:]': ['\\p{L}\\p{Nl}\\p{Nd}\\p{Pc}', true],
-    '[:xdigit:]': ['A-Fa-f0-9', false],
-};
-// only need to escape a few things inside of brace expressions
-// escapes: [ \ ] -
-const braceEscape = (s) => s.replace(/[[\]\\-]/g, '\\$&');
-// escape all regexp magic characters
-const regexpEscape = (s) => s.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
-// everything has already been escaped, we just have to join
-const rangesToString = (ranges) => ranges.join('');
-// takes a glob string at a posix brace expression, and returns
-// an equivalent regular expression source, and boolean indicating
-// whether the /u flag needs to be applied, and the number of chars
-// consumed to parse the character class.
-// This also removes out of order ranges, and returns ($.) if the
-// entire class just no good.
-const parseClass = (glob, position) => {
-    const pos = position;
-    /* c8 ignore start */
-    if (glob.charAt(pos) !== '[') {
-        throw new Error('not in a brace expression');
-    }
-    /* c8 ignore stop */
-    const ranges = [];
-    const negs = [];
-    let i = pos + 1;
-    let sawStart = false;
-    let uflag = false;
-    let escaping = false;
-    let negate = false;
-    let endPos = pos;
-    let rangeStart = '';
-    WHILE: while (i < glob.length) {
-        const c = glob.charAt(i);
-        if ((c === '!' || c === '^') && i === pos + 1) {
-            negate = true;
-            i++;
-            continue;
-        }
-        if (c === ']' && sawStart && !escaping) {
-            endPos = i + 1;
-            break;
-        }
-        sawStart = true;
-        if (c === '\\') {
-            if (!escaping) {
-                escaping = true;
-                i++;
-                continue;
-            }
-            // escaped \ char, fall through and treat like normal char
-        }
-        if (c === '[' && !escaping) {
-            // either a posix class, a collation equivalent, or just a [
-            for (const [cls, [unip, u, neg]] of Object.entries(posixClasses)) {
-                if (glob.startsWith(cls, i)) {
-                    // invalid, [a-[] is fine, but not [a-[:alpha]]
-                    if (rangeStart) {
-                        return ['$.', false, glob.length - pos, true];
-                    }
-                    i += cls.length;
-                    if (neg)
-                        negs.push(unip);
-                    else
-                        ranges.push(unip);
-                    uflag = uflag || u;
-                    continue WHILE;
-                }
-            }
-        }
-        // now it's just a normal character, effectively
-        escaping = false;
-        if (rangeStart) {
-            // throw this range away if it's not valid, but others
-            // can still match.
-            if (c > rangeStart) {
-                ranges.push(braceEscape(rangeStart) + '-' + braceEscape(c));
-            }
-            else if (c === rangeStart) {
-                ranges.push(braceEscape(c));
-            }
-            rangeStart = '';
-            i++;
-            continue;
-        }
-        // now might be the start of a range.
-        // can be either c-d or c-] or c<more...>] or c] at this point
-        if (glob.startsWith('-]', i + 1)) {
-            ranges.push(braceEscape(c + '-'));
-            i += 2;
-            continue;
-        }
-        if (glob.startsWith('-', i + 1)) {
-            rangeStart = c;
-            i += 2;
-            continue;
-        }
-        // not the start of a range, just a single character
-        ranges.push(braceEscape(c));
-        i++;
-    }
-    if (endPos < i) {
-        // didn't see the end of the class, not a valid class,
-        // but might still be valid as a literal match.
-        return ['', false, 0, false];
-    }
-    // if we got no ranges and no negates, then we have a range that
-    // cannot possibly match anything, and that poisons the whole glob
-    if (!ranges.length && !negs.length) {
-        return ['$.', false, glob.length - pos, true];
-    }
-    // if we got one positive range, and it's a single character, then that's
-    // not actually a magic pattern, it's just that one literal character.
-    // we should not treat that as "magic", we should just return the literal
-    // character. [_] is a perfectly valid way to escape glob magic chars.
-    if (negs.length === 0 &&
-        ranges.length === 1 &&
-        /^\\?.$/.test(ranges[0]) &&
-        !negate) {
-        const r = ranges[0].length === 2 ? ranges[0].slice(-1) : ranges[0];
-        return [regexpEscape(r), false, endPos - pos, false];
-    }
-    const sranges = '[' + (negate ? '^' : '') + rangesToString(ranges) + ']';
-    const snegs = '[' + (negate ? '' : '^') + rangesToString(negs) + ']';
-    const comb = ranges.length && negs.length
-        ? '(' + sranges + '|' + snegs + ')'
-        : ranges.length
-            ? sranges
-            : snegs;
-    return [comb, uflag, endPos - pos, true];
-};
-exports.parseClass = parseClass;
-//# sourceMappingURL=brace-expressions.js.map
-
-/***/ }),
-
-/***/ 2804:
-/***/ ((__unused_webpack_module, exports) => {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.escape = void 0;
+;// CONCATENATED MODULE: ./node_modules/minimatch/dist/esm/escape.js
 /**
  * Escape all magic characters in a glob pattern.
  *
@@ -36904,7 +36651,7 @@ exports.escape = void 0;
  * that exact character.  In this mode, `\` is _not_ escaped, because it is
  * not interpreted as a magic character, but instead as a path separator.
  */
-const escape = (s, { windowsPathsNoEscape = false, } = {}) => {
+const escape_escape = (s, { windowsPathsNoEscape = false, } = {}) => {
     // don't need to escape +@! because we escape the parens
     // that make those magic, and escaping ! as [!] isn't valid,
     // because [!]] is a valid glob class meaning not ']'.
@@ -36912,35 +36659,21 @@ const escape = (s, { windowsPathsNoEscape = false, } = {}) => {
         ? s.replace(/[?*()[\]]/g, '[$&]')
         : s.replace(/[?*()[\]\\]/g, '\\$&');
 };
-exports.escape = escape;
 //# sourceMappingURL=escape.js.map
+;// CONCATENATED MODULE: ./node_modules/minimatch/dist/esm/index.js
 
-/***/ }),
 
-/***/ 4501:
-/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
-"use strict";
 
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.unescape = exports.escape = exports.AST = exports.Minimatch = exports.match = exports.makeRe = exports.braceExpand = exports.defaults = exports.filter = exports.GLOBSTAR = exports.sep = exports.minimatch = void 0;
-const brace_expansion_1 = __importDefault(__nccwpck_require__(3717));
-const assert_valid_pattern_js_1 = __nccwpck_require__(4149);
-const ast_js_1 = __nccwpck_require__(5136);
-const escape_js_1 = __nccwpck_require__(2804);
-const unescape_js_1 = __nccwpck_require__(5698);
+
 const minimatch = (p, pattern, options = {}) => {
-    (0, assert_valid_pattern_js_1.assertValidPattern)(pattern);
+    assertValidPattern(pattern);
     // shortcut: comments match nothing.
     if (!options.nocomment && pattern.charAt(0) === '#') {
         return false;
     }
     return new Minimatch(pattern, options).match(p);
 };
-exports.minimatch = minimatch;
 // Optimized checking for the most common glob patterns.
 const starDotExtRE = /^\*+([^+@!?\*\[\(]*)$/;
 const starDotExtTest = (ext) => (f) => !f.startsWith('.') && f.endsWith(ext);
@@ -37004,15 +36737,15 @@ const path = {
     posix: { sep: '/' },
 };
 /* c8 ignore stop */
-exports.sep = defaultPlatform === 'win32' ? path.win32.sep : path.posix.sep;
-exports.minimatch.sep = exports.sep;
-exports.GLOBSTAR = Symbol('globstar **');
-exports.minimatch.GLOBSTAR = exports.GLOBSTAR;
+const sep = defaultPlatform === 'win32' ? path.win32.sep : path.posix.sep;
+minimatch.sep = sep;
+const GLOBSTAR = Symbol('globstar **');
+minimatch.GLOBSTAR = GLOBSTAR;
 // any single thing other than /
 // don't need to escape / when using new RegExp()
-const qmark = '[^/]';
+const esm_qmark = '[^/]';
 // * => any number of characters
-const star = qmark + '*?';
+const esm_star = esm_qmark + '*?';
 // ** when dots are allowed.  Anything goes, except .. and .
 // not (^ or / followed by one or two dots followed by $ or /),
 // followed by anything, any number of times.
@@ -37020,15 +36753,14 @@ const twoStarDot = '(?:(?!(?:\\/|^)(?:\\.{1,2})($|\\/)).)*?';
 // not a ^ or / followed by a dot,
 // followed by anything, any number of times.
 const twoStarNoDot = '(?:(?!(?:\\/|^)\\.).)*?';
-const filter = (pattern, options = {}) => (p) => (0, exports.minimatch)(p, pattern, options);
-exports.filter = filter;
-exports.minimatch.filter = exports.filter;
+const filter = (pattern, options = {}) => (p) => minimatch(p, pattern, options);
+minimatch.filter = filter;
 const ext = (a, b = {}) => Object.assign({}, a, b);
 const defaults = (def) => {
     if (!def || typeof def !== 'object' || !Object.keys(def).length) {
-        return exports.minimatch;
+        return minimatch;
     }
-    const orig = exports.minimatch;
+    const orig = minimatch;
     const m = (p, pattern, options = {}) => orig(p, pattern, ext(def, options));
     return Object.assign(m, {
         Minimatch: class Minimatch extends orig.Minimatch {
@@ -37057,11 +36789,10 @@ const defaults = (def) => {
         braceExpand: (pattern, options = {}) => orig.braceExpand(pattern, ext(def, options)),
         match: (list, pattern, options = {}) => orig.match(list, pattern, ext(def, options)),
         sep: orig.sep,
-        GLOBSTAR: exports.GLOBSTAR,
+        GLOBSTAR: GLOBSTAR,
     });
 };
-exports.defaults = defaults;
-exports.minimatch.defaults = exports.defaults;
+minimatch.defaults = defaults;
 // Brace expansion:
 // a{b,c}d -> abd acd
 // a{b,}c -> abc ac
@@ -37073,17 +36804,16 @@ exports.minimatch.defaults = exports.defaults;
 // a{2..}b -> a{2..}b
 // a{b}c -> a{b}c
 const braceExpand = (pattern, options = {}) => {
-    (0, assert_valid_pattern_js_1.assertValidPattern)(pattern);
+    assertValidPattern(pattern);
     // Thanks to Yeting Li <https://github.com/yetingli> for
     // improving this regexp to avoid a ReDOS vulnerability.
     if (options.nobrace || !/\{(?:(?!\{).)*\}/.test(pattern)) {
         // shortcut. no need to expand.
         return [pattern];
     }
-    return (0, brace_expansion_1.default)(pattern);
+    return brace_expansion(pattern);
 };
-exports.braceExpand = braceExpand;
-exports.minimatch.braceExpand = exports.braceExpand;
+minimatch.braceExpand = braceExpand;
 // parse a component of the expanded set.
 // At this point, no pattern may contain "/" in it
 // so we're going to return a 2d array, where each entry is the full
@@ -37096,8 +36826,7 @@ exports.minimatch.braceExpand = exports.braceExpand;
 // of * is equivalent to a single *.  Globstar behavior is enabled by
 // default, and can be disabled by setting options.noglobstar.
 const makeRe = (pattern, options = {}) => new Minimatch(pattern, options).makeRe();
-exports.makeRe = makeRe;
-exports.minimatch.makeRe = exports.makeRe;
+minimatch.makeRe = makeRe;
 const match = (list, pattern, options = {}) => {
     const mm = new Minimatch(pattern, options);
     list = list.filter(f => mm.match(f));
@@ -37106,11 +36835,10 @@ const match = (list, pattern, options = {}) => {
     }
     return list;
 };
-exports.match = match;
-exports.minimatch.match = exports.match;
+minimatch.match = match;
 // replace stuff like \* with *
 const globMagic = /[?*]|[+@!]\(.*?\)|\[|\]/;
-const regExpEscape = (s) => s.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
+const esm_regExpEscape = (s) => s.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
 class Minimatch {
     options;
     set;
@@ -37130,7 +36858,7 @@ class Minimatch {
     windowsNoMagicRoot;
     regexp;
     constructor(pattern, options = {}) {
-        (0, assert_valid_pattern_js_1.assertValidPattern)(pattern);
+        assertValidPattern(pattern);
         options = options || {};
         this.options = options;
         this.pattern = pattern;
@@ -37585,7 +37313,7 @@ class Minimatch {
                 return false;
             }
             /* c8 ignore stop */
-            if (p === exports.GLOBSTAR) {
+            if (p === GLOBSTAR) {
                 this.debug('GLOBSTAR', [pattern, p, f]);
                 // "**"
                 // a/**/b/**/c would match the following:
@@ -37716,14 +37444,14 @@ class Minimatch {
         /* c8 ignore stop */
     }
     braceExpand() {
-        return (0, exports.braceExpand)(this.pattern, this.options);
+        return braceExpand(this.pattern, this.options);
     }
     parse(pattern) {
-        (0, assert_valid_pattern_js_1.assertValidPattern)(pattern);
+        assertValidPattern(pattern);
         const options = this.options;
         // shortcuts
         if (pattern === '**')
-            return exports.GLOBSTAR;
+            return GLOBSTAR;
         if (pattern === '')
             return '';
         // far and away, the most common glob pattern parts are
@@ -37757,7 +37485,7 @@ class Minimatch {
         else if ((m = pattern.match(dotStarRE))) {
             fastTest = dotStarTest;
         }
-        const re = ast_js_1.AST.fromGlob(pattern, this.options).toMMPattern();
+        const re = AST.fromGlob(pattern, this.options).toMMPattern();
         if (fastTest && typeof re === 'object') {
             // Avoids overriding in frozen environments
             Reflect.defineProperty(re, 'test', { value: fastTest });
@@ -37780,7 +37508,7 @@ class Minimatch {
         }
         const options = this.options;
         const twoStar = options.noglobstar
-            ? star
+            ? esm_star
             : options.dot
                 ? twoStarDot
                 : twoStarNoDot;
@@ -37799,19 +37527,19 @@ class Minimatch {
                         flags.add(f);
                 }
                 return typeof p === 'string'
-                    ? regExpEscape(p)
-                    : p === exports.GLOBSTAR
-                        ? exports.GLOBSTAR
+                    ? esm_regExpEscape(p)
+                    : p === GLOBSTAR
+                        ? GLOBSTAR
                         : p._src;
             });
             pp.forEach((p, i) => {
                 const next = pp[i + 1];
                 const prev = pp[i - 1];
-                if (p !== exports.GLOBSTAR || prev === exports.GLOBSTAR) {
+                if (p !== GLOBSTAR || prev === GLOBSTAR) {
                     return;
                 }
                 if (prev === undefined) {
-                    if (next !== undefined && next !== exports.GLOBSTAR) {
+                    if (next !== undefined && next !== GLOBSTAR) {
                         pp[i + 1] = '(?:\\/|' + twoStar + '\\/)?' + next;
                     }
                     else {
@@ -37821,12 +37549,12 @@ class Minimatch {
                 else if (next === undefined) {
                     pp[i - 1] = prev + '(?:\\/|' + twoStar + ')?';
                 }
-                else if (next !== exports.GLOBSTAR) {
+                else if (next !== GLOBSTAR) {
                     pp[i - 1] = prev + '(?:\\/|\\/' + twoStar + '\\/)' + next;
-                    pp[i + 1] = exports.GLOBSTAR;
+                    pp[i + 1] = GLOBSTAR;
                 }
             });
-            return pp.filter(p => p !== exports.GLOBSTAR).join('/');
+            return pp.filter(p => p !== GLOBSTAR).join('/');
         })
             .join('|');
         // need to wrap in parens if we had more than one thing with |,
@@ -37921,112 +37649,736 @@ class Minimatch {
         return this.negate;
     }
     static defaults(def) {
-        return exports.minimatch.defaults(def).Minimatch;
+        return minimatch.defaults(def).Minimatch;
     }
 }
-exports.Minimatch = Minimatch;
 /* c8 ignore start */
-var ast_js_2 = __nccwpck_require__(5136);
-Object.defineProperty(exports, "AST", ({ enumerable: true, get: function () { return ast_js_2.AST; } }));
-var escape_js_2 = __nccwpck_require__(2804);
-Object.defineProperty(exports, "escape", ({ enumerable: true, get: function () { return escape_js_2.escape; } }));
-var unescape_js_2 = __nccwpck_require__(5698);
-Object.defineProperty(exports, "unescape", ({ enumerable: true, get: function () { return unescape_js_2.unescape; } }));
+
+
+
 /* c8 ignore stop */
-exports.minimatch.AST = ast_js_1.AST;
-exports.minimatch.Minimatch = Minimatch;
-exports.minimatch.escape = escape_js_1.escape;
-exports.minimatch.unescape = unescape_js_1.unescape;
+minimatch.AST = AST;
+minimatch.Minimatch = Minimatch;
+minimatch.escape = escape_escape;
+minimatch.unescape = unescape_unescape;
 //# sourceMappingURL=index.js.map
-
-/***/ }),
-
-/***/ 5698:
-/***/ ((__unused_webpack_module, exports) => {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.unescape = void 0;
+// EXTERNAL MODULE: ./node_modules/semver/index.js
+var semver = __nccwpck_require__(1383);
+;// CONCATENATED MODULE: ./src/version-helper.ts
+const semverVersionTypes = ['major', 'minor', 'patch'];
 /**
- * Un-escape a string that has been escaped with {@link escape}.
- *
- * If the {@link windowsPathsNoEscape} option is used, then square-brace
- * escapes are removed, but not backslash escapes.  For example, it will turn
- * the string `'[*]'` into `*`, but it will not turn `'\\*'` into `'*'`,
- * becuase `\` is a path separator in `windowsPathsNoEscape` mode.
- *
- * When `windowsPathsNoEscape` is not set, then both brace escapes and
- * backslash escapes are removed.
- *
- * Slashes (and backslashes in `windowsPathsNoEscape` mode) cannot be escaped
- * or unescaped.
+ * This function will take the contents of a package.json file and replace the version number with the next version number.
+ * @param fileContents
+ * @param nextVersion
  */
-const unescape = (s, { windowsPathsNoEscape = false, } = {}) => {
-    return windowsPathsNoEscape
-        ? s.replace(/\[([^\/\\])\]/g, '$1')
-        : s.replace(/((?!\\).|^)\[([^\/\\])\]/g, '$1$2').replace(/\\([^\/])/g, '$1');
-};
-exports.unescape = unescape;
-//# sourceMappingURL=unescape.js.map
+function patchPackageJson(fileContents, nextVersion) {
+    return fileContents.replace(/"version": "(.*)"/, `"version": "${nextVersion}"`);
+}
+function isValidSemverVersionType(version) {
+    return semverVersionTypes.includes(version);
+}
 
-/***/ })
+;// CONCATENATED MODULE: ./src/markdown.ts
+function note(message) {
+    return `> [!NOTE]\n> ${message}`;
+}
+function tip(message) {
+    return `> [!TIP]\n> ${message}`;
+}
+function important(message) {
+    return `> [!IMPORTANT]\n> ${message}`;
+}
+function warning(message) {
+    return `> [!WARNING]\n> ${message}`;
+}
+function caution(message) {
+    return `> [!CAUTION]\n> ${message}`;
+}
+function markdown_hidden(message) {
+    return `[//]: # (${message})`;
+}
 
-/******/ 	});
-/************************************************************************/
-/******/ 	// The module cache
-/******/ 	var __webpack_module_cache__ = {};
-/******/ 	
-/******/ 	// The require function
-/******/ 	function __nccwpck_require__(moduleId) {
-/******/ 		// Check if module is in cache
-/******/ 		var cachedModule = __webpack_module_cache__[moduleId];
-/******/ 		if (cachedModule !== undefined) {
-/******/ 			return cachedModule.exports;
-/******/ 		}
-/******/ 		// Create a new module (and put it into the cache)
-/******/ 		var module = __webpack_module_cache__[moduleId] = {
-/******/ 			// no module.id needed
-/******/ 			// no module.loaded needed
-/******/ 			exports: {}
-/******/ 		};
-/******/ 	
-/******/ 		// Execute the module function
-/******/ 		var threw = true;
-/******/ 		try {
-/******/ 			__webpack_modules__[moduleId].call(module.exports, module, module.exports, __nccwpck_require__);
-/******/ 			threw = false;
-/******/ 		} finally {
-/******/ 			if(threw) delete __webpack_module_cache__[moduleId];
-/******/ 		}
-/******/ 	
-/******/ 		// Return the exports of the module
-/******/ 		return module.exports;
-/******/ 	}
-/******/ 	
-/************************************************************************/
-/******/ 	/* webpack/runtime/compat */
-/******/ 	
-/******/ 	if (typeof __nccwpck_require__ !== 'undefined') __nccwpck_require__.ab = __dirname + "/";
-/******/ 	
-/************************************************************************/
-var __webpack_exports__ = {};
-// This entry need to be wrapped in an IIFE because it need to be in strict mode.
-(() => {
-"use strict";
-var exports = __webpack_exports__;
+;// CONCATENATED MODULE: ./src/github-helper.ts
 
-Object.defineProperty(exports, "__esModule", ({ value: true }));
+
+
+
+
+
+
+var Commands;
+(function (Commands) {
+    Commands["Rebase"] = "@krytenbot rebase";
+    Commands["Recreate"] = "@krytenbot recreate";
+    Commands["SetVersion"] = "@krytenbot setversion";
+})(Commands || (Commands = {}));
+const projects = ['core', 'grid'];
+const projectsPaths = ['core/*', 'grid/*'];
+const projectsEcosystem = (/* unused pure expression or super */ null && (['npm', 'npm']));
+function extractProjectNameFromPR(text) {
+    const match = text.match(/\[\/\/]:\s#\s\(krytenbot-project:(\w+)\)/);
+    return match ? match[1] : null;
+}
+/**
+ * Get the release branch name for the project.
+ * @param project
+ */
+function getReleaseBranchName(project) {
+    return `releasebot-${project}`;
+}
+/**
+ * Get the title for the PR.
+ * @param project
+ * @param nextVersion
+ */
+function getPullRequestTitle(project, nextVersion) {
+    return `Release \`${project}\` v${nextVersion}`;
+}
+/**
+ * Get the default next version.
+ */
+function getDefaultNextVersion() {
+    return '0.0.1';
+}
+/**
+ * Return the body of the PR text.
+ * @param project
+ * @param nextVersion
+ * @param rebasing
+ */
+function getPullRequestBody(project, nextVersion, rebasing = false) {
+    const body = [];
+    body.push(markdown_hidden(`krytenbot-project:${project}`));
+    body.push('\n');
+    if (rebasing) {
+        body.push(markdown_hidden('krytenbot-start'));
+        body.push('\n\n');
+        body.push(important('Krytenbot is rebasing this PR'));
+        body.push('\n\n');
+        body.push(markdown_hidden('krytenbot-end'));
+        body.push('\n');
+    }
+    body.push(`
+This PR was created automatically by the Krytenbot to track the next release. 
+The next version for this release is v${nextVersion}.
+
+---
+
+<details>
+<summary>Krytenbot commands and options</summary>
+<br />
+
+You can trigger Krytenbot actions by commenting on this PR:
+- \`@krytenbot rebase\` will rebase this PR
+- \`@krytenbot recreate\` will recreate this PR, overwriting any edits that have been made to it
+- \`@krytenbot setversion [major|minor|patch]\` will set the version for this PR
+</details>
+  `);
+    return body.join('');
+}
+/**
+ * List all files that were added, modified, or removed in the push event.
+ * @param octokit
+ * @param payload
+ */
+async function listPushCommitFiles(octokit, payload) {
+    const files = new Set();
+    // If the push event has a list of commits, use that to get the list of files, otherwise
+    // get the list of files from the commit details.
+    for (const commit of payload.commits) {
+        if (commit.added || commit.modified || commit.removed) {
+            lib_core.debug(`Commit contained file details: ${JSON.stringify(commit, null, 2)}`);
+            commit.added.forEach(file => files.add(file));
+            commit.modified.forEach(file => files.add(file));
+            commit.removed.forEach(file => files.add(file));
+        }
+        else {
+            lib_core.debug(`Commit contained no file details. Getting commit details for: ${payload.after}`);
+            const { data: commitDetails } = await octokit.rest.repos.getCommit({
+                owner: lib_github.context.repo.owner,
+                repo: lib_github.context.repo.repo,
+                ref: payload.after
+            });
+            lib_core.debug(`Commit Details: ${JSON.stringify(commitDetails, null, 2)}`);
+            commitDetails.files?.forEach(file => files.add(file.filename));
+        }
+    }
+    return Array.from(files);
+}
+/**
+ * List all projects that are relevant to the files that were changed.
+ * @param files
+ */
+async function listProjectsOfRelevance(files) {
+    const relevantProjects = new Set();
+    files.forEach(file => {
+        projects.forEach((project, index) => {
+            if (minimatch(file, projectsPaths[index])) {
+                relevantProjects.add(project);
+            }
+        });
+    });
+    return Array.from(relevantProjects);
+}
+/**
+ * Get the next version for the project.
+ * @param octokit
+ * @param project
+ * @param versionType
+ */
+async function getNextVersion(octokit, project, versionType) {
+    // Check if there is an existing tag for the project
+    const tags = await listTags(octokit, project);
+    if (tags.length > 0) {
+        const lastTag = tags[tags.length - 1];
+        const lastTagName = lastTag.ref.substring('refs/tags/'.length);
+        const lastTagVersion = lastTagName.substring(`${project}@v`.length);
+        // Check if there is an existing PR for the release branch
+        // and if it has a set version command in the comments
+        const releaseBranchPR = await findPullRequest(octokit, project);
+        if (releaseBranchPR) {
+            const comments = await listComments(octokit, releaseBranchPR.number);
+            for (let i = comments.length - 1; i >= 0; i--) {
+                const lastCommentBody = comments[i].body;
+                if (lastCommentBody?.startsWith(Commands.SetVersion)) {
+                    lib_core.info(`Found setversion command in comment: ${lastCommentBody}`);
+                    const nextVersionType = lastCommentBody.split(' ')[2];
+                    const nextVersion = semver.inc(lastTagVersion, nextVersionType);
+                    if (nextVersion) {
+                        return nextVersion;
+                    }
+                }
+            }
+        }
+        // Bump the version using semver
+        const nextVersion = semver.inc(lastTagVersion, versionType);
+        if (nextVersion) {
+            return nextVersion;
+        }
+        else {
+            lib_core.setFailed(`Invalid last tag version: ${lastTagVersion}. Must be of the format '${project}@vX.X.X'`);
+        }
+    }
+    lib_core.warning(`No tags found for project: ${project}. Using default next version.`);
+    return getDefaultNextVersion();
+}
+/**
+ * Update the version for the project.
+ * @param octokit
+ * @param project
+ * @param branch
+ * @param version
+ */
+async function setVersion(octokit, project, branch, version) {
+    lib_core.info(`Updating ${project} version to ${version}`);
+    const { data: existingFile } = await octokit.rest.repos.getContent({
+        owner: lib_github.context.repo.owner,
+        repo: lib_github.context.repo.repo,
+        path: `${project}/package.json`,
+        ref: branch
+    });
+    lib_core.debug(`Existing File: ${JSON.stringify(existingFile, null, 2)}`);
+    if (!Array.isArray(existingFile)) {
+        if (existingFile.type === 'file' && existingFile.size > 0) {
+            const existingFileContents = decode(existingFile.content);
+            const newFileContents = patchPackageJson(existingFileContents, version);
+            if (lib_core.isDebug()) {
+                lib_core.startGroup('File Contents');
+                lib_core.debug(`Existing File Contents: ${existingFileContents}`);
+                lib_core.debug(`New File Contents: ${newFileContents}`);
+                lib_core.endGroup();
+            }
+            const newFile = await octokit.rest.repos.createOrUpdateFileContents({
+                owner: lib_github.context.repo.owner,
+                repo: lib_github.context.repo.repo,
+                path: `${project}/package.json`,
+                branch: branch,
+                sha: existingFile.sha,
+                message: `Update ${project} version to v${version}`,
+                content: encode(newFileContents)
+            });
+            lib_core.debug(`Updated File: ${JSON.stringify(newFile, null, 2)}`);
+        }
+        else {
+            lib_core.setFailed('Existing file is not a file');
+        }
+    }
+}
+/**
+ * Check if the release branch exists for the project.
+ * @param octokit
+ * @param project
+ */
+async function github_helper_releaseBranchExists(octokit, project) {
+    const releaseBranch = getReleaseBranchName(project);
+    const branches = await octokit.rest.repos.listBranches({
+        owner: lib_github.context.repo.owner,
+        repo: lib_github.context.repo.repo
+    });
+    return branches.data.some(branch => branch.name === releaseBranch);
+}
+/**
+ * Create a release branch for the project and commit the next version.
+ * @param octokit
+ * @param project
+ */
+async function createReleaseBranch(octokit, project) {
+    const releaseBranch = getReleaseBranchName(project);
+    lib_core.info(`Creating new branch: ${releaseBranch}`);
+    const branch = await octokit.rest.git.createRef({
+        owner: lib_github.context.repo.owner,
+        repo: lib_github.context.repo.repo,
+        ref: `refs/heads/${releaseBranch}`,
+        sha: lib_github.context.sha
+    });
+    lib_core.debug(`Created Branch: ${JSON.stringify(branch, null, 2)}`);
+}
+/**
+ * Recreate a release branch for the project and commit the next version.
+ * @param octokit
+ * @param project
+ */
+async function recreateReleaseBranch(octokit, project) {
+    const releaseBranch = getReleaseBranchName(project);
+    lib_core.info(`Recreating existing branch: ${releaseBranch}`);
+    const branch = await octokit.rest.git.updateRef({
+        owner: lib_github.context.repo.owner,
+        repo: lib_github.context.repo.repo,
+        ref: `heads/${releaseBranch}`,
+        sha: lib_github.context.sha,
+        force: true
+    });
+    lib_core.debug(`Recreated Branch: ${JSON.stringify(branch, null, 2)}`);
+}
+/**
+ * Find the PR for the release branch.
+ * @param octokit
+ * @param project
+ */
+async function findPullRequest(octokit, project) {
+    const releaseBranch = getReleaseBranchName(project);
+    const pulls = await octokit.rest.pulls.list({
+        owner: lib_github.context.repo.owner,
+        repo: lib_github.context.repo.repo,
+        head: `${lib_github.context.repo.owner}:${releaseBranch}`,
+        state: 'open'
+    });
+    lib_core.debug(`Pulls: ${JSON.stringify(pulls, null, 2)}`);
+    for (const pull of pulls.data) {
+        if (pull.labels.find(label => label.name === 'release')) {
+            lib_core.info(`Found existing PR for branch: ${releaseBranch}`);
+            return pull;
+        }
+    }
+    return undefined;
+}
+/**
+ * Create a draft PR for the release branch.
+ * @param octokit
+ * @param project
+ */
+async function createPullRequest(octokit, project) {
+    const releaseBranch = getReleaseBranchName(project);
+    const branch = lib_github.context.ref.substring('refs/heads/'.length);
+    lib_core.info(`Creating new PR for branch: ${releaseBranch}`);
+    const nextVersion = await getNextVersion(octokit, project, 'patch');
+    const pull = await octokit.rest.pulls.create({
+        owner: lib_github.context.repo.owner,
+        repo: lib_github.context.repo.repo,
+        title: getPullRequestTitle(project, nextVersion),
+        body: getPullRequestBody(project, nextVersion),
+        head: releaseBranch,
+        base: branch,
+        draft: true
+    });
+    lib_core.debug(`Created Pull: ${JSON.stringify(pull, null, 2)}`);
+    const label = await octokit.rest.issues.addLabels({
+        owner: lib_github.context.repo.owner,
+        repo: lib_github.context.repo.repo,
+        issue_number: pull.data.number,
+        labels: ['release', project]
+    });
+    lib_core.debug(`Added Label: ${JSON.stringify(label, null, 2)}`);
+    return pull.data;
+}
+/**
+ * Update the PR for the release branch.
+ * @param octokit
+ * @param pull_number
+ * @param project
+ * @param nextVersion
+ * @param rebasing
+ */
+async function updatePullRequest(octokit, pull_number, project, nextVersion, rebasing = false) {
+    const releaseBranch = getReleaseBranchName(project);
+    const branch = lib_github.context.ref.substring('refs/heads/'.length);
+    lib_core.info(`Updating existing PR for branch: ${releaseBranch}`);
+    const pull = await octokit.rest.pulls.update({
+        owner: lib_github.context.repo.owner,
+        repo: lib_github.context.repo.repo,
+        pull_number: pull_number,
+        title: getPullRequestTitle(project, nextVersion),
+        body: getPullRequestBody(project, nextVersion, rebasing),
+        head: releaseBranch,
+        base: branch,
+        draft: true
+    });
+    lib_core.debug(`Updated Pull: ${JSON.stringify(pull, null, 2)}`);
+    const label = await octokit.rest.issues.addLabels({
+        owner: lib_github.context.repo.owner,
+        repo: lib_github.context.repo.repo,
+        issue_number: pull_number,
+        labels: ['release', project]
+    });
+    lib_core.debug(`Added Label: ${JSON.stringify(label, null, 2)}`);
+}
+/**
+ * List all tags for the project.
+ * @param octokit
+ * @param project
+ */
+async function listTags(octokit, project) {
+    const tags = await octokit.rest.git.listMatchingRefs({
+        owner: lib_github.context.repo.owner,
+        repo: lib_github.context.repo.repo,
+        ref: `tags/${project}`
+    });
+    return tags.data;
+}
+/**
+ * Add a reaction to a comment.
+ * @param octokit
+ * @param comment_number
+ * @param reaction
+ */
+async function addReaction(octokit, comment_number, reaction) {
+    const response = await octokit.rest.reactions.createForIssueComment({
+        owner: lib_github.context.repo.owner,
+        repo: lib_github.context.repo.repo,
+        comment_id: comment_number,
+        content: reaction
+    });
+    lib_core.debug(`Added Reaction: ${JSON.stringify(response, null, 2)}`);
+}
+/**
+ * Add or update a comment on a PR.
+ * @param octokit
+ * @param pull_number
+ * @param body
+ */
+async function addOrUpdateComment(octokit, pull_number, body) {
+    const comments = await listComments(octokit, pull_number);
+    if (comments.length > 0) {
+        const lastComment = comments[comments.length - 1];
+        if (lastComment.body === body) {
+            return await updateComment(octokit, lastComment.id, body);
+        }
+        else {
+            return await createComment(octokit, pull_number, body);
+        }
+    }
+    else {
+        return await createComment(octokit, pull_number, body);
+    }
+}
+/**
+ * List all comments on a PR.
+ * @param octokit
+ * @param pull_number
+ */
+async function listComments(octokit, pull_number) {
+    const comments = await octokit.rest.issues.listComments({
+        owner: lib_github.context.repo.owner,
+        repo: lib_github.context.repo.repo,
+        issue_number: pull_number
+    });
+    lib_core.debug(`List Comments: ${JSON.stringify(comments, null, 2)}`);
+    return comments.data;
+}
+/**
+ * Add a comment to a PR.
+ * @param octokit
+ * @param pull_number
+ * @param body
+ */
+async function createComment(octokit, pull_number, body) {
+    const response = await octokit.rest.issues.createComment({
+        owner: lib_github.context.repo.owner,
+        repo: lib_github.context.repo.repo,
+        issue_number: pull_number,
+        body: body
+    });
+    lib_core.debug(`Added Comment: ${JSON.stringify(response, null, 2)}`);
+    return response.data;
+}
+/**
+ * Update a comment on a PR.
+ * @param octokit
+ * @param comment_id
+ * @param body
+ */
+async function updateComment(octokit, comment_id, body) {
+    const response = await octokit.rest.issues.updateComment({
+        owner: lib_github.context.repo.owner,
+        repo: lib_github.context.repo.repo,
+        comment_id: comment_id,
+        body: body
+    });
+    lib_core.debug(`Updated Comment: ${JSON.stringify(response, null, 2)}`);
+    return response.data;
+}
+/**
+ * Delete a comment on a PR.
+ * @param octokit
+ * @param comment_id
+ */
+async function deleteComment(octokit, comment_id) {
+    const response = await octokit.rest.issues.deleteComment({
+        owner: github.context.repo.owner,
+        repo: github.context.repo.repo,
+        comment_id: comment_id
+    });
+    core.debug(`Deleted Comment: ${JSON.stringify(response, null, 2)}`);
+}
+
+;// CONCATENATED MODULE: ./src/main.ts
+
+
+
+
+
+
+
+
+var Events;
+(function (Events) {
+    Events["Push"] = "push";
+    Events["IssueComment"] = "issue_comment";
+})(Events || (Events = {}));
+const DAYS_OLD = 30;
+const main_projects = (/* unused pure expression or super */ null && (['core', 'grid']));
+/**
+ * Get the number of days between two dates.
+ * @param d1
+ * @param d2
+ */
+function daysBetween(d1, d2) {
+    const diff = Math.abs(d1.getTime() - d2.getTime());
+    return diff / (1000 * 60 * 60 * 24);
+}
+/**
+ * The main function for the action.
+ * @returns {Promise<void>} Resolves when the action is complete.
+ */
+async function run() {
+    try {
+        const token = lib_core.getInput('token');
+        const octokit = lib_github.getOctokit(token);
+        const { repository } = await graphql2(`
+        {
+          repository(owner: "octokit", name: "graphql.js") {
+            issues(last: 3) {
+              edges {
+                node {
+                  title
+                }
+              }
+            }
+          }
+        }
+      `, {
+            headers: {
+                authorization: `token secret123`
+            }
+        });
+        lib_core.info(`Repository: ${JSON.stringify(repository, null, 2)}`);
+        lib_core.debug(`Github Context: ${JSON.stringify(lib_github.context, null, 2)}`);
+        /**
+         * Handle commits being pushed to the branch we are monitoring
+         */
+        if (lib_github.context.eventName === Events.Push) {
+            await pushEvent(octokit);
+        }
+        /**
+         * Handle PRs being commented on
+         */
+        if (lib_github.context.eventName === Events.IssueComment) {
+            await issueCommentEvent(octokit);
+        }
+    }
+    catch (error) {
+        // Fail the workflow run if an error occurs
+        if (error instanceof Error)
+            lib_core.setFailed(error.message);
+    }
+}
+/**
+ * Handles the push event.
+ * @param octokit
+ */
+async function pushEvent(octokit) {
+    const pushPayload = lib_github.context.payload;
+    lib_core.startGroup('Files Changed in Push');
+    const files = await listPushCommitFiles(octokit, pushPayload);
+    files.forEach(file => lib_core.info(file));
+    lib_core.endGroup();
+    lib_core.startGroup('Projects of Relevance:');
+    const projectsOfRelevance = await listProjectsOfRelevance(files);
+    projectsOfRelevance.forEach(projectOfRelevance => lib_core.info(projectOfRelevance));
+    lib_core.endGroup();
+    for (const project of projectsOfRelevance) {
+        lib_core.startGroup('Checking for Branch');
+        const nextVersion = await getNextVersion(octokit, project, 'patch');
+        const releaseBranch = `releasebot-${project}`;
+        const releaseBranchPR = await findPullRequest(octokit, project);
+        const releaseBranchExists = await github_helper_releaseBranchExists(octokit, project);
+        if (!releaseBranchExists) {
+            await createReleaseBranch(octokit, project);
+            await setVersion(octokit, project, releaseBranch, nextVersion);
+        }
+        else {
+            if (releaseBranchPR) {
+                const daysOld = daysBetween(new Date(releaseBranchPR.created_at), new Date());
+                if (daysOld <= DAYS_OLD) {
+                    lib_core.info('Release branch already exists. Rebasing...');
+                    try {
+                        // Update PR to indicate rebasing
+                        await updatePullRequest(octokit, releaseBranchPR.number, project, nextVersion, true);
+                        try {
+                            const token = lib_core.getInput('token');
+                            await init(token);
+                            await clone();
+                            await fetchBranch(releaseBranch);
+                            await switchBranch(releaseBranch);
+                            await fetchUnshallow();
+                            await rebaseBranch('origin/main');
+                            await push(releaseBranch, true);
+                        }
+                        catch (error) {
+                            await addOrUpdateComment(octokit, releaseBranchPR.number, caution('Failed to rebase the branch. Please either manually rebase it or use the `recreate` command.'));
+                            if (error instanceof Error)
+                                lib_core.setFailed(error.message);
+                        }
+                    }
+                    finally {
+                        // Update PR to indicate rebasing is complete
+                        await updatePullRequest(octokit, releaseBranchPR.number, project, nextVersion);
+                    }
+                }
+                else {
+                    await addOrUpdateComment(octokit, releaseBranchPR.number, note(`Branch is now older than the ${DAYS_OLD} day limit. Please manually \`recreate\` and merge it when ready.`));
+                    lib_core.warning(`Release branch is ${daysOld} days old. Ignoring...`);
+                }
+            }
+        }
+        lib_core.endGroup();
+        if (!releaseBranchPR) {
+            lib_core.startGroup('Checking for Pull Request');
+            await createPullRequest(octokit, project);
+            lib_core.endGroup();
+        }
+    }
+}
+/**
+ * Handles the issue comment event.
+ * @param octokit
+ */
+async function issueCommentEvent(octokit) {
+    const commentPayload = lib_github.context.payload;
+    const project = extractProjectNameFromPR(commentPayload.issue.body);
+    if (project) {
+        lib_core.info(`Issue comment found for: ${project}`);
+        if (commentPayload.comment.body.startsWith(Commands.SetVersion)) {
+            await issueCommentEventSetVersion(octokit, project, commentPayload);
+        }
+        if (commentPayload.comment.body.startsWith(Commands.Rebase)) {
+            await issueCommentEventRebase(octokit, project, commentPayload);
+        }
+        if (commentPayload.comment.body.startsWith(Commands.Recreate)) {
+            await issueCommentEventRecreate(octokit, project, commentPayload);
+        }
+    }
+    else {
+        lib_core.warning('No issue for comment found');
+    }
+}
+/**
+ * Handles the issue comment event for setting the version.
+ * @param octokit
+ * @param project
+ * @param comment
+ */
+async function issueCommentEventSetVersion(octokit, project, comment) {
+    const versionType = comment.comment.body.split(' ')[2];
+    lib_core.debug(`Version Type: ${versionType}`);
+    if (isValidSemverVersionType(versionType)) {
+        const version = await getNextVersion(octokit, 'core', versionType);
+        const releaseBranch = `releasebot-${project}`;
+        lib_core.startGroup('Setting new version');
+        await addReaction(octokit, comment.comment.id, '+1');
+        await setVersion(octokit, project, releaseBranch, version);
+        await updatePullRequest(octokit, comment.issue.number, project, version);
+        lib_core.endGroup();
+    }
+    else {
+        lib_core.setFailed(`Invalid version type: ${versionType}`);
+    }
+}
+/**
+ * Handles the issue comment event for rebasing the branch.
+ * @param octokit
+ * @param project
+ * @param comment
+ */
+async function issueCommentEventRebase(octokit, project, comment) {
+    lib_core.startGroup('Rebasing');
+    const version = await getNextVersion(octokit, project, 'patch');
+    const releaseBranch = `releasebot-${project}`;
+    await addReaction(octokit, comment.comment.id, '+1');
+    await updatePullRequest(octokit, comment.issue.number, project, version, true);
+    try {
+        const token = lib_core.getInput('token');
+        await init(token);
+        await clone();
+        await fetchBranch(releaseBranch);
+        await switchBranch(releaseBranch);
+        await fetchUnshallow();
+        await rebaseBranch('origin/main');
+        await push(releaseBranch, true);
+        await updatePullRequest(octokit, comment.issue.number, project, version);
+    }
+    catch (error) {
+        await createComment(octokit, comment.issue.number, caution('Failed to rebase the branch. Please either manually rebase it or use the `recreate` command.'));
+        if (error instanceof Error)
+            lib_core.setFailed(error.message);
+    }
+    lib_core.endGroup();
+}
+/**
+ * Handles the issue comment event for recreating the branch.
+ * @param octokit
+ * @param project
+ * @param comment
+ */
+async function issueCommentEventRecreate(octokit, project, comment) {
+    lib_core.startGroup('Recreating Branch');
+    const version = await getNextVersion(octokit, project, 'patch');
+    await addReaction(octokit, comment.comment.id, '+1');
+    await recreateReleaseBranch(octokit, project);
+    await setVersion(octokit, project, `releasebot-core`, version);
+    await updatePullRequest(octokit, comment.issue.number, project, version);
+    lib_core.endGroup();
+}
+
+;// CONCATENATED MODULE: ./src/index.ts
 /**
  * The entrypoint for the action.
  */
-const main_1 = __nccwpck_require__(399);
+
 // eslint-disable-next-line @typescript-eslint/no-floating-promises
-(0, main_1.run)();
+run();
 
 })();
 
-module.exports = __webpack_exports__;
-/******/ })()
-;
+
 //# sourceMappingURL=index.js.map

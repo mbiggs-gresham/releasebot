@@ -1,5 +1,6 @@
 import * as core from '@actions/core'
 import * as github from '@actions/github'
+import { graphql, type GraphQlQueryResponseData } from '@octokit/graphql'
 import { IssueCommentEvent, PushEvent } from '@octokit/webhooks-types'
 import * as git from './git-helper'
 import * as githubapi from './github-helper'
@@ -34,6 +35,28 @@ export async function run(): Promise<void> {
   try {
     const token = core.getInput('token')
     const octokit = github.getOctokit(token)
+
+    const { repository }: GraphQlQueryResponseData = await graphql(
+      `
+        {
+          repository(owner: "octokit", name: "graphql.js") {
+            issues(last: 3) {
+              edges {
+                node {
+                  title
+                }
+              }
+            }
+          }
+        }
+      `,
+      {
+        headers: {
+          authorization: `token secret123`
+        }
+      }
+    )
+    core.info(`Repository: ${JSON.stringify(repository, null, 2)}`)
 
     core.debug(`Github Context: ${JSON.stringify(github.context, null, 2)}`)
 
