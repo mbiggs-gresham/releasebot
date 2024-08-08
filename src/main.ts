@@ -67,7 +67,7 @@ export async function run(): Promise<void> {
     const pullRequestId = await octokit.graphql(findPullRequestIdQuery(), {
       owner: github.context.repo.owner,
       repo: github.context.repo.repo,
-      pullNumber: '5'
+      pullNumber: 5
     })
     core.info(`Pull Request ID: ${JSON.stringify(pullRequestId, null, 2)}`)
 
