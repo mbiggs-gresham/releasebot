@@ -1,14 +1,12 @@
 import * as core from '@actions/core'
 import * as github from '@actions/github'
 import { App, Octokit } from 'octokit'
-import { graphql, type GraphQlQueryResponseData } from '@octokit/graphql'
-import { createAppAuth } from '@octokit/auth-app'
+import { type GraphQlQueryResponseData } from '@octokit/graphql'
 import { IssueCommentEvent, PushEvent } from '@octokit/webhooks-types'
 import * as git from './git-helper'
 import * as githubapi from './github-helper'
 import * as versions from './version-helper'
 import { Commands, getNextVersion, setVersion, Version } from './github-helper'
-import { GitHub } from '@actions/github/lib/utils'
 import { note, caution } from './markdown'
 
 enum Events {
@@ -74,34 +72,6 @@ export async function run(): Promise<void> {
 
     const octokit: Octokit = await app.getInstallationOctokit(installation.id)
 
-    // const auth = createAppAuth({
-    //   appId,
-    //   privateKey
-    // })
-    //
-    // const { token: jwt } = await auth({ type: 'app' })
-    // core.info('JWT: ' + jwt)
-    // // const token = core.getInput('token')
-    // const octokitAuth = github.getOctokit(jwt)
-    //
-    // const install = await octokitAuth.rest.apps.getRepoInstallation({
-    //   ...github.context.repo
-    // })
-    // core.info(`Installation: ${JSON.stringify(install, null, 2)}`)
-    //
-    // const app = new App({
-    //   appId,
-    //   privateKey
-    // });
-    //
-    // const octokit = await app.getInstallationOctokit(install.data.id);
-
-    // const { token } = await auth({
-    //   type: 'installation',
-    //   installationId: install.data.id
-    // })
-    // core.info('Token: ' + token)
-
     const pullRequestId: GraphQlQueryResponseData = await octokit.graphql(findPullRequestIdQuery(), {
       owner: github.context.repo.owner,
       repo: github.context.repo.repo,
@@ -110,10 +80,10 @@ export async function run(): Promise<void> {
     core.info(`Pull Request ID: ${JSON.stringify(pullRequestId, null, 2)}`)
     core.info(`Pull Request ID: ${pullRequestId.repository.pullRequest.id}`)
 
-    const comment: GraphQlQueryResponseData = await octokit.graphql(addPullRequestCommentMutation(), {
-      subjectId: pullRequestId.repository.pullRequest.id,
-      body: 'Hello, World!'
-    })
+    // const comment: GraphQlQueryResponseData = await octokit.graphql(addPullRequestCommentMutation(), {
+    //   subjectId: pullRequestId.repository.pullRequest.id,
+    //   body: 'Hello, World!'
+    // })
 
     // const { repository }: GraphQlQueryResponseData = await graphql(
     //   `
