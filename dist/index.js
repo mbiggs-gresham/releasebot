@@ -53207,7 +53207,7 @@ function extractProjectNameFromPR(text) {
  * @param project
  */
 function getReleaseBranchName(project) {
-    return `releasebot-${project}`;
+    return `krytenbot-${project}`;
 }
 /**
  * Get the title for the PR.
