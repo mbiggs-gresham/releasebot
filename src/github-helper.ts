@@ -59,7 +59,7 @@ export function extractProjectNameFromPR(text: string): string | null {
  * @param project
  */
 export function getReleaseBranchName(project: string): string {
-  return `releasebot-${project}`
+  return `krytenbot-${project}`
 }
 
 /**
