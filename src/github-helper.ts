@@ -88,7 +88,7 @@ function getPullRequestBody(project: string, nextVersion: string, rebasing: bool
   const body: string[] = []
 
   if (rebasing) {
-    body.push(`${hidden('releasebot-start')}\n${important('Releasebot is rebasing this PR')}\n${hidden('releasebot-end')}\n`)
+    body.push(`${hidden('releasebot-start')}\n${important('Releasebot is rebasing this PR')}\n\n${hidden('releasebot-end')}\n`)
   }
 
   body.push(`
