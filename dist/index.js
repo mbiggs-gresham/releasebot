@@ -34008,7 +34008,9 @@ async function run() {
         /**
          * Handle PRs being commented on
          */
+        core.info('Event Name: ' + github.context.eventName + (github.context.eventName === Events.IssueComment));
         if (github.context.eventName === Events.IssueComment) {
+            core.info('Issue Comment Event Found');
             await issueCommentEvent(octokit);
         }
     }
