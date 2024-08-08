@@ -1,5 +1,6 @@
 import * as core from '@actions/core'
 import * as github from '@actions/github'
+import { App, Octokit } from 'octokit'
 import { graphql, type GraphQlQueryResponseData } from '@octokit/graphql'
 import { createAppAuth } from '@octokit/auth-app'
 import { IssueCommentEvent, PushEvent } from '@octokit/webhooks-types'
@@ -65,26 +66,41 @@ export async function run(): Promise<void> {
     const appId = core.getInput('app_id')
     const privateKey = core.getInput('private_key')
 
-    const auth = createAppAuth({
-      appId,
-      privateKey
+    const app: App = new App({ appId, privateKey })
+    const { data: installation } = await app.octokit.rest.apps.getRepoInstallation({
+      owner: github.context.repo.owner,
+      repo: github.context.repo.repo
     })
 
-    const { token: jwt } = await auth({ type: 'app' })
-    core.info('JWT: ' + jwt)
-    // const token = core.getInput('token')
-    const octokit = github.getOctokit(jwt)
+    const octokit: Octokit = await app.getInstallationOctokit(installation.id)
 
-    const install = await octokit.rest.apps.getRepoInstallation({
-      ...github.context.repo
-    })
-    core.info(`Installation: ${JSON.stringify(install, null, 2)}`)
+    // const auth = createAppAuth({
+    //   appId,
+    //   privateKey
+    // })
+    //
+    // const { token: jwt } = await auth({ type: 'app' })
+    // core.info('JWT: ' + jwt)
+    // // const token = core.getInput('token')
+    // const octokitAuth = github.getOctokit(jwt)
+    //
+    // const install = await octokitAuth.rest.apps.getRepoInstallation({
+    //   ...github.context.repo
+    // })
+    // core.info(`Installation: ${JSON.stringify(install, null, 2)}`)
+    //
+    // const app = new App({
+    //   appId,
+    //   privateKey
+    // });
+    //
+    // const octokit = await app.getInstallationOctokit(install.data.id);
 
-    const { token } = await auth({
-      type: 'installation',
-      installationId: install.data.id
-    })
-    core.info('Token: ' + token)
+    // const { token } = await auth({
+    //   type: 'installation',
+    //   installationId: install.data.id
+    // })
+    // core.info('Token: ' + token)
 
     const pullRequestId: GraphQlQueryResponseData = await octokit.graphql(findPullRequestIdQuery(), {
       owner: github.context.repo.owner,
@@ -146,7 +162,7 @@ export async function run(): Promise<void> {
  * Handles the push event.
  * @param octokit
  */
-async function pushEvent(octokit: InstanceType<typeof GitHub>): Promise<void> {
+async function pushEvent(octokit: Octokit): Promise<void> {
   const pushPayload = github.context.payload as PushEvent
 
   core.startGroup('Files Changed in Push')
@@ -213,7 +229,7 @@ async function pushEvent(octokit: InstanceType<typeof GitHub>): Promise<void> {
  * Handles the issue comment event.
  * @param octokit
  */
-async function issueCommentEvent(octokit: InstanceType<typeof GitHub>): Promise<void> {
+async function issueCommentEvent(octokit: Octokit): Promise<void> {
   const commentPayload = github.context.payload as IssueCommentEvent
 
   const project = githubapi.extractProjectNameFromPR(commentPayload.issue.body!)
@@ -241,7 +257,7 @@ async function issueCommentEvent(octokit: InstanceType<typeof GitHub>): Promise<
  * @param project
  * @param comment
  */
-async function issueCommentEventSetVersion(octokit: InstanceType<typeof GitHub>, project: string, comment: IssueCommentEvent): Promise<void> {
+async function issueCommentEventSetVersion(octokit: Octokit, project: string, comment: IssueCommentEvent): Promise<void> {
   const versionType = comment.comment.body.split(' ')[2]
   core.debug(`Version Type: ${versionType}`)
   if (versions.isValidSemverVersionType(versionType)) {
@@ -264,7 +280,7 @@ async function issueCommentEventSetVersion(octokit: InstanceType<typeof GitHub>,
  * @param project
  * @param comment
  */
-async function issueCommentEventRebase(octokit: InstanceType<typeof GitHub>, project: string, comment: IssueCommentEvent): Promise<void> {
+async function issueCommentEventRebase(octokit: Octokit, project: string, comment: IssueCommentEvent): Promise<void> {
   core.startGroup('Rebasing')
   const version = await getNextVersion(octokit, project, 'patch')
   const releaseBranch = `releasebot-${project}`
@@ -296,7 +312,7 @@ async function issueCommentEventRebase(octokit: InstanceType<typeof GitHub>, pro
  * @param project
  * @param comment
  */
-async function issueCommentEventRecreate(octokit: InstanceType<typeof GitHub>, project: string, comment: IssueCommentEvent): Promise<void> {
+async function issueCommentEventRecreate(octokit: Octokit, project: string, comment: IssueCommentEvent): Promise<void> {
   core.startGroup('Recreating Branch')
   const version = await getNextVersion(octokit, project, 'patch')
   await githubapi.addReaction(octokit, comment.comment.id, '+1')

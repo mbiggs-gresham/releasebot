@@ -1,8 +1,8 @@
 import * as core from '@actions/core'
 import * as github from '@actions/github'
+import { Octokit } from 'octokit'
 import { Endpoints } from '@octokit/types'
 import { PushEvent } from '@octokit/webhooks-types'
-import { GitHub } from '@actions/github/lib/utils'
 import { minimatch } from 'minimatch'
 import * as semver from 'semver'
 import * as versions from './version-helper'
@@ -124,7 +124,7 @@ You can trigger Krytenbot actions by commenting on this PR:
  * @param octokit
  * @param payload
  */
-export async function listPushCommitFiles(octokit: InstanceType<typeof GitHub>, payload: PushEvent): Promise<string[]> {
+export async function listPushCommitFiles(octokit: Octokit, payload: PushEvent): Promise<string[]> {
   const files = new Set<string>()
 
   // If the push event has a list of commits, use that to get the list of files, otherwise
@@ -172,7 +172,7 @@ export async function listProjectsOfRelevance(files: string[]): Promise<string[]
  * @param project
  * @param versionType
  */
-export async function getNextVersion(octokit: InstanceType<typeof GitHub>, project: string, versionType: Version): Promise<string> {
+export async function getNextVersion(octokit: Octokit, project: string, versionType: Version): Promise<string> {
   // Check if there is an existing tag for the project
   const tags = await listTags(octokit, project)
   if (tags.length > 0) {
@@ -218,7 +218,7 @@ export async function getNextVersion(octokit: InstanceType<typeof GitHub>, proje
  * @param branch
  * @param version
  */
-export async function setVersion(octokit: InstanceType<typeof GitHub>, project: string, branch: string, version: string): Promise<void> {
+export async function setVersion(octokit: Octokit, project: string, branch: string, version: string): Promise<void> {
   core.info(`Updating ${project} version to ${version}`)
   const { data: existingFile }: GetContentResponse = await octokit.rest.repos.getContent({
     owner: github.context.repo.owner,
@@ -261,7 +261,7 @@ export async function setVersion(octokit: InstanceType<typeof GitHub>, project: 
  * @param octokit
  * @param project
  */
-export async function releaseBranchExists(octokit: InstanceType<typeof GitHub>, project: string): Promise<boolean> {
+export async function releaseBranchExists(octokit: Octokit, project: string): Promise<boolean> {
   const releaseBranch: string = getReleaseBranchName(project)
   const branches: ListBranchesResponse = await octokit.rest.repos.listBranches({
     owner: github.context.repo.owner,
@@ -275,7 +275,7 @@ export async function releaseBranchExists(octokit: InstanceType<typeof GitHub>, 
  * @param octokit
  * @param project
  */
-export async function createReleaseBranch(octokit: InstanceType<typeof GitHub>, project: string): Promise<void> {
+export async function createReleaseBranch(octokit: Octokit, project: string): Promise<void> {
   const releaseBranch: string = getReleaseBranchName(project)
 
   core.info(`Creating new branch: ${releaseBranch}`)
@@ -293,7 +293,7 @@ export async function createReleaseBranch(octokit: InstanceType<typeof GitHub>, 
  * @param octokit
  * @param project
  */
-export async function recreateReleaseBranch(octokit: InstanceType<typeof GitHub>, project: string): Promise<void> {
+export async function recreateReleaseBranch(octokit: Octokit, project: string): Promise<void> {
   const releaseBranch: string = getReleaseBranchName(project)
 
   core.info(`Recreating existing branch: ${releaseBranch}`)
@@ -312,7 +312,7 @@ export async function recreateReleaseBranch(octokit: InstanceType<typeof GitHub>
  * @param octokit
  * @param project
  */
-export async function findPullRequest(octokit: InstanceType<typeof GitHub>, project: string): Promise<PullRequest | undefined> {
+export async function findPullRequest(octokit: Octokit, project: string): Promise<PullRequest | undefined> {
   const releaseBranch: string = getReleaseBranchName(project)
 
   const pulls: ListPullRequestsResponse = await octokit.rest.pulls.list({
@@ -338,7 +338,7 @@ export async function findPullRequest(octokit: InstanceType<typeof GitHub>, proj
  * @param octokit
  * @param project
  */
-export async function createPullRequest(octokit: InstanceType<typeof GitHub>, project: string): Promise<CreatedPullRequest> {
+export async function createPullRequest(octokit: Octokit, project: string): Promise<CreatedPullRequest> {
   const releaseBranch: string = getReleaseBranchName(project)
   const branch = github.context.ref.substring('refs/heads/'.length)
 
@@ -374,7 +374,7 @@ export async function createPullRequest(octokit: InstanceType<typeof GitHub>, pr
  * @param nextVersion
  * @param rebasing
  */
-export async function updatePullRequest(octokit: InstanceType<typeof GitHub>, pull_number: number, project: string, nextVersion: string, rebasing: boolean = false): Promise<void> {
+export async function updatePullRequest(octokit: Octokit, pull_number: number, project: string, nextVersion: string, rebasing: boolean = false): Promise<void> {
   const releaseBranch: string = getReleaseBranchName(project)
   const branch = github.context.ref.substring('refs/heads/'.length)
 
@@ -405,7 +405,7 @@ export async function updatePullRequest(octokit: InstanceType<typeof GitHub>, pu
  * @param octokit
  * @param project
  */
-export async function listTags(octokit: InstanceType<typeof GitHub>, project: string): Promise<Tag[]> {
+export async function listTags(octokit: Octokit, project: string): Promise<Tag[]> {
   const tags: ListTagsResponse = await octokit.rest.git.listMatchingRefs({
     owner: github.context.repo.owner,
     repo: github.context.repo.repo,
@@ -420,7 +420,7 @@ export async function listTags(octokit: InstanceType<typeof GitHub>, project: st
  * @param comment_number
  * @param reaction
  */
-export async function addReaction(octokit: InstanceType<typeof GitHub>, comment_number: number, reaction: Reaction): Promise<void> {
+export async function addReaction(octokit: Octokit, comment_number: number, reaction: Reaction): Promise<void> {
   const response: CreateReactionResponse = await octokit.rest.reactions.createForIssueComment({
     owner: github.context.repo.owner,
     repo: github.context.repo.repo,
@@ -436,7 +436,7 @@ export async function addReaction(octokit: InstanceType<typeof GitHub>, comment_
  * @param pull_number
  * @param body
  */
-export async function addOrUpdateComment(octokit: InstanceType<typeof GitHub>, pull_number: number, body: string): Promise<Comment> {
+export async function addOrUpdateComment(octokit: Octokit, pull_number: number, body: string): Promise<Comment> {
   const comments: Comment[] = await listComments(octokit, pull_number)
   if (comments.length > 0) {
     const lastComment = comments[comments.length - 1]
@@ -455,7 +455,7 @@ export async function addOrUpdateComment(octokit: InstanceType<typeof GitHub>, p
  * @param octokit
  * @param pull_number
  */
-export async function listComments(octokit: InstanceType<typeof GitHub>, pull_number: number): Promise<Comment[]> {
+export async function listComments(octokit: Octokit, pull_number: number): Promise<Comment[]> {
   const comments: ListCommentsResponse = await octokit.rest.issues.listComments({
     owner: github.context.repo.owner,
     repo: github.context.repo.repo,
@@ -471,7 +471,7 @@ export async function listComments(octokit: InstanceType<typeof GitHub>, pull_nu
  * @param pull_number
  * @param body
  */
-export async function createComment(octokit: InstanceType<typeof GitHub>, pull_number: number, body: string): Promise<Comment> {
+export async function createComment(octokit: Octokit, pull_number: number, body: string): Promise<Comment> {
   const response: CreateCommentResponse = await octokit.rest.issues.createComment({
     owner: github.context.repo.owner,
     repo: github.context.repo.repo,
@@ -488,7 +488,7 @@ export async function createComment(octokit: InstanceType<typeof GitHub>, pull_n
  * @param comment_id
  * @param body
  */
-export async function updateComment(octokit: InstanceType<typeof GitHub>, comment_id: number, body: string): Promise<Comment> {
+export async function updateComment(octokit: Octokit, comment_id: number, body: string): Promise<Comment> {
   const response: UpdateCommentResponse = await octokit.rest.issues.updateComment({
     owner: github.context.repo.owner,
     repo: github.context.repo.repo,
@@ -504,7 +504,7 @@ export async function updateComment(octokit: InstanceType<typeof GitHub>, commen
  * @param octokit
  * @param comment_id
  */
-export async function deleteComment(octokit: InstanceType<typeof GitHub>, comment_id: number): Promise<void> {
+export async function deleteComment(octokit: Octokit, comment_id: number): Promise<void> {
   const response: DeleteCommentResponse = await octokit.rest.issues.deleteComment({
     owner: github.context.repo.owner,
     repo: github.context.repo.repo,
