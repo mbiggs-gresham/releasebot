@@ -52,7 +52,7 @@ export async function run(): Promise<void> {
       `,
       {
         headers: {
-          authorization: `token secret123`
+          authorization: `token ${token}`
         }
       }
     )

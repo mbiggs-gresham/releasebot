@@ -38188,7 +38188,7 @@ async function run() {
         }
       `, {
             headers: {
-                authorization: `token secret123`
+                authorization: `token ${token}`
             }
         });
         lib_core.info(`Repository: ${JSON.stringify(repository, null, 2)}`);
