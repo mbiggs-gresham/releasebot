@@ -132,7 +132,7 @@ async function issueCommentEvent(octokit: InstanceType<typeof GitHub>): Promise<
 
   const project = githubapi.extractProjectNameFromPR(commentPayload.issue.body!)
   if (project) {
-    core.info('Issue Comment Found')
+    core.info(`Issue comment found for: ${project}`)
     if (commentPayload.comment.body.startsWith(Commands.SetVersion)) {
       await issueCommentEventSetVersion(octokit, project, commentPayload)
     }
