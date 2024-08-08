@@ -27,6 +27,34 @@ function daysBetween(d1: Date, d2: Date) {
   return diff / (1000 * 60 * 60 * 24)
 }
 
+function addPullRequestCommentMutation(): string {
+  return `
+    mutation AddPullRequestComment($subjectId: ID!, $body: String!) {
+        addComment(input:{subjectId:$subjectId, body: $body}) {
+            commentEdge {
+                node {
+                    createdAt
+                    body
+                }
+            }
+            subject {
+                id
+            }
+        }
+    }`
+}
+
+function findPullRequestIdQuery(): string {
+  return `
+    query FindPullRequestID ($owner: String!, $repo: String!, $pullNumber: Int!){
+        repository(owner:$owner, name:$repo) {
+            pullRequest(number:$pullNumber) {
+                id
+            }
+        }
+    }`
+}
+
 /**
  * The main function for the action.
  * @returns {Promise<void>} Resolves when the action is complete.
@@ -36,27 +64,34 @@ export async function run(): Promise<void> {
     const token = core.getInput('token')
     const octokit = github.getOctokit(token)
 
-    const { repository }: GraphQlQueryResponseData = await graphql(
-      `
-        {
-          repository(owner: "octokit", name: "graphql.js") {
-            issues(last: 3) {
-              edges {
-                node {
-                  title
-                }
-              }
-            }
-          }
-        }
-      `,
-      {
-        headers: {
-          authorization: `token ${token}`
-        }
-      }
-    )
-    core.info(`Repository: ${JSON.stringify(repository, null, 2)}`)
+    const pullRequestId = await octokit.graphql(findPullRequestIdQuery(), {
+      owner: github.context.repo.owner,
+      repo: github.context.repo.repo,
+      pullNumber: '5'
+    })
+    core.info(`Pull Request ID: ${JSON.stringify(pullRequestId, null, 2)}`)
+
+    // const { repository }: GraphQlQueryResponseData = await graphql(
+    //   `
+    //     {
+    //       repository(owner: "octokit", name: "graphql.js") {
+    //         issues(last: 3) {
+    //           edges {
+    //             node {
+    //               title
+    //             }
+    //           }
+    //         }
+    //       }
+    //     }
+    //   `,
+    //   {
+    //     headers: {
+    //       authorization: `token ${token}`
+    //     }
+    //   }
+    // )
+    // core.info(`Repository: ${JSON.stringify(repository, null, 2)}`)
 
     core.debug(`Github Context: ${JSON.stringify(github.context, null, 2)}`)
 
