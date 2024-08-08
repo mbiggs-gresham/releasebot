@@ -148,7 +148,7 @@ async function pushEvent(octokit: Octokit): Promise<void> {
   for (const project of projectsOfRelevance) {
     core.startGroup('Checking for Branch')
     const nextVersion = await getNextVersion(octokit, project, 'patch')
-    const releaseBranch = `releasebot-${project}`
+    const releaseBranch = `krytenbot-${project}`
     const releaseBranchPR = await githubapi.findPullRequest(octokit, project)
     const releaseBranchExists = await githubapi.releaseBranchExists(octokit, project)
     if (!releaseBranchExists) {
@@ -232,7 +232,7 @@ async function issueCommentEventSetVersion(octokit: Octokit, project: string, co
   core.debug(`Version Type: ${versionType}`)
   if (versions.isValidSemverVersionType(versionType)) {
     const version = await githubapi.getNextVersion(octokit, 'core', versionType as Version)
-    const releaseBranch = `releasebot-${project}`
+    const releaseBranch = `krytenbot-${project}`
 
     core.startGroup('Setting new version')
     await githubapi.addReaction(octokit, comment.comment.id, '+1')
@@ -253,7 +253,7 @@ async function issueCommentEventSetVersion(octokit: Octokit, project: string, co
 async function issueCommentEventRebase(octokit: Octokit, project: string, comment: IssueCommentEvent): Promise<void> {
   core.startGroup('Rebasing')
   const version = await getNextVersion(octokit, project, 'patch')
-  const releaseBranch = `releasebot-${project}`
+  const releaseBranch = `krytenbot-${project}`
 
   await githubapi.addReaction(octokit, comment.comment.id, '+1')
   await githubapi.updatePullRequest(octokit, comment.issue.number, project, version, true)
@@ -287,7 +287,7 @@ async function issueCommentEventRecreate(octokit: Octokit, project: string, comm
   const version = await getNextVersion(octokit, project, 'patch')
   await githubapi.addReaction(octokit, comment.comment.id, '+1')
   await githubapi.recreateReleaseBranch(octokit, project)
-  await githubapi.setVersion(octokit, project, `releasebot-core`, version)
+  await githubapi.setVersion(octokit, project, `krytenbot-core`, version)
   await githubapi.updatePullRequest(octokit, comment.issue.number, project, version)
   core.endGroup()
 }

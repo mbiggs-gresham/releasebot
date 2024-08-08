@@ -53758,7 +53758,7 @@ async function pushEvent(octokit) {
     for (const project of projectsOfRelevance) {
         lib_core.startGroup('Checking for Branch');
         const nextVersion = await getNextVersion(octokit, project, 'patch');
-        const releaseBranch = `releasebot-${project}`;
+        const releaseBranch = `krytenbot-${project}`;
         const releaseBranchPR = await findPullRequest(octokit, project);
         const releaseBranchExists = await github_helper_releaseBranchExists(octokit, project);
         if (!releaseBranchExists) {
@@ -53842,7 +53842,7 @@ async function issueCommentEventSetVersion(octokit, project, comment) {
     lib_core.debug(`Version Type: ${versionType}`);
     if (isValidSemverVersionType(versionType)) {
         const version = await getNextVersion(octokit, 'core', versionType);
-        const releaseBranch = `releasebot-${project}`;
+        const releaseBranch = `krytenbot-${project}`;
         lib_core.startGroup('Setting new version');
         await addReaction(octokit, comment.comment.id, '+1');
         await setVersion(octokit, project, releaseBranch, version);
@@ -53862,7 +53862,7 @@ async function issueCommentEventSetVersion(octokit, project, comment) {
 async function issueCommentEventRebase(octokit, project, comment) {
     lib_core.startGroup('Rebasing');
     const version = await getNextVersion(octokit, project, 'patch');
-    const releaseBranch = `releasebot-${project}`;
+    const releaseBranch = `krytenbot-${project}`;
     await addReaction(octokit, comment.comment.id, '+1');
     await updatePullRequest(octokit, comment.issue.number, project, version, true);
     try {
@@ -53894,7 +53894,7 @@ async function issueCommentEventRecreate(octokit, project, comment) {
     const version = await getNextVersion(octokit, project, 'patch');
     await addReaction(octokit, comment.comment.id, '+1');
     await recreateReleaseBranch(octokit, project);
-    await setVersion(octokit, project, `releasebot-core`, version);
+    await setVersion(octokit, project, `krytenbot-core`, version);
     await updatePullRequest(octokit, comment.issue.number, project, version);
     lib_core.endGroup();
 }
