@@ -1,6 +1,7 @@
 import * as core from '@actions/core'
 import * as github from '@actions/github'
 import { graphql, type GraphQlQueryResponseData } from '@octokit/graphql'
+import { createAppAuth } from '@octokit/auth-app'
 import { IssueCommentEvent, PushEvent } from '@octokit/webhooks-types'
 import * as git from './git-helper'
 import * as githubapi from './github-helper'
@@ -61,7 +62,17 @@ function findPullRequestIdQuery(): string {
  */
 export async function run(): Promise<void> {
   try {
-    const token = core.getInput('token')
+    const appId = core.getInput('app_id')
+    const privateKey = core.getInput('private_key')
+
+    const auth = createAppAuth({
+      appId,
+      privateKey
+    })
+
+    const { token } = await auth({ type: 'app' })
+
+    // const token = core.getInput('token')
     const octokit = github.getOctokit(token)
 
     const pullRequestId: GraphQlQueryResponseData = await octokit.graphql(findPullRequestIdQuery(), {
