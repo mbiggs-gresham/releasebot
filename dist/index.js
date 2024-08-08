@@ -33548,6 +33548,7 @@ function getDefaultNextVersion() {
  */
 function getPullRequestBody(project, nextVersion, rebasing = false) {
     const body = [];
+    body.push((0, markdown_1.hidden)(`releasebot-project:${project}\n`));
     if (rebasing) {
         body.push(`${(0, markdown_1.hidden)('releasebot-start')}\n${(0, markdown_1.important)('Releasebot is rebasing this PR')}\n\n${(0, markdown_1.hidden)('releasebot-end')}\n`);
     }
