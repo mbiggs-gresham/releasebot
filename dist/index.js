@@ -52169,7 +52169,30 @@ async function setVersion(octokit, project, branch, version, sha) {
                 core.debug(`New File Contents: ${newFileContents}`);
                 core.endGroup();
             }
-            core.info(`Creating new commit for ${project} version update using oid ${sha}`);
+            const parameters = {
+                repositoryNameWithOwner: {
+                    repositoryNameWithOwner: `${github.context.repo.owner}/${github.context.repo.repo}`,
+                    branchName: branch
+                },
+                message: { body: `Update ${project} version to v${version}` },
+                expectedHeadOid: sha,
+                fileChanges: [
+                    {
+                        deletions: [
+                            {
+                                path: `${project}/package.json`
+                            }
+                        ],
+                        additions: [
+                            {
+                                path: `${project}/package.json`,
+                                contents: encode(newFileContents)
+                            }
+                        ]
+                    }
+                ]
+            };
+            core.info(`Creating new commit using mutation: ${JSON.stringify(parameters, null, 2)}`);
             const createCommitOnBranch = await octokit.graphql(createCommitOnBranchMutation(), {
                 repositoryNameWithOwner: {
                     repositoryNameWithOwner: `${github.context.repo.owner}/${github.context.repo.repo}`,
