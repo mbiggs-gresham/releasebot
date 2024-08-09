@@ -446,38 +446,12 @@ export async function setVersion(octokit: Octokit, project: string, branch: stri
         core.endGroup()
       }
 
-      const parameters = {
-        branch: {
-          repositoryNameWithOwner: `${github.context.repo.owner}/${github.context.repo.repo}`,
-          branchName: branch
-        },
-        message: { body: `Update ${project} version to v${version}` },
-        expectedHeadOid: sha,
-        fileChanges: [
-          {
-            deletions: [
-              {
-                path: `${project}/package.json`
-              }
-            ],
-            additions: [
-              {
-                path: `${project}/package.json`,
-                contents: base64.encode(newFileContents)
-              }
-            ]
-          }
-        ]
-      }
-
-      core.info(`Creating new commit using mutation: ${JSON.stringify(parameters, null, 2)}`)
-
       const createCommitOnBranch: GraphQlQueryResponseData = await octokit.graphql(createCommitOnBranchMutation(), {
         branch: {
           repositoryNameWithOwner: `${github.context.repo.owner}/${github.context.repo.repo}`,
           branchName: branch
         },
-        message: { body: `Update ${project} version to v${version}` },
+        message: { headline: `Update ${project} version to v${version}` },
         expectedHeadOid: sha,
         fileChanges: [
           {
