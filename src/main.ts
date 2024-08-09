@@ -138,7 +138,7 @@ async function issueCommentEvent(octokit: Octokit): Promise<void> {
     }
 
     if (comment.comment.body.startsWith(Commands.Recreate)) {
-      await issueCommentEventRecreate(octokit, project, comment)
+      await issueCommentEventRecreate(octokit, draftRelease, project, comment)
     }
   } else {
     core.warning('No project for pull request found')
@@ -195,10 +195,25 @@ async function issueCommentEventRebase(octokit: Octokit, draftRelease: Krytenbot
 /**
  * Handles the issue comment event for recreating the branch.
  * @param octokit
+ * @param draftRelease
  * @param project
  * @param comment
  */
-async function issueCommentEventRecreate(octokit: Octokit, project: string, comment: IssueCommentEvent): Promise<void> {
+async function issueCommentEventRecreate(octokit: Octokit, draftRelease: KrytenbotDraftRelease, project: string, comment: IssueCommentEvent): Promise<void> {
+  core.info(`Recreating release branch for '${project}'`)
+  try {
+    core.info(`Calculating new version for '${project}'`)
+    const nextVersion = githubapi.getNextVersion(draftRelease, 'patch')
+    core.info(`New version for '${project}': ${nextVersion}`)
+
+    await githubapi.addCommentReaction(octokit, String(comment.comment.node_id), 'THUMBS_UP')
+    await githubapi.recreateReleaseBranch(octokit, draftRelease)
+    await githubapi.updatePullRequestTitle(octokit, draftRelease, project, nextVersion)
+  } catch (error) {
+    await githubapi.addComment(octokit, comment.issue.node_id, caution('Failed to recreate the branch. Please check the logs for more details.'))
+    if (error instanceof Error) core.setFailed(error.message)
+  }
+
   // core.startGroup('Recreating Branch')
   // const version = await getNextVersion(octokit, project, 'patch')
   // await githubapi.addReaction(octokit, comment.comment.id, '+1')

@@ -7,9 +7,10 @@ import * as semver from 'semver'
 import * as versions from './version-helper'
 import * as base64 from './base64-helper'
 import { hidden, important } from './markdown'
-import { GraphQlQueryResponseData, GraphqlResponseError } from '@octokit/graphql'
+import { GraphQlQueryResponseData } from '@octokit/graphql'
 
 export interface Branch {
+  id: string
   name: string
 }
 
@@ -18,6 +19,7 @@ export interface Branches {
 }
 
 export interface Tag {
+  id: string
   name: string
 }
 
@@ -100,6 +102,20 @@ function createRefMutation(): string {
   return `
     mutation CreateRef($repositoryId: ID!, $name: String!, $oid: GitObjectID!) {
         createRef(input:{ repositoryId: $repositoryId, name: $name, oid: $oid }) {
+            ref {
+                name
+                target {
+                    oid
+                }
+            }
+        }
+    }`
+}
+
+function updateRefMutation(): string {
+  return `
+    mutation UpdateRef($repositoryId: ID!, $refId: ID!, $oid: GitObjectID!) {
+        updateRef(input:{ clientMutationId: "krytenbot", refId: $refId, oid: $oid, force: false }) {
             ref {
                 name
                 target {
@@ -242,11 +258,13 @@ function findDraftReleaseQuery(): string {
               id
               tags: refs(last: 20, refPrefix: "refs/tags/", query: $project) {
                   tags: nodes {
+                      id
                       name
                   }
               }
               branches: refs(last: 20, refPrefix: "refs/heads/", query: $branch) {
                   branches: nodes {
+                      id
                       name
                   }
               }
@@ -422,51 +440,6 @@ export async function listProjectsOfRelevance(files: string[]): Promise<string[]
   return Array.from(relevantProjects)
 }
 
-// /**
-//  * Get the next version for the project.
-//  * @param octokit
-//  * @param project
-//  * @param versionType
-//  */
-// export async function getNextVersion(octokit: Octokit, project: string, versionType: Version): Promise<string> {
-//   // Check if there is an existing tag for the project
-//   const tags = await listTags(octokit, project)
-//   if (tags.length > 0) {
-//     const lastTag = tags[tags.length - 1]
-//     const lastTagName = lastTag.ref.substring('refs/tags/'.length)
-//     const lastTagVersion = lastTagName.substring(`${project}@v`.length)
-//
-//     // Check if there is an existing PR for the release branch
-//     // and if it has a set version command in the comments
-//     const releaseBranchPR = await findPullRequest(octokit, project)
-//     if (releaseBranchPR) {
-//       const comments: Comment[] = await listComments(octokit, releaseBranchPR.number)
-//       for (let i = comments.length - 1; i >= 0; i--) {
-//         const lastCommentBody = comments[i].body
-//         if (lastCommentBody?.startsWith(Commands.SetVersion)) {
-//           core.info(`Found setversion command in comment: ${lastCommentBody}`)
-//           const nextVersionType = lastCommentBody.split(' ')[2]
-//           const nextVersion = semver.inc(lastTagVersion, nextVersionType as Version)
-//           if (nextVersion) {
-//             return nextVersion
-//           }
-//         }
-//       }
-//     }
-//
-//     // Bump the version using semver
-//     const nextVersion = semver.inc(lastTagVersion, versionType)
-//     if (nextVersion) {
-//       return nextVersion
-//     } else {
-//       core.setFailed(`Invalid last tag version: ${lastTagVersion}. Must be of the format '${project}@vX.X.X'`)
-//     }
-//   }
-//
-//   core.warning(`No tags found for project: ${project}. Using default next version.`)
-//   return getDefaultNextVersion()
-// }
-
 /**
  * Update the version for the project.
  * @param octokit
@@ -506,38 +479,6 @@ export async function setReleaseBranchVersion(octokit: Octokit, project: string,
   core.debug(`Updated File: ${JSON.stringify(createCommitOnBranch, null, 2)}`)
 }
 
-// /**
-//  * Check if the release branch exists for the project.
-//  * @param octokit
-//  * @param project
-//  */
-// export async function releaseBranchExists(octokit: Octokit, project: string): Promise<boolean> {
-//   const releaseBranch: string = getReleaseBranchName(project)
-//   const branches: ListBranchesResponse = await octokit.rest.repos.listBranches({
-//     owner: github.context.repo.owner,
-//     repo: github.context.repo.repo
-//   })
-//   return branches.data.some(branch => branch.name === releaseBranch)
-// }
-//
-// /**
-//  * Create a release branch for the project and commit the next version.
-//  * @param octokit
-//  * @param project
-//  */
-// export async function createReleaseBranch(octokit: Octokit, project: string): Promise<void> {
-//   const releaseBranch: string = getReleaseBranchName(project)
-//
-//   core.info(`Creating new branch: ${releaseBranch}`)
-//   const branch: CreateBranchResponse = await octokit.rest.git.createRef({
-//     owner: github.context.repo.owner,
-//     repo: github.context.repo.repo,
-//     ref: `refs/heads/${releaseBranch}`,
-//     sha: github.context.sha
-//   })
-//   core.debug(`Created Branch: ${JSON.stringify(branch, null, 2)}`)
-// }
-//
 // /**
 //  * Recreate a release branch for the project and commit the next version.
 //  * @param octokit
@@ -635,6 +576,19 @@ export async function updateReleaseBranch(octokit: Octokit, draftRelease: Kryten
 }
 
 /**
+ * Recreate the release branch.
+ * @param octokit
+ * @param draftRelease
+ */
+export async function recreateReleaseBranch(octokit: Octokit, draftRelease: KrytenbotDraftRelease): Promise<void> {
+  const branch: GraphQlQueryResponseData = await octokit.graphql(updateRefMutation(), {
+    refId: draftRelease.branches.branches[0].id,
+    oid: github.context.sha
+  })
+  core.debug(`Recreated Branch: ${JSON.stringify(branch, null, 2)}`)
+}
+
+/**
  * Create draft release pull request.
  * @param octokit
  * @param draftRelease
@@ -704,104 +658,6 @@ export async function updatePullRequestTitle(octokit: Octokit, draftRelease: Kry
   core.debug(`Updated pull request title: ${JSON.stringify(pullRequestLabels, null, 2)}`)
 }
 
-// /**
-//  * Create a draft PR for the release branch.
-//  * @param octokit
-//  * @param project
-//  */
-// export async function createPullRequest(octokit: Octokit, project: string): Promise<CreatedPullRequest> {
-//   const releaseBranch: string = getReleaseBranchName(project)
-//   const branch = github.context.ref.substring('refs/heads/'.length)
-//
-//   core.info(`Creating new PR for branch: ${releaseBranch}`)
-//   const nextVersion = await getNextVersion(octokit, project, 'patch')
-//   const pull: CreatePullRequestResponse = await octokit.rest.pulls.create({
-//     owner: github.context.repo.owner,
-//     repo: github.context.repo.repo,
-//     title: getPullRequestTitle(project, nextVersion),
-//     body: getPullRequestBody(project, nextVersion),
-//     head: releaseBranch,
-//     base: branch,
-//     draft: true
-//   })
-//   core.debug(`Created Pull: ${JSON.stringify(pull, null, 2)}`)
-//
-//   const label: AddLabelResponse = await octokit.rest.issues.addLabels({
-//     owner: github.context.repo.owner,
-//     repo: github.context.repo.repo,
-//     issue_number: pull.data.number,
-//     labels: ['release', project]
-//   })
-//   core.debug(`Added Label: ${JSON.stringify(label, null, 2)}`)
-//
-//   return pull.data
-// }
-//
-// /**
-//  * Update the PR for the release branch.
-//  * @param octokit
-//  * @param pull_number
-//  * @param project
-//  * @param nextVersion
-//  * @param rebasing
-//  */
-// export async function updatePullRequest(octokit: Octokit, pull_number: number, project: string, nextVersion: string, rebasing: boolean = false): Promise<void> {
-//   const releaseBranch: string = getReleaseBranchName(project)
-//   const branch = github.context.ref.substring('refs/heads/'.length)
-//
-//   core.info(`Updating existing PR for branch: ${releaseBranch}`)
-//   const pull = await octokit.rest.pulls.update({
-//     owner: github.context.repo.owner,
-//     repo: github.context.repo.repo,
-//     pull_number: pull_number,
-//     title: getPullRequestTitle(project, nextVersion),
-//     body: getPullRequestBody(project, nextVersion, rebasing),
-//     head: releaseBranch,
-//     base: branch,
-//     draft: true
-//   })
-//   core.debug(`Updated Pull: ${JSON.stringify(pull, null, 2)}`)
-//
-//   const label: AddLabelResponse = await octokit.rest.issues.addLabels({
-//     owner: github.context.repo.owner,
-//     repo: github.context.repo.repo,
-//     issue_number: pull_number,
-//     labels: ['release', project]
-//   })
-//   core.debug(`Added Label: ${JSON.stringify(label, null, 2)}`)
-// }
-//
-// /**
-//  * List all tags for the project.
-//  * @param octokit
-//  * @param project
-//  */
-// export async function listTags(octokit: Octokit, project: string): Promise<Tag[]> {
-//   const tags: ListTagsResponse = await octokit.rest.git.listMatchingRefs({
-//     owner: github.context.repo.owner,
-//     repo: github.context.repo.repo,
-//     ref: `tags/${project}`
-//   })
-//   return tags.data
-// }
-//
-// /**
-//  * Add a reaction to a comment.
-//  * @param octokit
-//  * @param comment_number
-//  * @param reaction
-//  */
-// export async function addReaction(octokit: Octokit, comment_number: number, reaction: Reaction): Promise<void> {
-//   const response: CreateReactionResponse = await octokit.rest.reactions.createForIssueComment({
-//     owner: github.context.repo.owner,
-//     repo: github.context.repo.repo,
-//     comment_id: comment_number,
-//     content: reaction
-//   })
-//   core.debug(`Added Reaction: ${JSON.stringify(response, null, 2)}`)
-// }
-//
-// /**
 //  * Add or update a comment on a PR.
 //  * @param octokit
 //  * @param pull_number
@@ -820,39 +676,7 @@ export async function updatePullRequestTitle(octokit: Octokit, draftRelease: Kry
 //     return await createComment(octokit, pull_number, body)
 //   }
 // }
-//
-// /**
-//  * List all comments on a PR.
-//  * @param octokit
-//  * @param pull_number
-//  */
-// export async function listComments(octokit: Octokit, pull_number: number): Promise<Comment[]> {
-//   const comments: ListCommentsResponse = await octokit.rest.issues.listComments({
-//     owner: github.context.repo.owner,
-//     repo: github.context.repo.repo,
-//     issue_number: pull_number
-//   })
-//   core.debug(`List Comments: ${JSON.stringify(comments, null, 2)}`)
-//   return comments.data
-// }
-//
-// /**
-//  * Add a comment to a PR.
-//  * @param octokit
-//  * @param pull_number
-//  * @param body
-//  */
-// export async function createComment(octokit: Octokit, pull_number: number, body: string): Promise<Comment> {
-//   const response: CreateCommentResponse = await octokit.rest.issues.createComment({
-//     owner: github.context.repo.owner,
-//     repo: github.context.repo.repo,
-//     issue_number: pull_number,
-//     body: body
-//   })
-//   core.debug(`Added Comment: ${JSON.stringify(response, null, 2)}`)
-//   return response.data
-// }
-//
+
 // /**
 //  * Update a comment on a PR.
 //  * @param octokit
