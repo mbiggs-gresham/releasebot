@@ -135,7 +135,7 @@ function findRefQuery(): string {
 
 function findCommitQuery(): string {
   return `
-    query FindCommit($owner: String!, $repo: String!, $expression: string!) {
+    query FindCommit($owner: String!, $repo: String!, $expression: String!) {
         repository(owner: $owner, name: $repo) {
             object(expression: $expression) {
                 ... on Commit {
