@@ -98,7 +98,7 @@ function createRefMutation(): string {
 
 function createCommitOnBranchMutation(): string {
   return `
-    mutation CreateCommitOnBranchMutation($repositoryId: ID!, $branch: CommittableBranch!, $message: CommitMessage!, $expectedHeadOid: GitObjectID!, $fileChanges: FileChanges) {
+    mutation CreateCommitOnBranchMutation($branch: CommittableBranch!, $message: CommitMessage!, $expectedHeadOid: GitObjectID!, $fileChanges: FileChanges) {
         createCommitOnBranch(input:{ clientMutationId: "krytenbot", branch: $branch, message: $message, expectedHeadOid: $expectedHeadOid, fileChanges: $fileChanges }) {
             commit {
                 oid
