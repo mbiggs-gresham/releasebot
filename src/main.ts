@@ -208,6 +208,7 @@ async function issueCommentEventRecreate(octokit: Octokit, draftRelease: Krytenb
 
     await githubapi.addCommentReaction(octokit, String(comment.comment.node_id), 'THUMBS_UP')
     await githubapi.recreateReleaseBranch(octokit, draftRelease)
+    await githubapi.setReleaseBranchVersion(octokit, project, nextVersion, draftRelease.pullRequests.pullRequests[0].headRefOid)
     await githubapi.updatePullRequestTitle(octokit, draftRelease, project, nextVersion)
   } catch (error) {
     await githubapi.addComment(octokit, comment.issue.node_id, caution('Failed to recreate the branch. Please check the logs for more details.'))

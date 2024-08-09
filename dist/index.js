@@ -51850,7 +51850,7 @@ function createRefMutation() {
 function updateRefMutation() {
     return `
     mutation UpdateRef($refId: ID!, $oid: GitObjectID!) {
-        updateRef(input:{ clientMutationId: "krytenbot", refId: $refId, oid: $oid, force: false }) {
+        updateRef(input:{ clientMutationId: "krytenbot", refId: $refId, oid: $oid, force: true }) {
             ref {
                 name
                 target {
@@ -52588,6 +52588,7 @@ async function issueCommentEventRecreate(octokit, draftRelease, project, comment
         core.info(`New version for '${project}': ${nextVersion}`);
         await addCommentReaction(octokit, String(comment.comment.node_id), 'THUMBS_UP');
         await recreateReleaseBranch(octokit, draftRelease);
+        await setReleaseBranchVersion(octokit, project, nextVersion, draftRelease.pullRequests.pullRequests[0].headRefOid);
         await updatePullRequestTitle(octokit, draftRelease, project, nextVersion);
     }
     catch (error) {
