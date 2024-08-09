@@ -244,7 +244,7 @@ function findDraftReleaseQuery(): string {
                       name
                   }
               }
-              relevantLabels: {
+              relevantLabels: relevantLabels {
                   release: label(name: "release") {
                       id
                       name
