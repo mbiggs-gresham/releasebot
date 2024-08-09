@@ -128,7 +128,7 @@ function createPullRequestMutation(): string {
 
 function updatePullRequestLabelsMutation(): string {
   return `
-    mutation UpdatePullRequestLabels($pullRequestId: ID!, labelIds: [ID!]) {
+    mutation UpdatePullRequestLabels($pullRequestId: ID!, $labelIds: [ID!]) {
         updatePullRequest(input:{ clientMutationId: "krytenbot", pullRequestId: $pullRequestId, labelIds: $labelIds }) {
             pullRequest {
                 id
