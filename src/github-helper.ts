@@ -446,6 +446,7 @@ export async function setVersion(octokit: Octokit, project: string, branch: stri
         core.endGroup()
       }
 
+      core.info(`Creating new commit for ${project} version update using oid ${sha}`)
       const createCommitOnBranch: GraphQlQueryResponseData = await octokit.graphql(createCommitOnBranchMutation(), {
         repositoryNameWithOwner: {
           repositoryNameWithOwner: `${github.context.repo.owner}/${github.context.repo.repo}`,

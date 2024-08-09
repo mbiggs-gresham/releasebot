@@ -52169,6 +52169,7 @@ async function setVersion(octokit, project, branch, version, sha) {
                 core.debug(`New File Contents: ${newFileContents}`);
                 core.endGroup();
             }
+            core.info(`Creating new commit for ${project} version update using oid ${sha}`);
             const createCommitOnBranch = await octokit.graphql(createCommitOnBranchMutation(), {
                 repositoryNameWithOwner: {
                     repositoryNameWithOwner: `${github.context.repo.owner}/${github.context.repo.repo}`,
