@@ -51823,7 +51823,7 @@ const projectsPaths = ['core/*', 'grid/*'];
 const projectsEcosystem = (/* unused pure expression or super */ null && (['npm', 'npm']));
 function addReactionToIssueMutation() {
     return `
-    mutation AddReactionToIssue($subjectId: ID!, $content: ReactionContent!) {
+    mutation AddReaction($subjectId: ID!, $content: ReactionContent!) {
         addReaction(input:{ subjectId:$subjectId, content: $content }) {
             reaction {
                 content
@@ -51871,6 +51871,16 @@ function updatePullRequestLabelsMutation() {
     return `
     mutation UpdatePullRequestLabels($pullRequestId: ID!, $labelIds: [ID!]) {
         updatePullRequest(input:{ clientMutationId: "krytenbot", pullRequestId: $pullRequestId, labelIds: $labelIds }) {
+            pullRequest {
+                id
+            }
+        }
+    }`;
+}
+function updatePullRequestTitleMutation() {
+    return `
+    mutation UpdatePullRequestLabels($pullRequestId: ID!, $title: string) {
+        updatePullRequest(input:{ clientMutationId: "krytenbot", pullRequestId: $pullRequestId, title: $title }) {
             pullRequest {
                 id
             }
@@ -51999,6 +52009,7 @@ function findDraftReleaseQuery() {
                       }
                       comments(last: 10) {
                           comments: nodes {
+                              id
                               author {
                                   login
                               }
@@ -52340,7 +52351,6 @@ async function updateDraftReleaseBranch(octokit, draftRelease, project) {
  */
 async function createDraftReleasePullRequest(octokit, draftRelease, project, branch, nextVersion) {
     const releaseBranch = getReleaseBranchName(project);
-    core.info(`Creating new PR for branch: ${releaseBranch}`);
     const pullRequest = await octokit.graphql(createPullRequestMutation(), {
         repositoryId: draftRelease.id,
         baseRefName: branch,
@@ -52348,12 +52358,40 @@ async function createDraftReleasePullRequest(octokit, draftRelease, project, bra
         title: getPullRequestTitle(project, nextVersion),
         body: getPullRequestBody(project, nextVersion)
     });
-    core.debug(`Created Pull: ${JSON.stringify(pullRequest, null, 2)}`);
+    core.debug(`Created pull request: ${JSON.stringify(pullRequest, null, 2)}`);
     const pullRequestLabels = await octokit.graphql(updatePullRequestLabelsMutation(), {
         pullRequestId: pullRequest.createPullRequest.pullRequest.id,
         labelIds: [draftRelease.releaseLabel.id, draftRelease.projectLabel.id]
     });
-    core.debug(`Updated Labels: ${JSON.stringify(pullRequestLabels, null, 2)}`);
+    core.debug(`Updated pull requeust labels: ${JSON.stringify(pullRequestLabels, null, 2)}`);
+}
+/**
+ * Add a reaction to a comment.
+ * @param octokit
+ * @param commentId
+ * @param reaction
+ */
+async function addCommentReaction(octokit, commentId, reaction) {
+    const response = await octokit.graphql(addReactionToIssueMutation(), {
+        subjectId: commentId,
+        content: reaction
+    });
+    core.debug(`Added comment reaction: ${JSON.stringify(response, null, 2)}`);
+}
+/**
+ * Update the pull request title.
+ * @param octokit
+ * @param draftRelease
+ * @param project
+ * @param nextVersion
+ * @param title
+ */
+async function updatePullRequestTitle(octokit, draftRelease, project, nextVersion) {
+    const pullRequestLabels = await octokit.graphql(updatePullRequestLabelsMutation(), {
+        pullRequestId: draftRelease.pullRequests.pullRequests[0].id,
+        title: getPullRequestTitle(project, nextVersion)
+    });
+    core.debug(`Updated pull request title: ${JSON.stringify(pullRequestLabels, null, 2)}`);
 }
 // /**
 //  * Create a draft PR for the release branch.
@@ -52683,7 +52721,9 @@ async function issueCommentEventSetVersion(octokit, draftRelease, project, comme
         // await githubapi.updatePullRequest(octokit, comment.issue.number, project, version)
         // core.endGroup()
         core.info(`Updating '${project}' version to ${nextVersion}`);
+        await addCommentReaction(octokit, String(comment.comment.id), 'THUMBS_UP ');
         await setDraftReleaseBranchVersion(octokit, project, nextVersion, draftRelease.pullRequests.pullRequests[0].headRefOid);
+        await updatePullRequestTitle(octokit, draftRelease, project, nextVersion);
     }
     else {
         core.setFailed(`Invalid version type: ${versionType}`);

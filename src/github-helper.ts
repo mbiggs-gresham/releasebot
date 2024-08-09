@@ -32,6 +32,7 @@ export interface Label {
 }
 
 export interface Comment {
+  id: string
   author: {
     login: string
   }
@@ -70,7 +71,7 @@ export interface KrytenbotDraftRelease {
 }
 
 export type Version = 'major' | 'minor' | 'patch'
-export type Reaction = '+1' | '-1' | 'laugh' | 'confused' | 'heart' | 'hooray' | 'rocket' | 'eyes'
+export type Reaction = 'THUMBS_UP ' | 'THUMBS_DOWN' | 'LAUGH' | 'HOORAY' | 'CONFUSED' | 'HEART' | 'ROCKET' | 'EYES'
 
 export enum Commands {
   Rebase = '@krytenbot rebase',
@@ -84,7 +85,7 @@ const projectsEcosystem = ['npm', 'npm']
 
 function addReactionToIssueMutation(): string {
   return `
-    mutation AddReactionToIssue($subjectId: ID!, $content: ReactionContent!) {
+    mutation AddReaction($subjectId: ID!, $content: ReactionContent!) {
         addReaction(input:{ subjectId:$subjectId, content: $content }) {
             reaction {
                 content
@@ -136,6 +137,17 @@ function updatePullRequestLabelsMutation(): string {
   return `
     mutation UpdatePullRequestLabels($pullRequestId: ID!, $labelIds: [ID!]) {
         updatePullRequest(input:{ clientMutationId: "krytenbot", pullRequestId: $pullRequestId, labelIds: $labelIds }) {
+            pullRequest {
+                id
+            }
+        }
+    }`
+}
+
+function updatePullRequestTitleMutation(): string {
+  return `
+    mutation UpdatePullRequestLabels($pullRequestId: ID!, $title: string) {
+        updatePullRequest(input:{ clientMutationId: "krytenbot", pullRequestId: $pullRequestId, title: $title }) {
             pullRequest {
                 id
             }
@@ -270,6 +282,7 @@ function findDraftReleaseQuery(): string {
                       }
                       comments(last: 10) {
                           comments: nodes {
+                              id
                               author {
                                   login
                               }
@@ -641,8 +654,6 @@ export async function updateDraftReleaseBranch(octokit: Octokit, draftRelease: K
 export async function createDraftReleasePullRequest(octokit: Octokit, draftRelease: KrytenbotDraftRelease, project: string, branch: string, nextVersion: string): Promise<void> {
   const releaseBranch: string = getReleaseBranchName(project)
 
-  core.info(`Creating new PR for branch: ${releaseBranch}`)
-
   const pullRequest: GraphQlQueryResponseData = await octokit.graphql(createPullRequestMutation(), {
     repositoryId: draftRelease.id,
     baseRefName: branch,
@@ -650,13 +661,43 @@ export async function createDraftReleasePullRequest(octokit: Octokit, draftRelea
     title: getPullRequestTitle(project, nextVersion),
     body: getPullRequestBody(project, nextVersion)
   })
-  core.debug(`Created Pull: ${JSON.stringify(pullRequest, null, 2)}`)
+  core.debug(`Created pull request: ${JSON.stringify(pullRequest, null, 2)}`)
 
   const pullRequestLabels: GraphQlQueryResponseData = await octokit.graphql(updatePullRequestLabelsMutation(), {
     pullRequestId: pullRequest.createPullRequest.pullRequest.id,
     labelIds: [draftRelease.releaseLabel.id, draftRelease.projectLabel.id]
   })
-  core.debug(`Updated Labels: ${JSON.stringify(pullRequestLabels, null, 2)}`)
+  core.debug(`Updated pull requeust labels: ${JSON.stringify(pullRequestLabels, null, 2)}`)
+}
+
+/**
+ * Add a reaction to a comment.
+ * @param octokit
+ * @param commentId
+ * @param reaction
+ */
+export async function addCommentReaction(octokit: Octokit, commentId: string, reaction: Reaction): Promise<void> {
+  const response: GraphQlQueryResponseData = await octokit.graphql(addReactionToIssueMutation(), {
+    subjectId: commentId,
+    content: reaction
+  })
+  core.debug(`Added comment reaction: ${JSON.stringify(response, null, 2)}`)
+}
+
+/**
+ * Update the pull request title.
+ * @param octokit
+ * @param draftRelease
+ * @param project
+ * @param nextVersion
+ * @param title
+ */
+export async function updatePullRequestTitle(octokit: Octokit, draftRelease: KrytenbotDraftRelease, project: string, nextVersion: string): Promise<void> {
+  const pullRequestLabels: GraphQlQueryResponseData = await octokit.graphql(updatePullRequestLabelsMutation(), {
+    pullRequestId: draftRelease.pullRequests.pullRequests[0].id,
+    title: getPullRequestTitle(project, nextVersion)
+  })
+  core.debug(`Updated pull request title: ${JSON.stringify(pullRequestLabels, null, 2)}`)
 }
 
 // /**
