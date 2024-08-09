@@ -53800,7 +53800,7 @@ async function pushEvent(octokit) {
                         const pullRequestId = await octokit.graphql(findPullRequestIdQuery(), {
                             owner: lib_github.context.repo.owner,
                             repo: lib_github.context.repo.repo,
-                            pullNumber: 5
+                            pullNumber: 6
                         });
                         lib_core.info(`Pull Request ID: ${JSON.stringify(pullRequestId, null, 2)}`);
                         try {

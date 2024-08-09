@@ -191,12 +191,12 @@ async function pushEvent(octokit: Octokit): Promise<void> {
             const pullRequestId: GraphQlQueryResponseData = await octokit.graphql(findPullRequestIdQuery(), {
               owner: github.context.repo.owner,
               repo: github.context.repo.repo,
-              pullNumber: 5
+              pullNumber: 6
             })
             core.info(`Pull Request ID: ${JSON.stringify(pullRequestId, null, 2)}`)
 
             try {
-              const updatePR = await octokit.graphql(updatePullRequestBranchMutation(), {
+              const updatePR: GraphQlQueryResponseData = await octokit.graphql(updatePullRequestBranchMutation(), {
                 pullRequestId: pullRequestId.id
               })
               core.info(`Update PR: ${JSON.stringify(updatePR, null, 2)}`)
