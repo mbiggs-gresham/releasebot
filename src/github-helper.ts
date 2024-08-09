@@ -162,15 +162,13 @@ function findRefQuery(): string {
 
 function getFileContentQuery(): string {
   return `
-    query GetFileContent($owner: String!, $repo: String!, $branch: String!, $ref: String!) {
+    query GetFileContent($owner: String!, $repo: String!, $ref: String!) {
         repository(owner: $owner, name: $repo) {
-            ref(qualifiedName: $branch) {
-                file: object(expression: $ref) {
-                    ... on Blob {
-                        text
-                    }
-                }
-            }
+              file: object(expression: $ref) {
+                  ... on Blob {
+                      text
+                  }
+              }
         }
     }`
 }
@@ -445,10 +443,9 @@ export async function setVersion(octokit: Octokit, project: string, branch: stri
   const file: GetContentResponse = await octokit.graphql(getFileContentQuery(), {
     owner: github.context.repo.owner,
     repo: github.context.repo.repo,
-    branch: `refs/heads/${branch}`,
-    ref: `HEAD:${project}/package.json`
+    ref: `${branch}:${project}/package.json`
   })
-  core.debug(`File: ${JSON.stringify(file, null, 2)}`)
+  core.info(`File: ${JSON.stringify(file, null, 2)}`)
 
   const { data: existingFile }: GetContentResponse = await octokit.rest.repos.getContent({
     owner: github.context.repo.owner,
