@@ -97,11 +97,20 @@ function findPullRequestsQuery(): string {
     query FindPullRequestID ($owner: String!, $repo: String!, $labels: [String!]){
         repository(owner:$owner, name:$repo) {
             pullRequests(first:10, labels:$labels, states:OPEN) {
+              nodes {
+                number
+                title
+                labels(first:10) {
+                  nodes {
+                    name
+                  }
+                }
+              }
               edges {
                 node {
                     title
-                }        
-              }        
+                }
+              }    
             }
         }
     }`
