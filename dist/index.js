@@ -51985,7 +51985,7 @@ async function listPushCommitFiles(octokit, payload) {
             const commitDetails = await octokit.graphql(findCommitQuery(), {
                 owner: github.context.repo.owner,
                 repo: github.context.repo.repo,
-                oid: payload.after
+                expression: payload.after
             });
             core.info(`Commit Details: ${JSON.stringify(commitDetails, null, 2)}`);
             // commitDetails.files?.forEach(file => files.add(file.filename))
@@ -52204,7 +52204,7 @@ async function createDraftReleaseBranch(octokit, draftRelease, project, sha) {
     const branch = await octokit.graphql(createRefMutation(), {
         repositoryId: draftRelease.id,
         name: `refs/heads/${releaseBranch}`,
-        expression: sha
+        oid: sha
     });
     core.debug(`Created Branch: ${JSON.stringify(branch, null, 2)}`);
 }
