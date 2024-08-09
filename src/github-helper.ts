@@ -1,7 +1,6 @@
 import * as core from '@actions/core'
 import * as github from '@actions/github'
 import { Octokit } from 'octokit'
-import { Endpoints } from '@octokit/types'
 import { PushEvent } from '@octokit/webhooks-types'
 import { minimatch } from 'minimatch'
 import * as semver from 'semver'
@@ -633,10 +632,8 @@ export async function createDraftReleaseBranch(octokit: Octokit, draftRelease: K
  * Update the draft release branch by rebasing it.
  * @param octokit
  * @param draftRelease
- * @param project
  */
-export async function updateDraftReleaseBranch(octokit: Octokit, draftRelease: KrytenbotDraftRelease, project: string): Promise<void> {
-  const releaseBranch: string = getReleaseBranchName(project)
+export async function updateDraftReleaseBranch(octokit: Octokit, draftRelease: KrytenbotDraftRelease): Promise<void> {
   const branch: GraphQlQueryResponseData = await octokit.graphql(updatePullRequestBranchMutation(), {
     pullRequestId: draftRelease.pullRequests.pullRequests[0].id
   })
@@ -690,10 +687,9 @@ export async function addCommentReaction(octokit: Octokit, commentId: string, re
  * @param draftRelease
  * @param project
  * @param nextVersion
- * @param title
  */
 export async function updatePullRequestTitle(octokit: Octokit, draftRelease: KrytenbotDraftRelease, project: string, nextVersion: string): Promise<void> {
-  const pullRequestLabels: GraphQlQueryResponseData = await octokit.graphql(updatePullRequestLabelsMutation(), {
+  const pullRequestLabels: GraphQlQueryResponseData = await octokit.graphql(updatePullRequestTitleMutation(), {
     pullRequestId: draftRelease.pullRequests.pullRequests[0].id,
     title: getPullRequestTitle(project, nextVersion)
   })

@@ -1,12 +1,10 @@
 import * as core from '@actions/core'
 import * as github from '@actions/github'
 import { App, Octokit } from 'octokit'
-import { type GraphQlQueryResponseData, GraphqlResponseError } from '@octokit/graphql'
 import { IssueCommentEvent, PushEvent } from '@octokit/webhooks-types'
-import * as git from './git-helper'
 import * as githubapi from './github-helper'
 import * as versions from './version-helper'
-import { Commands, getNextVersion, KrytenbotDraftRelease, Reaction, Version } from './github-helper'
+import { Commands, KrytenbotDraftRelease, Version } from './github-helper'
 import { note, caution } from './markdown'
 
 enum Events {
@@ -110,7 +108,7 @@ async function pushEvent(octokit: Octokit): Promise<void> {
       await githubapi.createDraftReleasePullRequest(octokit, draftRelease, project, branch, nextVersion)
     } else {
       core.info(`Updating draft release branch for '${project}'`)
-      await githubapi.updateDraftReleaseBranch(octokit, draftRelease, project)
+      await githubapi.updateDraftReleaseBranch(octokit, draftRelease)
     }
 
     core.endGroup()
@@ -158,7 +156,7 @@ async function issueCommentEventSetVersion(octokit: Octokit, draftRelease: Kryte
   const versionType = comment.comment.body.split(' ')[2]
   core.debug(`Version Type: ${versionType}`)
   if (versions.isValidSemverVersionType(versionType)) {
-    core.info(`Calculating next version for '${project}'`)
+    core.info(`Calculating new version for '${project}'`)
     const nextVersion = githubapi.getNextVersion(draftRelease, versionType as Version)
     core.info(`Next version for '${project}': ${nextVersion}`)
 

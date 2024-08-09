@@ -52332,10 +52332,8 @@ async function createDraftReleaseBranch(octokit, draftRelease, project) {
  * Update the draft release branch by rebasing it.
  * @param octokit
  * @param draftRelease
- * @param project
  */
-async function updateDraftReleaseBranch(octokit, draftRelease, project) {
-    const releaseBranch = getReleaseBranchName(project);
+async function updateDraftReleaseBranch(octokit, draftRelease) {
     const branch = await octokit.graphql(updatePullRequestBranchMutation(), {
         pullRequestId: draftRelease.pullRequests.pullRequests[0].id
     });
@@ -52384,10 +52382,9 @@ async function addCommentReaction(octokit, commentId, reaction) {
  * @param draftRelease
  * @param project
  * @param nextVersion
- * @param title
  */
 async function updatePullRequestTitle(octokit, draftRelease, project, nextVersion) {
-    const pullRequestLabels = await octokit.graphql(updatePullRequestLabelsMutation(), {
+    const pullRequestLabels = await octokit.graphql(updatePullRequestTitleMutation(), {
         pullRequestId: draftRelease.pullRequests.pullRequests[0].id,
         title: getPullRequestTitle(project, nextVersion)
     });
@@ -52669,7 +52666,7 @@ async function pushEvent(octokit) {
         }
         else {
             core.info(`Updating draft release branch for '${project}'`);
-            await updateDraftReleaseBranch(octokit, draftRelease, project);
+            await updateDraftReleaseBranch(octokit, draftRelease);
         }
         core.endGroup();
     }
@@ -52710,7 +52707,7 @@ async function issueCommentEventSetVersion(octokit, draftRelease, project, comme
     const versionType = comment.comment.body.split(' ')[2];
     core.debug(`Version Type: ${versionType}`);
     if (isValidSemverVersionType(versionType)) {
-        core.info(`Calculating next version for '${project}'`);
+        core.info(`Calculating new version for '${project}'`);
         const nextVersion = getNextVersion(draftRelease, versionType);
         core.info(`Next version for '${project}': ${nextVersion}`);
         // const releaseBranch = `krytenbot-${project}`
