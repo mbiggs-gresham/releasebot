@@ -504,7 +504,7 @@ export async function createDraftReleaseBranch(octokit: Octokit, draftRelease: K
   const releaseBranch: string = getReleaseBranchName(project)
   const branch: GraphQlQueryResponseData = await octokit.graphql(createRefMutation(), {
     repositoryId: draftRelease.id,
-    name: releaseBranch,
+    name: `refs/heads/${releaseBranch}`,
     oid: sha
   })
   core.debug(`Created Branch: ${JSON.stringify(branch, null, 2)}`)
