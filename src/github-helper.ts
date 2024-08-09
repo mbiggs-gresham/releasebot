@@ -106,19 +106,19 @@ function addPullRequestCommentMutation(): string {
 
 function findPullRequestsQuery(): string {
   return `
-    query FindPullRequestID ($owner: String!, $repo: String!, $labels: [String!]){
-        repository(owner:$owner, name:$repo) {
-            tags: refs(first:100, refPrefix:"refs/tags/") {
+    query FindPullRequestID ($owner: String!, $repo: String!, $project: String!, $labels: [String!]){
+        repository(owner: $owner, name: $repo) {
+            tags: refs(first: 100, refPrefix: "refs/tags/", query: $project) {
                 tag: nodes {
                     name
                 }
             }
-            branches: refs(first:100, refPrefix:"refs/heads/", query:"krytenbot-") {
+            branches: refs(first: 100, refPrefix: "refs/heads/", query: "krytenbot-" + $project) {
                 branch: nodes {
                     name
                 }
             }
-            pullRequests(first:1, labels:$labels, states:OPEN) {
+            pullRequests(first: 1, labels: $labels, states: OPEN) {
               nodes {
                 id
                 number
@@ -432,6 +432,7 @@ export async function findPullRequest(octokit: Octokit, project: string): Promis
   const pullRequests: GraphQlQueryResponseData = await octokit.graphql(findPullRequestsQuery(), {
     owner: github.context.repo.owner,
     repo: github.context.repo.repo,
+    project: project,
     labels: ['release', project]
   })
   core.info(`Pull Request: ${JSON.stringify(pullRequests, null, 2)}`)
