@@ -51754,6 +51754,26 @@ minimatch.unescape = unescape_unescape;
 //# sourceMappingURL=index.js.map
 // EXTERNAL MODULE: ./node_modules/semver/index.js
 var semver = __nccwpck_require__(1383);
+;// CONCATENATED MODULE: ./src/markdown.ts
+function note(message) {
+    return `> [!NOTE]\n> ${message}`;
+}
+function tip(message) {
+    return `> [!TIP]\n> ${message}`;
+}
+function important(message) {
+    return `> [!IMPORTANT]\n> ${message}`;
+}
+function warning(message) {
+    return `> [!WARNING]\n> ${message}`;
+}
+function caution(message) {
+    return `> [!CAUTION]\n> ${message}`;
+}
+function markdown_hidden(message) {
+    return `[//]: # (${message})`;
+}
+
 ;// CONCATENATED MODULE: ./src/github-helper.ts
 
 
@@ -51788,6 +51808,16 @@ function createRefMutation() {
         createRef(input:{ repositoryId: $repositoryId, name: $name, oid: $oid }) {
             ref {
                 name
+            }
+        }
+    }`;
+}
+function createPullRequestMutation() {
+    return `
+    mutation CreatePullRequestMutation($repositoryId: ID!, $baseRefName: String!, $headRefname: String!, $title: String!, $body: String!) {
+        createPullRequest(input:{ clientMutationId: "krytenbot", repositoryId: $repositoryId, baseRefName: $baseRefName, headRefName: $headRefName, title: $title, body: $body, draft: true }) {
+            pullRequest {
+                id
             }
         }
     }`;
@@ -51946,14 +51976,14 @@ function getDefaultNextVersion() {
  */
 function getPullRequestBody(project, nextVersion, rebasing = false) {
     const body = [];
-    body.push(hidden(`krytenbot-project:${project}`));
+    body.push(markdown_hidden(`krytenbot-project:${project}`));
     body.push('\n');
     if (rebasing) {
-        body.push(hidden('krytenbot-start'));
+        body.push(markdown_hidden('krytenbot-start'));
         body.push('\n\n');
         body.push(important('Krytenbot is rebasing this PR'));
         body.push('\n\n');
-        body.push(hidden('krytenbot-end'));
+        body.push(markdown_hidden('krytenbot-end'));
         body.push('\n');
     }
     body.push(`
@@ -51992,18 +52022,18 @@ async function listPushCommitFiles(octokit, payload) {
         }
         else {
             core.debug(`Commit contained no file details. Getting commit details for: ${payload.after}`);
-            // const { data: commitDetails } = await octokit.rest.repos.getCommit({
-            //   owner: github.context.repo.owner,
-            //   repo: github.context.repo.repo,
-            //   ref: payload.after
-            // })
-            const commitDetails = await octokit.graphql(findCommitQuery(), {
+            const { data: commitDetails } = await octokit.rest.repos.getCommit({
                 owner: github.context.repo.owner,
                 repo: github.context.repo.repo,
-                oid: payload.after
+                ref: payload.after
             });
+            // const commitDetails = await octokit.graphql(findCommitQuery(), {
+            //   owner: github.context.repo.owner,
+            //   repo: github.context.repo.repo,
+            //   oid: payload.after
+            // })
             core.info(`Commit Details: ${JSON.stringify(commitDetails, null, 2)}`);
-            // commitDetails.files?.forEach(file => files.add(file.filename))
+            commitDetails.files?.forEach(file => files.add(file.filename));
         }
     }
     return Array.from(files);
@@ -52222,6 +52252,36 @@ async function createDraftReleaseBranch(octokit, draftRelease, project, sha) {
         oid: sha
     });
     core.debug(`Created Branch: ${JSON.stringify(branch, null, 2)}`);
+}
+async function createDraftReleasePullRequest(octokit, draftRelease, project, branch, nextVersion) {
+    const releaseBranch = getReleaseBranchName(project);
+    // const branch = github.context.ref.substring('refs/heads/'.length)
+    core.info(`Creating new PR for branch: ${releaseBranch}`);
+    const pullRequest = await octokit.graphql(createPullRequestMutation(), {
+        repositoryId: draftRelease.id,
+        baseRefName: branch,
+        headRefName: releaseBranch,
+        title: getPullRequestTitle(project, nextVersion),
+        body: getPullRequestBody(project, nextVersion)
+    });
+    // const pull: Endpoints['POST /repos/{owner}/{repo}/pulls']['response'] = await octokit.rest.pulls.create({
+    //   owner: github.context.repo.owner,
+    //   repo: github.context.repo.repo,
+    //   title: getPullRequestTitle(project, nextVersion),
+    //   body: getPullRequestBody(project, nextVersion),
+    //   head: releaseBranch,
+    //   base: branch,
+    //   draft: true
+    // })
+    core.debug(`Created Pull: ${JSON.stringify(pullRequest, null, 2)}`);
+    //
+    // const label: Endpoints['POST /repos/{owner}/{repo}/issues/{issue_number}/labels']['response'] = await octokit.rest.issues.addLabels({
+    //   owner: github.context.repo.owner,
+    //   repo: github.context.repo.repo,
+    //   issue_number: pull.data.number,
+    //   labels: ['release', project]
+    // })
+    // core.debug(`Added Label: ${JSON.stringify(label, null, 2)}`)
 }
 // /**
 //  * Create a draft PR for the release branch.
@@ -52514,6 +52574,11 @@ async function pushEvent(octokit) {
         if (!draftRelease.branches.branches.some(branch => branch.name === releaseBranch)) {
             core.info(`Creating release branch for ${project}`);
             await createDraftReleaseBranch(octokit, draftRelease, project, github.context.sha);
+        }
+        if (draftRelease.pullRequests.pullRequests.length === 0) {
+            core.info(`Creating pull request for ${project}`);
+            const branch = github.context.ref.substring('refs/heads/'.length);
+            await createDraftReleasePullRequest(octokit, draftRelease, project, branch, nextVersion);
         }
         // const releaseBranchExists = await githubapi.releaseBranchExists(octokit, project)
         // if (!releaseBranchExists) {

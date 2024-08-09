@@ -94,6 +94,17 @@ function createRefMutation(): string {
     }`
 }
 
+function createPullRequestMutation(): string {
+  return `
+    mutation CreatePullRequestMutation($repositoryId: ID!, $baseRefName: String!, $headRefname: String!, $title: String!, $body: String!) {
+        createPullRequest(input:{ clientMutationId: "krytenbot", repositoryId: $repositoryId, baseRefName: $baseRefName, headRefName: $headRefName, title: $title, body: $body, draft: true }) {
+            pullRequest {
+                id
+            }
+        }
+    }`
+}
+
 function updatePullRequestBranchMutation(): string {
   return `
     mutation UpdatePullRequestBranchMutation($pullRequestId: ID!) {
@@ -309,19 +320,19 @@ export async function listPushCommitFiles(octokit: Octokit, payload: PushEvent):
       commit.removed.forEach(file => files.add(file))
     } else {
       core.debug(`Commit contained no file details. Getting commit details for: ${payload.after}`)
-      // const { data: commitDetails } = await octokit.rest.repos.getCommit({
-      //   owner: github.context.repo.owner,
-      //   repo: github.context.repo.repo,
-      //   ref: payload.after
-      // })
-      const commitDetails = await octokit.graphql(findCommitQuery(), {
+      const { data: commitDetails } = await octokit.rest.repos.getCommit({
         owner: github.context.repo.owner,
         repo: github.context.repo.repo,
-        oid: payload.after
+        ref: payload.after
       })
+      // const commitDetails = await octokit.graphql(findCommitQuery(), {
+      //   owner: github.context.repo.owner,
+      //   repo: github.context.repo.repo,
+      //   oid: payload.after
+      // })
 
       core.info(`Commit Details: ${JSON.stringify(commitDetails, null, 2)}`)
-      // commitDetails.files?.forEach(file => files.add(file.filename))
+      commitDetails.files?.forEach(file => files.add(file.filename))
     }
   }
 
@@ -549,6 +560,39 @@ export async function createDraftReleaseBranch(octokit: Octokit, draftRelease: K
     oid: sha
   })
   core.debug(`Created Branch: ${JSON.stringify(branch, null, 2)}`)
+}
+
+export async function createDraftReleasePullRequest(octokit: Octokit, draftRelease: KrytenbotDraftRelease, project: string, branch: string, nextVersion: string): Promise<void> {
+  const releaseBranch: string = getReleaseBranchName(project)
+  // const branch = github.context.ref.substring('refs/heads/'.length)
+
+  core.info(`Creating new PR for branch: ${releaseBranch}`)
+  const pullRequest: GraphQlQueryResponseData = await octokit.graphql(createPullRequestMutation(), {
+    repositoryId: draftRelease.id,
+    baseRefName: branch,
+    headRefName: releaseBranch,
+    title: getPullRequestTitle(project, nextVersion),
+    body: getPullRequestBody(project, nextVersion)
+  })
+
+  // const pull: Endpoints['POST /repos/{owner}/{repo}/pulls']['response'] = await octokit.rest.pulls.create({
+  //   owner: github.context.repo.owner,
+  //   repo: github.context.repo.repo,
+  //   title: getPullRequestTitle(project, nextVersion),
+  //   body: getPullRequestBody(project, nextVersion),
+  //   head: releaseBranch,
+  //   base: branch,
+  //   draft: true
+  // })
+  core.debug(`Created Pull: ${JSON.stringify(pullRequest, null, 2)}`)
+  //
+  // const label: Endpoints['POST /repos/{owner}/{repo}/issues/{issue_number}/labels']['response'] = await octokit.rest.issues.addLabels({
+  //   owner: github.context.repo.owner,
+  //   repo: github.context.repo.repo,
+  //   issue_number: pull.data.number,
+  //   labels: ['release', project]
+  // })
+  // core.debug(`Added Label: ${JSON.stringify(label, null, 2)}`)
 }
 
 // /**
