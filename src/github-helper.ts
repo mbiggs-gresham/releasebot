@@ -28,8 +28,20 @@ type Tag = ListTagsResponse['data'][0]
 type CreatePullRequestResponse = Endpoints['POST /repos/{owner}/{repo}/pulls']['response']
 type CreatedPullRequest = CreatePullRequestResponse['data']
 
-type ListPullRequestsResponse = Endpoints['GET /repos/{owner}/{repo}/pulls']['response']
-type PullRequest = ListPullRequestsResponse['data'][0]
+// type ListPullRequestsResponse = Endpoints['GET /repos/{owner}/{repo}/pulls']['response']
+// type PullRequest = ListPullRequestsResponse['data'][0]
+interface PullRequest {
+  id: string
+  number: number
+  title: string
+  body: string
+  createdAt: string
+  labels: { nodes: { name: string }[] }
+  baseRef: { id: string }
+  baseRefName: string
+  headRef: { id: string }
+  headRefName: string
+}
 
 type CreateCommentResponse = Endpoints['POST /repos/{owner}/{repo}/issues/{issue_number}/comments']['response']
 type UpdateCommentResponse = Endpoints['PATCH /repos/{owner}/{repo}/issues/comments/{comment_id}']['response']
@@ -96,6 +108,11 @@ function findPullRequestsQuery(): string {
   return `
     query FindPullRequestID ($owner: String!, $repo: String!, $labels: [String!]){
         repository(owner:$owner, name:$repo) {
+            refs(first:100) {
+                nodes {
+                    name
+                }
+            }
             pullRequests(first:1, labels:$labels, states:OPEN) {
               nodes {
                 id
@@ -396,7 +413,7 @@ export async function recreateReleaseBranch(octokit: Octokit, project: string): 
  * @param octokit
  * @param project
  */
-export async function findPullRequest(octokit: Octokit, project: string): Promise<PullRequest | undefined> {
+export async function findPullRequest(octokit: Octokit, project: string): Promise<PullRequest> {
   // const releaseBranch: string = getReleaseBranchName(project)
 
   // const pulls: ListPullRequestsResponse = await octokit.rest.pulls.list({
@@ -412,7 +429,7 @@ export async function findPullRequest(octokit: Octokit, project: string): Promis
     repo: github.context.repo.repo,
     labels: ['release', project]
   })
-  core.info(`Pull Request ID: ${JSON.stringify(pullRequests, null, 2)}`)
+  core.info(`Pull Request: ${JSON.stringify(pullRequests, null, 2)}`)
 
   // for (const pull of pulls.data) {
   //   if (pull.labels.find(label => label.name === 'release')) {
@@ -421,7 +438,7 @@ export async function findPullRequest(octokit: Octokit, project: string): Promis
   //   }
   // }
 
-  return undefined
+  return pullRequests.repository.pullRequests.nodes[0]
 }
 
 /**

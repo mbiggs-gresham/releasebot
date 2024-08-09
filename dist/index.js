@@ -53241,6 +53241,11 @@ function findPullRequestsQuery() {
     return `
     query FindPullRequestID ($owner: String!, $repo: String!, $labels: [String!]){
         repository(owner:$owner, name:$repo) {
+            refs(first:100) {
+                nodes {
+                    name
+                }
+            }
             pullRequests(first:1, labels:$labels, states:OPEN) {
               nodes {
                 id
@@ -53530,14 +53535,14 @@ async function findPullRequest(octokit, project) {
         repo: lib_github.context.repo.repo,
         labels: ['release', project]
     });
-    lib_core.info(`Pull Request ID: ${JSON.stringify(pullRequests, null, 2)}`);
+    lib_core.info(`Pull Request: ${JSON.stringify(pullRequests, null, 2)}`);
     // for (const pull of pulls.data) {
     //   if (pull.labels.find(label => label.name === 'release')) {
     //     core.info(`Found existing PR for branch: ${releaseBranch}`)
     //     return pull
     //   }
     // }
-    return undefined;
+    return pullRequests.repository.pullRequests.nodes[0];
 }
 /**
  * Create a draft PR for the release branch.
