@@ -135,7 +135,7 @@ function findRefQuery(): string {
 
 function findCommitQuery(): string {
   return `
-    query FindCommit($owner: String!, $repo: String!, $oid: GitObjectID!) {
+    query FindCommit($owner: String!, $repo: String!, $oid: string!) {
         repository(owner: $owner, name: $repo) {
             object(expression: $oid) {
                 ... on Commit {
