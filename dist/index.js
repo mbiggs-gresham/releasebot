@@ -53241,6 +53241,11 @@ function findPullRequestsQuery() {
     return `
     query FindPullRequestID ($owner: String!, $repo: String!, $labels: [String!]){
         repository(owner:$owner, name:$repo) {
+            tags: refs(first:100, refPrefix:"refs/tags/") {
+                nodes {
+                    name
+                }
+            }
             branches: refs(first:100, refPrefix:"refs/heads/") {
                 nodes {
                     name
