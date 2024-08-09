@@ -38,6 +38,10 @@ interface Comment {
   body: string
 }
 
+interface Comments {
+  comments: Comment[]
+}
+
 interface PullRequest {
   id: string
   number: number
@@ -47,7 +51,7 @@ interface PullRequest {
   lastEditedAt: string
   baseRefName: string
   headRefName: string
-  comments: Comment[]
+  comments: Comments
 }
 
 interface PullRequests {
@@ -261,7 +265,7 @@ function findDraftReleaseQuery(): string {
                           login
                       }
                       comments(last: 10) {
-                          comment: nodes {
+                          comments: nodes {
                               author {
                                   login
                               }
@@ -553,7 +557,7 @@ export function getNextVersion(draftRelease: KrytenbotDraftRelease, versionType:
     const tagVersion = tagName.substring(tagName.indexOf('@v') + 2)
 
     if (draftRelease.pullRequests.pullRequests.length > 0) {
-      for (const comment of draftRelease.pullRequests.pullRequests[0]?.comments) {
+      for (const comment of draftRelease.pullRequests.pullRequests[0]?.comments.comments) {
         const commentBody = comment.body
         if (commentBody.startsWith(Commands.SetVersion)) {
           const nextVersionType = commentBody.split(' ')[2]

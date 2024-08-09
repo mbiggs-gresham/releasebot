@@ -118,7 +118,7 @@ async function pushEvent(octokit: Octokit): Promise<void> {
   core.endGroup()
 
   for (const project of projectsOfRelevance) {
-    core.startGroup('Checking for draft release info')
+    core.startGroup(`Checking for draft release info for '${project}'`)
 
     const releaseBranch = `krytenbot-${project}`
     const draftRelease = await githubapi.findDraftRelease(octokit, project)
@@ -148,6 +148,7 @@ async function pushEvent(octokit: Octokit): Promise<void> {
       await githubapi.updateDraftReleaseBranch(octokit, draftRelease, project)
     }
 
+    core.endGroup()
     // const releaseBranchExists = await githubapi.releaseBranchExists(octokit, project)
     // if (!releaseBranchExists) {
     //   await githubapi.createReleaseBranch(octokit, project)

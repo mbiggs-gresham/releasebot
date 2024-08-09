@@ -51996,7 +51996,7 @@ function findDraftReleaseQuery() {
                           login
                       }
                       comments(last: 10) {
-                          comment: nodes {
+                          comments: nodes {
                               author {
                                   login
                               }
@@ -52265,7 +52265,7 @@ function getNextVersion(draftRelease, versionType) {
         const tagName = tag.name;
         const tagVersion = tagName.substring(tagName.indexOf('@v') + 2);
         if (draftRelease.pullRequests.pullRequests.length > 0) {
-            for (const comment of draftRelease.pullRequests.pullRequests[0]?.comments) {
+            for (const comment of draftRelease.pullRequests.pullRequests[0]?.comments.comments) {
                 const commentBody = comment.body;
                 if (commentBody.startsWith(Commands.SetVersion)) {
                     const nextVersionType = commentBody.split(' ')[2];
@@ -52634,7 +52634,7 @@ async function pushEvent(octokit) {
     projectsOfRelevance.forEach(projectOfRelevance => core.info(projectOfRelevance));
     core.endGroup();
     for (const project of projectsOfRelevance) {
-        core.startGroup('Checking for draft release info');
+        core.startGroup(`Checking for draft release info for '${project}'`);
         const releaseBranch = `krytenbot-${project}`;
         const draftRelease = await findDraftRelease(octokit, project);
         core.info(`Draft Release: ${JSON.stringify(draftRelease, null, 2)}`);
@@ -52660,6 +52660,7 @@ async function pushEvent(octokit) {
             core.info(`Updating draft release branch for '${project}'`);
             await updateDraftReleaseBranch(octokit, draftRelease, project);
         }
+        core.endGroup();
         // const releaseBranchExists = await githubapi.releaseBranchExists(octokit, project)
         // if (!releaseBranchExists) {
         //   await githubapi.createReleaseBranch(octokit, project)
