@@ -43,7 +43,7 @@ function addReactionToIssueMutation(): string {
 
 function updatePullRequestBranchMutation(): string {
   return `
-    mutation UpdatePullRequestBranchMutation($pullRequestId: ID!, $expectedHeadOid: GitObjectID!) {
+    mutation UpdatePullRequestBranchMutation($pullRequestId: ID!) {
         updatePullRequestBranch(input:{ clientMutationId: "krytenbot", pullRequestId: $pullRequestId, updateMethod: REBASE }) {
             pullRequest {
                 id
@@ -197,10 +197,7 @@ async function pushEvent(octokit: Octokit): Promise<void> {
 
             try {
               const updatePR = await octokit.graphql(updatePullRequestBranchMutation(), {
-                pullRequestId: pullRequestId.id,
-                expectedHeadOid: {
-                  id: github.context.sha
-                }
+                pullRequestId: pullRequestId.id
               })
               core.info(`Update PR: ${JSON.stringify(updatePR, null, 2)}`)
             } catch (error) {
