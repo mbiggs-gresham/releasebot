@@ -419,6 +419,7 @@ export async function listProjectsOfRelevance(files: string[]): Promise<string[]
  * @param project
  * @param branch
  * @param version
+ * @param sha
  */
 export async function setVersion(octokit: Octokit, project: string, branch: string, version: string, sha: string): Promise<void> {
   core.info(`Updating ${project} version to ${version}`)

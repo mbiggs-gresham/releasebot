@@ -52145,6 +52145,7 @@ async function listProjectsOfRelevance(files) {
  * @param project
  * @param branch
  * @param version
+ * @param sha
  */
 async function setVersion(octokit, project, branch, version, sha) {
     core.info(`Updating ${project} version to ${version}`);
