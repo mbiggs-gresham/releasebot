@@ -44,41 +44,6 @@ export async function run(): Promise<void> {
 
     const octokit: Octokit = await app.getInstallationOctokit(installation.id)
 
-    // const pullRequestId: GraphQlQueryResponseData = await octokit.graphql(findPullRequestIdQuery(), {
-    //   owner: github.context.repo.owner,
-    //   repo: github.context.repo.repo,
-    //   pullNumber: 5
-    // })
-    // core.info(`Pull Request ID: ${JSON.stringify(pullRequestId, null, 2)}`)
-    // core.info(`Pull Request ID: ${pullRequestId.repository.pullRequest.id}`)
-
-    // const comment: GraphQlQueryResponseData = await octokit.graphql(addPullRequestCommentMutation(), {
-    //   subjectId: pullRequestId.repository.pullRequest.id,
-    //   body: 'Hello, World!'
-    // })
-
-    // const { repository }: GraphQlQueryResponseData = await graphql(
-    //   `
-    //     {
-    //       repository(owner: "octokit", name: "graphql.js") {
-    //         issues(last: 3) {
-    //           edges {
-    //             node {
-    //               title
-    //             }
-    //           }
-    //         }
-    //       }
-    //     }
-    //   `,
-    //   {
-    //     headers: {
-    //       authorization: `token ${token}`
-    //     }
-    //   }
-    // )
-    // core.info(`Repository: ${JSON.stringify(repository, null, 2)}`)
-
     core.debug(`Github Context: ${JSON.stringify(github.context, null, 2)}`)
 
     /**

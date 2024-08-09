@@ -260,7 +260,9 @@ function findDraftReleaseQuery(): string {
                       createdAt
                       lastEditedAt
                       baseRefName
+                      baseRefOid
                       headRefName
+                      headRefOid
                       author {
                           login
                       }
