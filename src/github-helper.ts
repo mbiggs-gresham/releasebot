@@ -475,7 +475,7 @@ export async function findDraftRelease(octokit: Octokit, project: string): Promi
     branch: getReleaseBranchName(project),
     labels: ['release', project]
   })
-  core.debug(`Pull Request: ${JSON.stringify(pullRequests, null, 2)}`)
+  core.info(`Pull Request: ${JSON.stringify(pullRequests, null, 2)}`)
   return pullRequests.repository
 }
 
