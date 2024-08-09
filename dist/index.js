@@ -51830,9 +51830,9 @@ function findRefQuery() {
 }
 function findCommitQuery() {
     return `
-    query FindCommit($owner: String!, $repo: String!, $expression: String!) {
+    query FindCommit($owner: String!, $repo: String!, $oid: GitObjectID!) {
         repository(owner: $owner, name: $repo) {
-            object(expression: $expression) {
+            object(oid: $oid) {
                 ... on Commit {
                     oid
                     message
@@ -51841,6 +51841,20 @@ function findCommitQuery() {
                           name
                           path
                        }
+                    }
+                    history(first: 10) {
+                        nodes {
+                            id
+                            oid
+                            message
+                            changedFiles
+                            tree {
+                              entries {
+                                name
+                                path
+                              }                            
+                            }
+                        }
                     }
                 }
             }
@@ -51985,7 +51999,7 @@ async function listPushCommitFiles(octokit, payload) {
             const commitDetails = await octokit.graphql(findCommitQuery(), {
                 owner: github.context.repo.owner,
                 repo: github.context.repo.repo,
-                expression: payload.after
+                oid: payload.after
             });
             core.info(`Commit Details: ${JSON.stringify(commitDetails, null, 2)}`);
             // commitDetails.files?.forEach(file => files.add(file.filename))
