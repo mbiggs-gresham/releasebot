@@ -51842,7 +51842,7 @@ function findCommitQuery() {
                           path
                        }
                     }
-                    history(first: 10) {
+                    history(last: 1) {
                         nodes {
                             id
                             oid
