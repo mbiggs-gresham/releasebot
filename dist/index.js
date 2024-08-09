@@ -51889,7 +51889,7 @@ function getFileContentQuery() {
         repository(owner: $owner, name: $repo) {
               file: object(expression: $ref) {
                   ... on Blob {
-                      text
+                      content: text
                   }
               }
         }
@@ -52144,60 +52144,31 @@ async function listProjectsOfRelevance(files) {
  */
 async function setVersion(octokit, project, branch, version, sha) {
     lib_core.info(`Updating ${project} version to ${version}`);
-    const file = await octokit.graphql(getFileContentQuery(), {
+    const { contents: { repository: { file: { contents: existingFile } } } } = await octokit.graphql(getFileContentQuery(), {
         owner: github.context.repo.owner,
         repo: github.context.repo.repo,
         ref: `${branch}:${project}/package.json`
     });
-    lib_core.info(`File: ${JSON.stringify(file, null, 2)}`);
-    const { data: existingFile } = await octokit.rest.repos.getContent({
-        owner: github.context.repo.owner,
-        repo: github.context.repo.repo,
-        path: `${project}/package.json`,
-        ref: branch
-    });
-    lib_core.debug(`Existing File: ${JSON.stringify(existingFile, null, 2)}`);
-    if (!Array.isArray(existingFile)) {
-        if (existingFile.type === 'file' && existingFile.size > 0) {
-            const existingFileContents = decode(existingFile.content);
-            const newFileContents = patchPackageJson(existingFileContents, version);
-            if (lib_core.isDebug()) {
-                lib_core.startGroup('File Contents');
-                lib_core.debug(`Existing File Contents: ${existingFileContents}`);
-                lib_core.debug(`New File Contents: ${newFileContents}`);
-                lib_core.endGroup();
-            }
-            const createCommitOnBranch = await octokit.graphql(createCommitOnBranchMutation(), {
-                branch: {
-                    repositoryNameWithOwner: `${github.context.repo.owner}/${github.context.repo.repo}`,
-                    branchName: branch
-                },
-                message: { headline: `Update ${project} version to v${version}` },
-                expectedHeadOid: sha,
-                fileChanges: {
-                    additions: [
-                        {
-                            path: `${project}/package.json`,
-                            contents: encode(newFileContents)
-                        }
-                    ]
+    lib_core.info(`Existing File: ${JSON.stringify(existingFile, null, 2)}`);
+    const existingFileContents = decode(existingFile.content);
+    const newFileContents = patchPackageJson(existingFileContents, version);
+    const createCommitOnBranch = await octokit.graphql(createCommitOnBranchMutation(), {
+        branch: {
+            repositoryNameWithOwner: `${github.context.repo.owner}/${github.context.repo.repo}`,
+            branchName: branch
+        },
+        message: { headline: `Update ${project} version to v${version}` },
+        expectedHeadOid: sha,
+        fileChanges: {
+            additions: [
+                {
+                    path: `${project}/package.json`,
+                    contents: encode(newFileContents)
                 }
-            });
-            // const newFile: CreateOrUpdateFileContentsResponse = await octokit.rest.repos.createOrUpdateFileContents({
-            //   owner: github.context.repo.owner,
-            //   repo: github.context.repo.repo,
-            //   path: `${project}/package.json`,
-            //   branch: branch,
-            //   sha: existingFile.sha,
-            //   message: `Update ${project} version to v${version}`,
-            //   content: base64.encode(newFileContents)
-            // })
-            lib_core.info(`Updated File: ${JSON.stringify(createCommitOnBranch, null, 2)}`);
+            ]
         }
-        else {
-            lib_core.setFailed('Existing file is not a file');
-        }
-    }
+    });
+    lib_core.info(`Updated File: ${JSON.stringify(createCommitOnBranch, null, 2)}`);
 }
 // /**
 //  * Check if the release branch exists for the project.
