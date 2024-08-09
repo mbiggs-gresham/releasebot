@@ -51836,6 +51836,11 @@ function findCommitQuery() {
                 ... on Commit {
                     oid
                     message
+                    tree {
+                       entries { 
+                          name 
+                       }
+                    }
                 }
             }
         }

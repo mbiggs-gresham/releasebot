@@ -141,6 +141,11 @@ function findCommitQuery(): string {
                 ... on Commit {
                     oid
                     message
+                    tree {
+                       entries { 
+                          name 
+                       }
+                    }
                 }
             }
         }
