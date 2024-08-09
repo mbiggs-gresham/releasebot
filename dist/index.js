@@ -51883,6 +51883,20 @@ function findRefQuery() {
         }
     }`;
 }
+function getFileContentQuery() {
+    return `
+    query GetFileContent($owner: String!, $repo: String!, $branch: String!, $ref: String!) {
+        repository(owner: $owner, name: $repo) {
+            ref(qualifiedName: $branch) {
+                file: object(expression: $ref) {
+                    ... on Blob {
+                        text
+                    }
+                }
+            }
+        }
+    }`;
+}
 function findCommitQuery() {
     return `
     query FindCommit($owner: String!, $repo: String!, $oid: GitObjectID!) {
@@ -52132,6 +52146,13 @@ async function listProjectsOfRelevance(files) {
  */
 async function setVersion(octokit, project, branch, version, sha) {
     lib_core.info(`Updating ${project} version to ${version}`);
+    const file = await octokit.graphql(getFileContentQuery(), {
+        owner: github.context.repo.owner,
+        repo: github.context.repo.repo,
+        branch: `refs/heads/${branch}`,
+        ref: `HEAD:${project}/package.json`
+    });
+    lib_core.debug(`File: ${JSON.stringify(file, null, 2)}`);
     const { data: existingFile } = await octokit.rest.repos.getContent({
         owner: github.context.repo.owner,
         repo: github.context.repo.repo,
@@ -52157,11 +52178,6 @@ async function setVersion(octokit, project, branch, version, sha) {
                 message: { headline: `Update ${project} version to v${version}` },
                 expectedHeadOid: sha,
                 fileChanges: {
-                    // deletions: [
-                    //   {
-                    //     path: `${project}/package.json`
-                    //   }
-                    // ],
                     additions: [
                         {
                             path: `${project}/package.json`,
