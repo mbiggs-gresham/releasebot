@@ -69,6 +69,8 @@ const projects = ['core', 'grid']
 const projectsPaths = ['core/*', 'grid/*']
 const projectsEcosystem = ['npm', 'npm']
 
+type GetContentResponse = Endpoints['GET /repos/{owner}/{repo}/contents/{path}']['response']
+
 function addReactionToIssueMutation(): string {
   return `
     mutation AddReactionToIssue($subjectId: ID!, $content: ReactionContent!) {
@@ -89,6 +91,17 @@ function createRefMutation(): string {
         createRef(input:{ repositoryId: $repositoryId, name: $name, oid: $oid }) {
             ref {
                 name
+            }
+        }
+    }`
+}
+
+function createCommitOnBranchMutation(): string {
+  return `
+    mutation CreateCommitOnBranchMutation($repositoryId: ID!, $repositoryNameWithOwner: repositoryNameWithOwner!, $branch: CommittableBranch!, $message: CommitMessage!, $expectedHeadOid: GitObjectID!, fileChanges: FileChanges) {
+        createCommitOnBranch(input:{ clientMutationId: "krytenbot", branch: $branch, message: $message, expectedHeadOid: $expectedHeadOid, fileChanges: $fileChanges }) {
+            commit {
+                oid
             }
         }
     }`
@@ -399,52 +412,76 @@ export async function listProjectsOfRelevance(files: string[]): Promise<string[]
 //   core.warning(`No tags found for project: ${project}. Using default next version.`)
 //   return getDefaultNextVersion()
 // }
-//
-// /**
-//  * Update the version for the project.
-//  * @param octokit
-//  * @param project
-//  * @param branch
-//  * @param version
-//  */
-// export async function setVersion(octokit: Octokit, project: string, branch: string, version: string): Promise<void> {
-//   core.info(`Updating ${project} version to ${version}`)
-//   const { data: existingFile }: GetContentResponse = await octokit.rest.repos.getContent({
-//     owner: github.context.repo.owner,
-//     repo: github.context.repo.repo,
-//     path: `${project}/package.json`,
-//     ref: branch
-//   })
-//   core.debug(`Existing File: ${JSON.stringify(existingFile, null, 2)}`)
-//
-//   if (!Array.isArray(existingFile)) {
-//     if (existingFile.type === 'file' && existingFile.size > 0) {
-//       const existingFileContents = base64.decode(existingFile.content)
-//       const newFileContents = versions.patchPackageJson(existingFileContents, version)
-//
-//       if (core.isDebug()) {
-//         core.startGroup('File Contents')
-//         core.debug(`Existing File Contents: ${existingFileContents}`)
-//         core.debug(`New File Contents: ${newFileContents}`)
-//         core.endGroup()
-//       }
-//
-//       const newFile: CreateOrUpdateFileContentsResponse = await octokit.rest.repos.createOrUpdateFileContents({
-//         owner: github.context.repo.owner,
-//         repo: github.context.repo.repo,
-//         path: `${project}/package.json`,
-//         branch: branch,
-//         sha: existingFile.sha,
-//         message: `Update ${project} version to v${version}`,
-//         content: base64.encode(newFileContents)
-//       })
-//       core.debug(`Updated File: ${JSON.stringify(newFile, null, 2)}`)
-//     } else {
-//       core.setFailed('Existing file is not a file')
-//     }
-//   }
-// }
-//
+
+/**
+ * Update the version for the project.
+ * @param octokit
+ * @param project
+ * @param branch
+ * @param version
+ */
+export async function setVersion(octokit: Octokit, project: string, branch: string, version: string, sha: string): Promise<void> {
+  core.info(`Updating ${project} version to ${version}`)
+  const { data: existingFile }: GetContentResponse = await octokit.rest.repos.getContent({
+    owner: github.context.repo.owner,
+    repo: github.context.repo.repo,
+    path: `${project}/package.json`,
+    ref: branch
+  })
+  core.debug(`Existing File: ${JSON.stringify(existingFile, null, 2)}`)
+
+  if (!Array.isArray(existingFile)) {
+    if (existingFile.type === 'file' && existingFile.size > 0) {
+      const existingFileContents = base64.decode(existingFile.content)
+      const newFileContents = versions.patchPackageJson(existingFileContents, version)
+
+      if (core.isDebug()) {
+        core.startGroup('File Contents')
+        core.debug(`Existing File Contents: ${existingFileContents}`)
+        core.debug(`New File Contents: ${newFileContents}`)
+        core.endGroup()
+      }
+
+      const createCommitOnBranch: GraphQlQueryResponseData = await octokit.graphql(createCommitOnBranchMutation(), {
+        repositoryNameWithOwner: {
+          repositoryNameWithOwner: `${github.context.repo.owner}/${github.context.repo.repo}`,
+          branchName: branch
+        },
+        message: { body: `Update ${project} version to v${version}` },
+        expectedHeadOid: sha,
+        fileChanges: [
+          {
+            deletions: [
+              {
+                path: `${project}/package.json`
+              }
+            ],
+            additions: [
+              {
+                path: `${project}/package.json`,
+                contents: base64.encode(newFileContents)
+              }
+            ]
+          }
+        ]
+      })
+
+      // const newFile: CreateOrUpdateFileContentsResponse = await octokit.rest.repos.createOrUpdateFileContents({
+      //   owner: github.context.repo.owner,
+      //   repo: github.context.repo.repo,
+      //   path: `${project}/package.json`,
+      //   branch: branch,
+      //   sha: existingFile.sha,
+      //   message: `Update ${project} version to v${version}`,
+      //   content: base64.encode(newFileContents)
+      // })
+      core.debug(`Updated File: ${JSON.stringify(createCommitOnBranch, null, 2)}`)
+    } else {
+      core.setFailed('Existing file is not a file')
+    }
+  }
+}
+
 // /**
 //  * Check if the release branch exists for the project.
 //  * @param octokit

@@ -129,6 +129,7 @@ async function pushEvent(octokit: Octokit): Promise<void> {
     if (!draftRelease.branches.branches.some(branch => branch.name === releaseBranch)) {
       core.info(`Creating release branch for ${project}`)
       await githubapi.createDraftReleaseBranch(octokit, draftRelease, project, github.context.sha)
+      await githubapi.setVersion(octokit, project, releaseBranch, nextVersion, github.context.sha)
     }
 
     if (draftRelease.pullRequests.pullRequests.length === 0) {

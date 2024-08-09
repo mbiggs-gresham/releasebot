@@ -51754,6 +51754,36 @@ minimatch.unescape = unescape_unescape;
 //# sourceMappingURL=index.js.map
 // EXTERNAL MODULE: ./node_modules/semver/index.js
 var semver = __nccwpck_require__(1383);
+;// CONCATENATED MODULE: ./src/version-helper.ts
+const semverVersionTypes = (/* unused pure expression or super */ null && (['major', 'minor', 'patch']));
+/**
+ * This function will take the contents of a package.json file and replace the version number with the next version number.
+ * @param fileContents
+ * @param nextVersion
+ */
+function patchPackageJson(fileContents, nextVersion) {
+    return fileContents.replace(/"version": "(.*)"/, `"version": "${nextVersion}"`);
+}
+function isValidSemverVersionType(version) {
+    return semverVersionTypes.includes(version);
+}
+
+;// CONCATENATED MODULE: ./src/base64-helper.ts
+/**
+ * Encode a string to base64.
+ * @param input
+ */
+function encode(input) {
+    return Buffer.from(input, 'utf-8').toString('base64');
+}
+/**
+ * Decode a base64 encoded string.
+ * @param input
+ */
+function decode(input) {
+    return Buffer.from(input, 'base64').toString('utf-8');
+}
+
 ;// CONCATENATED MODULE: ./src/markdown.ts
 function note(message) {
     return `> [!NOTE]\n> ${message}`;
@@ -51775,6 +51805,8 @@ function markdown_hidden(message) {
 }
 
 ;// CONCATENATED MODULE: ./src/github-helper.ts
+
+
 
 
 
@@ -51808,6 +51840,16 @@ function createRefMutation() {
         createRef(input:{ repositoryId: $repositoryId, name: $name, oid: $oid }) {
             ref {
                 name
+            }
+        }
+    }`;
+}
+function createCommitOnBranchMutation() {
+    return `
+    mutation CreateCommitOnBranchMutation($repositoryId: ID!, $repositoryNameWithOwner: repositoryNameWithOwner!, $branch: CommittableBranch!, $message: CommitMessage!, $expectedHeadOid: GitObjectID!, fileChanges: FileChanges) {
+        createCommitOnBranch(input:{ clientMutationId: "krytenbot", branch: $branch, message: $message, expectedHeadOid: $expectedHeadOid, fileChanges: $fileChanges }) {
+            commit {
+                oid
             }
         }
     }`;
@@ -52097,52 +52139,71 @@ async function listProjectsOfRelevance(files) {
 //   core.warning(`No tags found for project: ${project}. Using default next version.`)
 //   return getDefaultNextVersion()
 // }
-//
-// /**
-//  * Update the version for the project.
-//  * @param octokit
-//  * @param project
-//  * @param branch
-//  * @param version
-//  */
-// export async function setVersion(octokit: Octokit, project: string, branch: string, version: string): Promise<void> {
-//   core.info(`Updating ${project} version to ${version}`)
-//   const { data: existingFile }: GetContentResponse = await octokit.rest.repos.getContent({
-//     owner: github.context.repo.owner,
-//     repo: github.context.repo.repo,
-//     path: `${project}/package.json`,
-//     ref: branch
-//   })
-//   core.debug(`Existing File: ${JSON.stringify(existingFile, null, 2)}`)
-//
-//   if (!Array.isArray(existingFile)) {
-//     if (existingFile.type === 'file' && existingFile.size > 0) {
-//       const existingFileContents = base64.decode(existingFile.content)
-//       const newFileContents = versions.patchPackageJson(existingFileContents, version)
-//
-//       if (core.isDebug()) {
-//         core.startGroup('File Contents')
-//         core.debug(`Existing File Contents: ${existingFileContents}`)
-//         core.debug(`New File Contents: ${newFileContents}`)
-//         core.endGroup()
-//       }
-//
-//       const newFile: CreateOrUpdateFileContentsResponse = await octokit.rest.repos.createOrUpdateFileContents({
-//         owner: github.context.repo.owner,
-//         repo: github.context.repo.repo,
-//         path: `${project}/package.json`,
-//         branch: branch,
-//         sha: existingFile.sha,
-//         message: `Update ${project} version to v${version}`,
-//         content: base64.encode(newFileContents)
-//       })
-//       core.debug(`Updated File: ${JSON.stringify(newFile, null, 2)}`)
-//     } else {
-//       core.setFailed('Existing file is not a file')
-//     }
-//   }
-// }
-//
+/**
+ * Update the version for the project.
+ * @param octokit
+ * @param project
+ * @param branch
+ * @param version
+ */
+async function setVersion(octokit, project, branch, version, sha) {
+    core.info(`Updating ${project} version to ${version}`);
+    const { data: existingFile } = await octokit.rest.repos.getContent({
+        owner: github.context.repo.owner,
+        repo: github.context.repo.repo,
+        path: `${project}/package.json`,
+        ref: branch
+    });
+    core.debug(`Existing File: ${JSON.stringify(existingFile, null, 2)}`);
+    if (!Array.isArray(existingFile)) {
+        if (existingFile.type === 'file' && existingFile.size > 0) {
+            const existingFileContents = decode(existingFile.content);
+            const newFileContents = patchPackageJson(existingFileContents, version);
+            if (core.isDebug()) {
+                core.startGroup('File Contents');
+                core.debug(`Existing File Contents: ${existingFileContents}`);
+                core.debug(`New File Contents: ${newFileContents}`);
+                core.endGroup();
+            }
+            const createCommitOnBranch = await octokit.graphql(createCommitOnBranchMutation(), {
+                repositoryNameWithOwner: {
+                    repositoryNameWithOwner: `${github.context.repo.owner}/${github.context.repo.repo}`,
+                    branchName: branch
+                },
+                message: { body: `Update ${project} version to v${version}` },
+                expectedHeadOid: sha,
+                fileChanges: [
+                    {
+                        deletions: [
+                            {
+                                path: `${project}/package.json`
+                            }
+                        ],
+                        additions: [
+                            {
+                                path: `${project}/package.json`,
+                                contents: encode(newFileContents)
+                            }
+                        ]
+                    }
+                ]
+            });
+            // const newFile: CreateOrUpdateFileContentsResponse = await octokit.rest.repos.createOrUpdateFileContents({
+            //   owner: github.context.repo.owner,
+            //   repo: github.context.repo.repo,
+            //   path: `${project}/package.json`,
+            //   branch: branch,
+            //   sha: existingFile.sha,
+            //   message: `Update ${project} version to v${version}`,
+            //   content: base64.encode(newFileContents)
+            // })
+            core.debug(`Updated File: ${JSON.stringify(createCommitOnBranch, null, 2)}`);
+        }
+        else {
+            core.setFailed('Existing file is not a file');
+        }
+    }
+}
 // /**
 //  * Check if the release branch exists for the project.
 //  * @param octokit
@@ -52574,6 +52635,7 @@ async function pushEvent(octokit) {
         if (!draftRelease.branches.branches.some(branch => branch.name === releaseBranch)) {
             core.info(`Creating release branch for ${project}`);
             await createDraftReleaseBranch(octokit, draftRelease, project, github.context.sha);
+            await setVersion(octokit, project, releaseBranch, nextVersion, github.context.sha);
         }
         if (draftRelease.pullRequests.pullRequests.length === 0) {
             core.info(`Creating pull request for ${project}`);
