@@ -51830,9 +51830,9 @@ function findRefQuery() {
 }
 function findCommitQuery() {
     return `
-    query FindCommit($owner: String!, $repo: String!, $oid: string!) {
+    query FindCommit($owner: String!, $repo: String!, $expression: string!) {
         repository(owner: $owner, name: $repo) {
-            object(expression: $oid) {
+            object(expression: $expression) {
                 ... on Commit {
                     oid
                     message
@@ -52204,7 +52204,7 @@ async function createDraftReleaseBranch(octokit, draftRelease, project, sha) {
     const branch = await octokit.graphql(createRefMutation(), {
         repositoryId: draftRelease.id,
         name: `refs/heads/${releaseBranch}`,
-        oid: sha
+        expression: sha
     });
     core.debug(`Created Branch: ${JSON.stringify(branch, null, 2)}`);
 }
