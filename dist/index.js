@@ -987,739 +987,6 @@ exports.toCommandProperties = toCommandProperties;
 
 /***/ }),
 
-/***/ 1514:
-/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
-
-
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.getExecOutput = exports.exec = void 0;
-const string_decoder_1 = __nccwpck_require__(1576);
-const tr = __importStar(__nccwpck_require__(8159));
-/**
- * Exec a command.
- * Output will be streamed to the live console.
- * Returns promise with return code
- *
- * @param     commandLine        command to execute (can include additional args). Must be correctly escaped.
- * @param     args               optional arguments for tool. Escaping is handled by the lib.
- * @param     options            optional exec options.  See ExecOptions
- * @returns   Promise<number>    exit code
- */
-function exec(commandLine, args, options) {
-    return __awaiter(this, void 0, void 0, function* () {
-        const commandArgs = tr.argStringToArray(commandLine);
-        if (commandArgs.length === 0) {
-            throw new Error(`Parameter 'commandLine' cannot be null or empty.`);
-        }
-        // Path to tool to execute should be first arg
-        const toolPath = commandArgs[0];
-        args = commandArgs.slice(1).concat(args || []);
-        const runner = new tr.ToolRunner(toolPath, args, options);
-        return runner.exec();
-    });
-}
-exports.exec = exec;
-/**
- * Exec a command and get the output.
- * Output will be streamed to the live console.
- * Returns promise with the exit code and collected stdout and stderr
- *
- * @param     commandLine           command to execute (can include additional args). Must be correctly escaped.
- * @param     args                  optional arguments for tool. Escaping is handled by the lib.
- * @param     options               optional exec options.  See ExecOptions
- * @returns   Promise<ExecOutput>   exit code, stdout, and stderr
- */
-function getExecOutput(commandLine, args, options) {
-    var _a, _b;
-    return __awaiter(this, void 0, void 0, function* () {
-        let stdout = '';
-        let stderr = '';
-        //Using string decoder covers the case where a mult-byte character is split
-        const stdoutDecoder = new string_decoder_1.StringDecoder('utf8');
-        const stderrDecoder = new string_decoder_1.StringDecoder('utf8');
-        const originalStdoutListener = (_a = options === null || options === void 0 ? void 0 : options.listeners) === null || _a === void 0 ? void 0 : _a.stdout;
-        const originalStdErrListener = (_b = options === null || options === void 0 ? void 0 : options.listeners) === null || _b === void 0 ? void 0 : _b.stderr;
-        const stdErrListener = (data) => {
-            stderr += stderrDecoder.write(data);
-            if (originalStdErrListener) {
-                originalStdErrListener(data);
-            }
-        };
-        const stdOutListener = (data) => {
-            stdout += stdoutDecoder.write(data);
-            if (originalStdoutListener) {
-                originalStdoutListener(data);
-            }
-        };
-        const listeners = Object.assign(Object.assign({}, options === null || options === void 0 ? void 0 : options.listeners), { stdout: stdOutListener, stderr: stdErrListener });
-        const exitCode = yield exec(commandLine, args, Object.assign(Object.assign({}, options), { listeners }));
-        //flush any remaining characters
-        stdout += stdoutDecoder.end();
-        stderr += stderrDecoder.end();
-        return {
-            exitCode,
-            stdout,
-            stderr
-        };
-    });
-}
-exports.getExecOutput = getExecOutput;
-//# sourceMappingURL=exec.js.map
-
-/***/ }),
-
-/***/ 8159:
-/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
-
-
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.argStringToArray = exports.ToolRunner = void 0;
-const os = __importStar(__nccwpck_require__(2037));
-const events = __importStar(__nccwpck_require__(2361));
-const child = __importStar(__nccwpck_require__(2081));
-const path = __importStar(__nccwpck_require__(1017));
-const io = __importStar(__nccwpck_require__(7436));
-const ioUtil = __importStar(__nccwpck_require__(1962));
-const timers_1 = __nccwpck_require__(9512);
-/* eslint-disable @typescript-eslint/unbound-method */
-const IS_WINDOWS = process.platform === 'win32';
-/*
- * Class for running command line tools. Handles quoting and arg parsing in a platform agnostic way.
- */
-class ToolRunner extends events.EventEmitter {
-    constructor(toolPath, args, options) {
-        super();
-        if (!toolPath) {
-            throw new Error("Parameter 'toolPath' cannot be null or empty.");
-        }
-        this.toolPath = toolPath;
-        this.args = args || [];
-        this.options = options || {};
-    }
-    _debug(message) {
-        if (this.options.listeners && this.options.listeners.debug) {
-            this.options.listeners.debug(message);
-        }
-    }
-    _getCommandString(options, noPrefix) {
-        const toolPath = this._getSpawnFileName();
-        const args = this._getSpawnArgs(options);
-        let cmd = noPrefix ? '' : '[command]'; // omit prefix when piped to a second tool
-        if (IS_WINDOWS) {
-            // Windows + cmd file
-            if (this._isCmdFile()) {
-                cmd += toolPath;
-                for (const a of args) {
-                    cmd += ` ${a}`;
-                }
-            }
-            // Windows + verbatim
-            else if (options.windowsVerbatimArguments) {
-                cmd += `"${toolPath}"`;
-                for (const a of args) {
-                    cmd += ` ${a}`;
-                }
-            }
-            // Windows (regular)
-            else {
-                cmd += this._windowsQuoteCmdArg(toolPath);
-                for (const a of args) {
-                    cmd += ` ${this._windowsQuoteCmdArg(a)}`;
-                }
-            }
-        }
-        else {
-            // OSX/Linux - this can likely be improved with some form of quoting.
-            // creating processes on Unix is fundamentally different than Windows.
-            // on Unix, execvp() takes an arg array.
-            cmd += toolPath;
-            for (const a of args) {
-                cmd += ` ${a}`;
-            }
-        }
-        return cmd;
-    }
-    _processLineBuffer(data, strBuffer, onLine) {
-        try {
-            let s = strBuffer + data.toString();
-            let n = s.indexOf(os.EOL);
-            while (n > -1) {
-                const line = s.substring(0, n);
-                onLine(line);
-                // the rest of the string ...
-                s = s.substring(n + os.EOL.length);
-                n = s.indexOf(os.EOL);
-            }
-            return s;
-        }
-        catch (err) {
-            // streaming lines to console is best effort.  Don't fail a build.
-            this._debug(`error processing line. Failed with error ${err}`);
-            return '';
-        }
-    }
-    _getSpawnFileName() {
-        if (IS_WINDOWS) {
-            if (this._isCmdFile()) {
-                return process.env['COMSPEC'] || 'cmd.exe';
-            }
-        }
-        return this.toolPath;
-    }
-    _getSpawnArgs(options) {
-        if (IS_WINDOWS) {
-            if (this._isCmdFile()) {
-                let argline = `/D /S /C "${this._windowsQuoteCmdArg(this.toolPath)}`;
-                for (const a of this.args) {
-                    argline += ' ';
-                    argline += options.windowsVerbatimArguments
-                        ? a
-                        : this._windowsQuoteCmdArg(a);
-                }
-                argline += '"';
-                return [argline];
-            }
-        }
-        return this.args;
-    }
-    _endsWith(str, end) {
-        return str.endsWith(end);
-    }
-    _isCmdFile() {
-        const upperToolPath = this.toolPath.toUpperCase();
-        return (this._endsWith(upperToolPath, '.CMD') ||
-            this._endsWith(upperToolPath, '.BAT'));
-    }
-    _windowsQuoteCmdArg(arg) {
-        // for .exe, apply the normal quoting rules that libuv applies
-        if (!this._isCmdFile()) {
-            return this._uvQuoteCmdArg(arg);
-        }
-        // otherwise apply quoting rules specific to the cmd.exe command line parser.
-        // the libuv rules are generic and are not designed specifically for cmd.exe
-        // command line parser.
-        //
-        // for a detailed description of the cmd.exe command line parser, refer to
-        // http://stackoverflow.com/questions/4094699/how-does-the-windows-command-interpreter-cmd-exe-parse-scripts/7970912#7970912
-        // need quotes for empty arg
-        if (!arg) {
-            return '""';
-        }
-        // determine whether the arg needs to be quoted
-        const cmdSpecialChars = [
-            ' ',
-            '\t',
-            '&',
-            '(',
-            ')',
-            '[',
-            ']',
-            '{',
-            '}',
-            '^',
-            '=',
-            ';',
-            '!',
-            "'",
-            '+',
-            ',',
-            '`',
-            '~',
-            '|',
-            '<',
-            '>',
-            '"'
-        ];
-        let needsQuotes = false;
-        for (const char of arg) {
-            if (cmdSpecialChars.some(x => x === char)) {
-                needsQuotes = true;
-                break;
-            }
-        }
-        // short-circuit if quotes not needed
-        if (!needsQuotes) {
-            return arg;
-        }
-        // the following quoting rules are very similar to the rules that by libuv applies.
-        //
-        // 1) wrap the string in quotes
-        //
-        // 2) double-up quotes - i.e. " => ""
-        //
-        //    this is different from the libuv quoting rules. libuv replaces " with \", which unfortunately
-        //    doesn't work well with a cmd.exe command line.
-        //
-        //    note, replacing " with "" also works well if the arg is passed to a downstream .NET console app.
-        //    for example, the command line:
-        //          foo.exe "myarg:""my val"""
-        //    is parsed by a .NET console app into an arg array:
-        //          [ "myarg:\"my val\"" ]
-        //    which is the same end result when applying libuv quoting rules. although the actual
-        //    command line from libuv quoting rules would look like:
-        //          foo.exe "myarg:\"my val\""
-        //
-        // 3) double-up slashes that precede a quote,
-        //    e.g.  hello \world    => "hello \world"
-        //          hello\"world    => "hello\\""world"
-        //          hello\\"world   => "hello\\\\""world"
-        //          hello world\    => "hello world\\"
-        //
-        //    technically this is not required for a cmd.exe command line, or the batch argument parser.
-        //    the reasons for including this as a .cmd quoting rule are:
-        //
-        //    a) this is optimized for the scenario where the argument is passed from the .cmd file to an
-        //       external program. many programs (e.g. .NET console apps) rely on the slash-doubling rule.
-        //
-        //    b) it's what we've been doing previously (by deferring to node default behavior) and we
-        //       haven't heard any complaints about that aspect.
-        //
-        // note, a weakness of the quoting rules chosen here, is that % is not escaped. in fact, % cannot be
-        // escaped when used on the command line directly - even though within a .cmd file % can be escaped
-        // by using %%.
-        //
-        // the saving grace is, on the command line, %var% is left as-is if var is not defined. this contrasts
-        // the line parsing rules within a .cmd file, where if var is not defined it is replaced with nothing.
-        //
-        // one option that was explored was replacing % with ^% - i.e. %var% => ^%var^%. this hack would
-        // often work, since it is unlikely that var^ would exist, and the ^ character is removed when the
-        // variable is used. the problem, however, is that ^ is not removed when %* is used to pass the args
-        // to an external program.
-        //
-        // an unexplored potential solution for the % escaping problem, is to create a wrapper .cmd file.
-        // % can be escaped within a .cmd file.
-        let reverse = '"';
-        let quoteHit = true;
-        for (let i = arg.length; i > 0; i--) {
-            // walk the string in reverse
-            reverse += arg[i - 1];
-            if (quoteHit && arg[i - 1] === '\\') {
-                reverse += '\\'; // double the slash
-            }
-            else if (arg[i - 1] === '"') {
-                quoteHit = true;
-                reverse += '"'; // double the quote
-            }
-            else {
-                quoteHit = false;
-            }
-        }
-        reverse += '"';
-        return reverse
-            .split('')
-            .reverse()
-            .join('');
-    }
-    _uvQuoteCmdArg(arg) {
-        // Tool runner wraps child_process.spawn() and needs to apply the same quoting as
-        // Node in certain cases where the undocumented spawn option windowsVerbatimArguments
-        // is used.
-        //
-        // Since this function is a port of quote_cmd_arg from Node 4.x (technically, lib UV,
-        // see https://github.com/nodejs/node/blob/v4.x/deps/uv/src/win/process.c for details),
-        // pasting copyright notice from Node within this function:
-        //
-        //      Copyright Joyent, Inc. and other Node contributors. All rights reserved.
-        //
-        //      Permission is hereby granted, free of charge, to any person obtaining a copy
-        //      of this software and associated documentation files (the "Software"), to
-        //      deal in the Software without restriction, including without limitation the
-        //      rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
-        //      sell copies of the Software, and to permit persons to whom the Software is
-        //      furnished to do so, subject to the following conditions:
-        //
-        //      The above copyright notice and this permission notice shall be included in
-        //      all copies or substantial portions of the Software.
-        //
-        //      THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-        //      IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-        //      FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-        //      AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-        //      LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-        //      FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-        //      IN THE SOFTWARE.
-        if (!arg) {
-            // Need double quotation for empty argument
-            return '""';
-        }
-        if (!arg.includes(' ') && !arg.includes('\t') && !arg.includes('"')) {
-            // No quotation needed
-            return arg;
-        }
-        if (!arg.includes('"') && !arg.includes('\\')) {
-            // No embedded double quotes or backslashes, so I can just wrap
-            // quote marks around the whole thing.
-            return `"${arg}"`;
-        }
-        // Expected input/output:
-        //   input : hello"world
-        //   output: "hello\"world"
-        //   input : hello""world
-        //   output: "hello\"\"world"
-        //   input : hello\world
-        //   output: hello\world
-        //   input : hello\\world
-        //   output: hello\\world
-        //   input : hello\"world
-        //   output: "hello\\\"world"
-        //   input : hello\\"world
-        //   output: "hello\\\\\"world"
-        //   input : hello world\
-        //   output: "hello world\\" - note the comment in libuv actually reads "hello world\"
-        //                             but it appears the comment is wrong, it should be "hello world\\"
-        let reverse = '"';
-        let quoteHit = true;
-        for (let i = arg.length; i > 0; i--) {
-            // walk the string in reverse
-            reverse += arg[i - 1];
-            if (quoteHit && arg[i - 1] === '\\') {
-                reverse += '\\';
-            }
-            else if (arg[i - 1] === '"') {
-                quoteHit = true;
-                reverse += '\\';
-            }
-            else {
-                quoteHit = false;
-            }
-        }
-        reverse += '"';
-        return reverse
-            .split('')
-            .reverse()
-            .join('');
-    }
-    _cloneExecOptions(options) {
-        options = options || {};
-        const result = {
-            cwd: options.cwd || process.cwd(),
-            env: options.env || process.env,
-            silent: options.silent || false,
-            windowsVerbatimArguments: options.windowsVerbatimArguments || false,
-            failOnStdErr: options.failOnStdErr || false,
-            ignoreReturnCode: options.ignoreReturnCode || false,
-            delay: options.delay || 10000
-        };
-        result.outStream = options.outStream || process.stdout;
-        result.errStream = options.errStream || process.stderr;
-        return result;
-    }
-    _getSpawnOptions(options, toolPath) {
-        options = options || {};
-        const result = {};
-        result.cwd = options.cwd;
-        result.env = options.env;
-        result['windowsVerbatimArguments'] =
-            options.windowsVerbatimArguments || this._isCmdFile();
-        if (options.windowsVerbatimArguments) {
-            result.argv0 = `"${toolPath}"`;
-        }
-        return result;
-    }
-    /**
-     * Exec a tool.
-     * Output will be streamed to the live console.
-     * Returns promise with return code
-     *
-     * @param     tool     path to tool to exec
-     * @param     options  optional exec options.  See ExecOptions
-     * @returns   number
-     */
-    exec() {
-        return __awaiter(this, void 0, void 0, function* () {
-            // root the tool path if it is unrooted and contains relative pathing
-            if (!ioUtil.isRooted(this.toolPath) &&
-                (this.toolPath.includes('/') ||
-                    (IS_WINDOWS && this.toolPath.includes('\\')))) {
-                // prefer options.cwd if it is specified, however options.cwd may also need to be rooted
-                this.toolPath = path.resolve(process.cwd(), this.options.cwd || process.cwd(), this.toolPath);
-            }
-            // if the tool is only a file name, then resolve it from the PATH
-            // otherwise verify it exists (add extension on Windows if necessary)
-            this.toolPath = yield io.which(this.toolPath, true);
-            return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
-                this._debug(`exec tool: ${this.toolPath}`);
-                this._debug('arguments:');
-                for (const arg of this.args) {
-                    this._debug(`   ${arg}`);
-                }
-                const optionsNonNull = this._cloneExecOptions(this.options);
-                if (!optionsNonNull.silent && optionsNonNull.outStream) {
-                    optionsNonNull.outStream.write(this._getCommandString(optionsNonNull) + os.EOL);
-                }
-                const state = new ExecState(optionsNonNull, this.toolPath);
-                state.on('debug', (message) => {
-                    this._debug(message);
-                });
-                if (this.options.cwd && !(yield ioUtil.exists(this.options.cwd))) {
-                    return reject(new Error(`The cwd: ${this.options.cwd} does not exist!`));
-                }
-                const fileName = this._getSpawnFileName();
-                const cp = child.spawn(fileName, this._getSpawnArgs(optionsNonNull), this._getSpawnOptions(this.options, fileName));
-                let stdbuffer = '';
-                if (cp.stdout) {
-                    cp.stdout.on('data', (data) => {
-                        if (this.options.listeners && this.options.listeners.stdout) {
-                            this.options.listeners.stdout(data);
-                        }
-                        if (!optionsNonNull.silent && optionsNonNull.outStream) {
-                            optionsNonNull.outStream.write(data);
-                        }
-                        stdbuffer = this._processLineBuffer(data, stdbuffer, (line) => {
-                            if (this.options.listeners && this.options.listeners.stdline) {
-                                this.options.listeners.stdline(line);
-                            }
-                        });
-                    });
-                }
-                let errbuffer = '';
-                if (cp.stderr) {
-                    cp.stderr.on('data', (data) => {
-                        state.processStderr = true;
-                        if (this.options.listeners && this.options.listeners.stderr) {
-                            this.options.listeners.stderr(data);
-                        }
-                        if (!optionsNonNull.silent &&
-                            optionsNonNull.errStream &&
-                            optionsNonNull.outStream) {
-                            const s = optionsNonNull.failOnStdErr
-                                ? optionsNonNull.errStream
-                                : optionsNonNull.outStream;
-                            s.write(data);
-                        }
-                        errbuffer = this._processLineBuffer(data, errbuffer, (line) => {
-                            if (this.options.listeners && this.options.listeners.errline) {
-                                this.options.listeners.errline(line);
-                            }
-                        });
-                    });
-                }
-                cp.on('error', (err) => {
-                    state.processError = err.message;
-                    state.processExited = true;
-                    state.processClosed = true;
-                    state.CheckComplete();
-                });
-                cp.on('exit', (code) => {
-                    state.processExitCode = code;
-                    state.processExited = true;
-                    this._debug(`Exit code ${code} received from tool '${this.toolPath}'`);
-                    state.CheckComplete();
-                });
-                cp.on('close', (code) => {
-                    state.processExitCode = code;
-                    state.processExited = true;
-                    state.processClosed = true;
-                    this._debug(`STDIO streams have closed for tool '${this.toolPath}'`);
-                    state.CheckComplete();
-                });
-                state.on('done', (error, exitCode) => {
-                    if (stdbuffer.length > 0) {
-                        this.emit('stdline', stdbuffer);
-                    }
-                    if (errbuffer.length > 0) {
-                        this.emit('errline', errbuffer);
-                    }
-                    cp.removeAllListeners();
-                    if (error) {
-                        reject(error);
-                    }
-                    else {
-                        resolve(exitCode);
-                    }
-                });
-                if (this.options.input) {
-                    if (!cp.stdin) {
-                        throw new Error('child process missing stdin');
-                    }
-                    cp.stdin.end(this.options.input);
-                }
-            }));
-        });
-    }
-}
-exports.ToolRunner = ToolRunner;
-/**
- * Convert an arg string to an array of args. Handles escaping
- *
- * @param    argString   string of arguments
- * @returns  string[]    array of arguments
- */
-function argStringToArray(argString) {
-    const args = [];
-    let inQuotes = false;
-    let escaped = false;
-    let arg = '';
-    function append(c) {
-        // we only escape double quotes.
-        if (escaped && c !== '"') {
-            arg += '\\';
-        }
-        arg += c;
-        escaped = false;
-    }
-    for (let i = 0; i < argString.length; i++) {
-        const c = argString.charAt(i);
-        if (c === '"') {
-            if (!escaped) {
-                inQuotes = !inQuotes;
-            }
-            else {
-                append(c);
-            }
-            continue;
-        }
-        if (c === '\\' && escaped) {
-            append(c);
-            continue;
-        }
-        if (c === '\\' && inQuotes) {
-            escaped = true;
-            continue;
-        }
-        if (c === ' ' && !inQuotes) {
-            if (arg.length > 0) {
-                args.push(arg);
-                arg = '';
-            }
-            continue;
-        }
-        append(c);
-    }
-    if (arg.length > 0) {
-        args.push(arg.trim());
-    }
-    return args;
-}
-exports.argStringToArray = argStringToArray;
-class ExecState extends events.EventEmitter {
-    constructor(options, toolPath) {
-        super();
-        this.processClosed = false; // tracks whether the process has exited and stdio is closed
-        this.processError = '';
-        this.processExitCode = 0;
-        this.processExited = false; // tracks whether the process has exited
-        this.processStderr = false; // tracks whether stderr was written to
-        this.delay = 10000; // 10 seconds
-        this.done = false;
-        this.timeout = null;
-        if (!toolPath) {
-            throw new Error('toolPath must not be empty');
-        }
-        this.options = options;
-        this.toolPath = toolPath;
-        if (options.delay) {
-            this.delay = options.delay;
-        }
-    }
-    CheckComplete() {
-        if (this.done) {
-            return;
-        }
-        if (this.processClosed) {
-            this._setResult();
-        }
-        else if (this.processExited) {
-            this.timeout = timers_1.setTimeout(ExecState.HandleTimeout, this.delay, this);
-        }
-    }
-    _debug(message) {
-        this.emit('debug', message);
-    }
-    _setResult() {
-        // determine whether there is an error
-        let error;
-        if (this.processExited) {
-            if (this.processError) {
-                error = new Error(`There was an error when attempting to execute the process '${this.toolPath}'. This may indicate the process failed to start. Error: ${this.processError}`);
-            }
-            else if (this.processExitCode !== 0 && !this.options.ignoreReturnCode) {
-                error = new Error(`The process '${this.toolPath}' failed with exit code ${this.processExitCode}`);
-            }
-            else if (this.processStderr && this.options.failOnStdErr) {
-                error = new Error(`The process '${this.toolPath}' failed because one or more lines were written to the STDERR stream`);
-            }
-        }
-        // clear the timeout
-        if (this.timeout) {
-            clearTimeout(this.timeout);
-            this.timeout = null;
-        }
-        this.done = true;
-        this.emit('done', error, this.processExitCode);
-    }
-    static HandleTimeout(state) {
-        if (state.done) {
-            return;
-        }
-        if (!state.processClosed && state.processExited) {
-            const message = `The STDIO streams did not close within ${state.delay /
-                1000} seconds of the exit event from process '${state.toolPath}'. This may indicate a child process inherited the STDIO streams and has not yet exited.`;
-            state._debug(message);
-        }
-        state._setResult();
-    }
-}
-//# sourceMappingURL=toolrunner.js.map
-
-/***/ }),
-
 /***/ 4087:
 /***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
@@ -2803,500 +2070,6 @@ function isLoopbackAddress(host) {
         hostLower.startsWith('[0:0:0:0:0:0:0:1]'));
 }
 //# sourceMappingURL=proxy.js.map
-
-/***/ }),
-
-/***/ 1962:
-/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
-
-
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-var _a;
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.getCmdPath = exports.tryGetExecutablePath = exports.isRooted = exports.isDirectory = exports.exists = exports.READONLY = exports.UV_FS_O_EXLOCK = exports.IS_WINDOWS = exports.unlink = exports.symlink = exports.stat = exports.rmdir = exports.rm = exports.rename = exports.readlink = exports.readdir = exports.open = exports.mkdir = exports.lstat = exports.copyFile = exports.chmod = void 0;
-const fs = __importStar(__nccwpck_require__(7147));
-const path = __importStar(__nccwpck_require__(1017));
-_a = fs.promises
-// export const {open} = 'fs'
-, exports.chmod = _a.chmod, exports.copyFile = _a.copyFile, exports.lstat = _a.lstat, exports.mkdir = _a.mkdir, exports.open = _a.open, exports.readdir = _a.readdir, exports.readlink = _a.readlink, exports.rename = _a.rename, exports.rm = _a.rm, exports.rmdir = _a.rmdir, exports.stat = _a.stat, exports.symlink = _a.symlink, exports.unlink = _a.unlink;
-// export const {open} = 'fs'
-exports.IS_WINDOWS = process.platform === 'win32';
-// See https://github.com/nodejs/node/blob/d0153aee367422d0858105abec186da4dff0a0c5/deps/uv/include/uv/win.h#L691
-exports.UV_FS_O_EXLOCK = 0x10000000;
-exports.READONLY = fs.constants.O_RDONLY;
-function exists(fsPath) {
-    return __awaiter(this, void 0, void 0, function* () {
-        try {
-            yield exports.stat(fsPath);
-        }
-        catch (err) {
-            if (err.code === 'ENOENT') {
-                return false;
-            }
-            throw err;
-        }
-        return true;
-    });
-}
-exports.exists = exists;
-function isDirectory(fsPath, useStat = false) {
-    return __awaiter(this, void 0, void 0, function* () {
-        const stats = useStat ? yield exports.stat(fsPath) : yield exports.lstat(fsPath);
-        return stats.isDirectory();
-    });
-}
-exports.isDirectory = isDirectory;
-/**
- * On OSX/Linux, true if path starts with '/'. On Windows, true for paths like:
- * \, \hello, \\hello\share, C:, and C:\hello (and corresponding alternate separator cases).
- */
-function isRooted(p) {
-    p = normalizeSeparators(p);
-    if (!p) {
-        throw new Error('isRooted() parameter "p" cannot be empty');
-    }
-    if (exports.IS_WINDOWS) {
-        return (p.startsWith('\\') || /^[A-Z]:/i.test(p) // e.g. \ or \hello or \\hello
-        ); // e.g. C: or C:\hello
-    }
-    return p.startsWith('/');
-}
-exports.isRooted = isRooted;
-/**
- * Best effort attempt to determine whether a file exists and is executable.
- * @param filePath    file path to check
- * @param extensions  additional file extensions to try
- * @return if file exists and is executable, returns the file path. otherwise empty string.
- */
-function tryGetExecutablePath(filePath, extensions) {
-    return __awaiter(this, void 0, void 0, function* () {
-        let stats = undefined;
-        try {
-            // test file exists
-            stats = yield exports.stat(filePath);
-        }
-        catch (err) {
-            if (err.code !== 'ENOENT') {
-                // eslint-disable-next-line no-console
-                console.log(`Unexpected error attempting to determine if executable file exists '${filePath}': ${err}`);
-            }
-        }
-        if (stats && stats.isFile()) {
-            if (exports.IS_WINDOWS) {
-                // on Windows, test for valid extension
-                const upperExt = path.extname(filePath).toUpperCase();
-                if (extensions.some(validExt => validExt.toUpperCase() === upperExt)) {
-                    return filePath;
-                }
-            }
-            else {
-                if (isUnixExecutable(stats)) {
-                    return filePath;
-                }
-            }
-        }
-        // try each extension
-        const originalFilePath = filePath;
-        for (const extension of extensions) {
-            filePath = originalFilePath + extension;
-            stats = undefined;
-            try {
-                stats = yield exports.stat(filePath);
-            }
-            catch (err) {
-                if (err.code !== 'ENOENT') {
-                    // eslint-disable-next-line no-console
-                    console.log(`Unexpected error attempting to determine if executable file exists '${filePath}': ${err}`);
-                }
-            }
-            if (stats && stats.isFile()) {
-                if (exports.IS_WINDOWS) {
-                    // preserve the case of the actual file (since an extension was appended)
-                    try {
-                        const directory = path.dirname(filePath);
-                        const upperName = path.basename(filePath).toUpperCase();
-                        for (const actualName of yield exports.readdir(directory)) {
-                            if (upperName === actualName.toUpperCase()) {
-                                filePath = path.join(directory, actualName);
-                                break;
-                            }
-                        }
-                    }
-                    catch (err) {
-                        // eslint-disable-next-line no-console
-                        console.log(`Unexpected error attempting to determine the actual case of the file '${filePath}': ${err}`);
-                    }
-                    return filePath;
-                }
-                else {
-                    if (isUnixExecutable(stats)) {
-                        return filePath;
-                    }
-                }
-            }
-        }
-        return '';
-    });
-}
-exports.tryGetExecutablePath = tryGetExecutablePath;
-function normalizeSeparators(p) {
-    p = p || '';
-    if (exports.IS_WINDOWS) {
-        // convert slashes on Windows
-        p = p.replace(/\//g, '\\');
-        // remove redundant slashes
-        return p.replace(/\\\\+/g, '\\');
-    }
-    // remove redundant slashes
-    return p.replace(/\/\/+/g, '/');
-}
-// on Mac/Linux, test the execute bit
-//     R   W  X  R  W X R W X
-//   256 128 64 32 16 8 4 2 1
-function isUnixExecutable(stats) {
-    return ((stats.mode & 1) > 0 ||
-        ((stats.mode & 8) > 0 && stats.gid === process.getgid()) ||
-        ((stats.mode & 64) > 0 && stats.uid === process.getuid()));
-}
-// Get the path of cmd.exe in windows
-function getCmdPath() {
-    var _a;
-    return (_a = process.env['COMSPEC']) !== null && _a !== void 0 ? _a : `cmd.exe`;
-}
-exports.getCmdPath = getCmdPath;
-//# sourceMappingURL=io-util.js.map
-
-/***/ }),
-
-/***/ 7436:
-/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
-
-
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.findInPath = exports.which = exports.mkdirP = exports.rmRF = exports.mv = exports.cp = void 0;
-const assert_1 = __nccwpck_require__(9491);
-const path = __importStar(__nccwpck_require__(1017));
-const ioUtil = __importStar(__nccwpck_require__(1962));
-/**
- * Copies a file or folder.
- * Based off of shelljs - https://github.com/shelljs/shelljs/blob/9237f66c52e5daa40458f94f9565e18e8132f5a6/src/cp.js
- *
- * @param     source    source path
- * @param     dest      destination path
- * @param     options   optional. See CopyOptions.
- */
-function cp(source, dest, options = {}) {
-    return __awaiter(this, void 0, void 0, function* () {
-        const { force, recursive, copySourceDirectory } = readCopyOptions(options);
-        const destStat = (yield ioUtil.exists(dest)) ? yield ioUtil.stat(dest) : null;
-        // Dest is an existing file, but not forcing
-        if (destStat && destStat.isFile() && !force) {
-            return;
-        }
-        // If dest is an existing directory, should copy inside.
-        const newDest = destStat && destStat.isDirectory() && copySourceDirectory
-            ? path.join(dest, path.basename(source))
-            : dest;
-        if (!(yield ioUtil.exists(source))) {
-            throw new Error(`no such file or directory: ${source}`);
-        }
-        const sourceStat = yield ioUtil.stat(source);
-        if (sourceStat.isDirectory()) {
-            if (!recursive) {
-                throw new Error(`Failed to copy. ${source} is a directory, but tried to copy without recursive flag.`);
-            }
-            else {
-                yield cpDirRecursive(source, newDest, 0, force);
-            }
-        }
-        else {
-            if (path.relative(source, newDest) === '') {
-                // a file cannot be copied to itself
-                throw new Error(`'${newDest}' and '${source}' are the same file`);
-            }
-            yield copyFile(source, newDest, force);
-        }
-    });
-}
-exports.cp = cp;
-/**
- * Moves a path.
- *
- * @param     source    source path
- * @param     dest      destination path
- * @param     options   optional. See MoveOptions.
- */
-function mv(source, dest, options = {}) {
-    return __awaiter(this, void 0, void 0, function* () {
-        if (yield ioUtil.exists(dest)) {
-            let destExists = true;
-            if (yield ioUtil.isDirectory(dest)) {
-                // If dest is directory copy src into dest
-                dest = path.join(dest, path.basename(source));
-                destExists = yield ioUtil.exists(dest);
-            }
-            if (destExists) {
-                if (options.force == null || options.force) {
-                    yield rmRF(dest);
-                }
-                else {
-                    throw new Error('Destination already exists');
-                }
-            }
-        }
-        yield mkdirP(path.dirname(dest));
-        yield ioUtil.rename(source, dest);
-    });
-}
-exports.mv = mv;
-/**
- * Remove a path recursively with force
- *
- * @param inputPath path to remove
- */
-function rmRF(inputPath) {
-    return __awaiter(this, void 0, void 0, function* () {
-        if (ioUtil.IS_WINDOWS) {
-            // Check for invalid characters
-            // https://docs.microsoft.com/en-us/windows/win32/fileio/naming-a-file
-            if (/[*"<>|]/.test(inputPath)) {
-                throw new Error('File path must not contain `*`, `"`, `<`, `>` or `|` on Windows');
-            }
-        }
-        try {
-            // note if path does not exist, error is silent
-            yield ioUtil.rm(inputPath, {
-                force: true,
-                maxRetries: 3,
-                recursive: true,
-                retryDelay: 300
-            });
-        }
-        catch (err) {
-            throw new Error(`File was unable to be removed ${err}`);
-        }
-    });
-}
-exports.rmRF = rmRF;
-/**
- * Make a directory.  Creates the full path with folders in between
- * Will throw if it fails
- *
- * @param   fsPath        path to create
- * @returns Promise<void>
- */
-function mkdirP(fsPath) {
-    return __awaiter(this, void 0, void 0, function* () {
-        assert_1.ok(fsPath, 'a path argument must be provided');
-        yield ioUtil.mkdir(fsPath, { recursive: true });
-    });
-}
-exports.mkdirP = mkdirP;
-/**
- * Returns path of a tool had the tool actually been invoked.  Resolves via paths.
- * If you check and the tool does not exist, it will throw.
- *
- * @param     tool              name of the tool
- * @param     check             whether to check if tool exists
- * @returns   Promise<string>   path to tool
- */
-function which(tool, check) {
-    return __awaiter(this, void 0, void 0, function* () {
-        if (!tool) {
-            throw new Error("parameter 'tool' is required");
-        }
-        // recursive when check=true
-        if (check) {
-            const result = yield which(tool, false);
-            if (!result) {
-                if (ioUtil.IS_WINDOWS) {
-                    throw new Error(`Unable to locate executable file: ${tool}. Please verify either the file path exists or the file can be found within a directory specified by the PATH environment variable. Also verify the file has a valid extension for an executable file.`);
-                }
-                else {
-                    throw new Error(`Unable to locate executable file: ${tool}. Please verify either the file path exists or the file can be found within a directory specified by the PATH environment variable. Also check the file mode to verify the file is executable.`);
-                }
-            }
-            return result;
-        }
-        const matches = yield findInPath(tool);
-        if (matches && matches.length > 0) {
-            return matches[0];
-        }
-        return '';
-    });
-}
-exports.which = which;
-/**
- * Returns a list of all occurrences of the given tool on the system path.
- *
- * @returns   Promise<string[]>  the paths of the tool
- */
-function findInPath(tool) {
-    return __awaiter(this, void 0, void 0, function* () {
-        if (!tool) {
-            throw new Error("parameter 'tool' is required");
-        }
-        // build the list of extensions to try
-        const extensions = [];
-        if (ioUtil.IS_WINDOWS && process.env['PATHEXT']) {
-            for (const extension of process.env['PATHEXT'].split(path.delimiter)) {
-                if (extension) {
-                    extensions.push(extension);
-                }
-            }
-        }
-        // if it's rooted, return it if exists. otherwise return empty.
-        if (ioUtil.isRooted(tool)) {
-            const filePath = yield ioUtil.tryGetExecutablePath(tool, extensions);
-            if (filePath) {
-                return [filePath];
-            }
-            return [];
-        }
-        // if any path separators, return empty
-        if (tool.includes(path.sep)) {
-            return [];
-        }
-        // build the list of directories
-        //
-        // Note, technically "where" checks the current directory on Windows. From a toolkit perspective,
-        // it feels like we should not do this. Checking the current directory seems like more of a use
-        // case of a shell, and the which() function exposed by the toolkit should strive for consistency
-        // across platforms.
-        const directories = [];
-        if (process.env.PATH) {
-            for (const p of process.env.PATH.split(path.delimiter)) {
-                if (p) {
-                    directories.push(p);
-                }
-            }
-        }
-        // find all matches
-        const matches = [];
-        for (const directory of directories) {
-            const filePath = yield ioUtil.tryGetExecutablePath(path.join(directory, tool), extensions);
-            if (filePath) {
-                matches.push(filePath);
-            }
-        }
-        return matches;
-    });
-}
-exports.findInPath = findInPath;
-function readCopyOptions(options) {
-    const force = options.force == null ? true : options.force;
-    const recursive = Boolean(options.recursive);
-    const copySourceDirectory = options.copySourceDirectory == null
-        ? true
-        : Boolean(options.copySourceDirectory);
-    return { force, recursive, copySourceDirectory };
-}
-function cpDirRecursive(sourceDir, destDir, currentDepth, force) {
-    return __awaiter(this, void 0, void 0, function* () {
-        // Ensure there is not a run away recursive copy
-        if (currentDepth >= 255)
-            return;
-        currentDepth++;
-        yield mkdirP(destDir);
-        const files = yield ioUtil.readdir(sourceDir);
-        for (const fileName of files) {
-            const srcFile = `${sourceDir}/${fileName}`;
-            const destFile = `${destDir}/${fileName}`;
-            const srcFileStat = yield ioUtil.lstat(srcFile);
-            if (srcFileStat.isDirectory()) {
-                // Recurse
-                yield cpDirRecursive(srcFile, destFile, currentDepth, force);
-            }
-            else {
-                yield copyFile(srcFile, destFile, force);
-            }
-        }
-        // Change the mode for the newly created directory
-        yield ioUtil.chmod(destDir, (yield ioUtil.stat(sourceDir)).mode);
-    });
-}
-// Buffered file copy
-function copyFile(srcFile, destFile, force) {
-    return __awaiter(this, void 0, void 0, function* () {
-        if ((yield ioUtil.lstat(srcFile)).isSymbolicLink()) {
-            // unlink/re-link it
-            try {
-                yield ioUtil.lstat(destFile);
-                yield ioUtil.unlink(destFile);
-            }
-            catch (e) {
-                // Try to override file permission
-                if (e.code === 'EPERM') {
-                    yield ioUtil.chmod(destFile, '0666');
-                    yield ioUtil.unlink(destFile);
-                }
-                // other errors = it doesn't exist, no work to do
-            }
-            // Copy over symlink
-            const symlinkFull = yield ioUtil.readlink(srcFile);
-            yield ioUtil.symlink(symlinkFull, destFile, ioUtil.IS_WINDOWS ? 'junction' : null);
-        }
-        else if (!(yield ioUtil.exists(destFile)) || force) {
-            yield ioUtil.copyFile(srcFile, destFile);
-        }
-    });
-}
-//# sourceMappingURL=io.js.map
 
 /***/ }),
 
@@ -34686,13 +33459,6 @@ module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("buffer");
 
 /***/ }),
 
-/***/ 2081:
-/***/ ((module) => {
-
-module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("child_process");
-
-/***/ }),
-
 /***/ 6206:
 /***/ ((module) => {
 
@@ -34823,13 +33589,6 @@ module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("stream/web")
 /***/ ((module) => {
 
 module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("string_decoder");
-
-/***/ }),
-
-/***/ 9512:
-/***/ ((module) => {
-
-module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("timers");
 
 /***/ }),
 
@@ -36531,9 +35290,9 @@ var __webpack_exports__ = {};
 (() => {
 
 // EXTERNAL MODULE: ./node_modules/@actions/core/lib/core.js
-var lib_core = __nccwpck_require__(2186);
+var core = __nccwpck_require__(2186);
 // EXTERNAL MODULE: ./node_modules/@actions/github/lib/github.js
-var lib_github = __nccwpck_require__(5438);
+var github = __nccwpck_require__(5438);
 ;// CONCATENATED MODULE: ./node_modules/octokit/node_modules/universal-user-agent/index.js
 function getUserAgent() {
   if (typeof navigator === "object" && "userAgent" in navigator) {
@@ -51200,158 +49959,6 @@ var dist_bundle_App = App.defaults({ Octokit: dist_bundle_Octokit });
 var dist_bundle_OAuthApp = OAuthApp.defaults({ Octokit: dist_bundle_Octokit });
 
 
-// EXTERNAL MODULE: ./node_modules/@actions/exec/lib/exec.js
-var exec = __nccwpck_require__(1514);
-// EXTERNAL MODULE: ./node_modules/@actions/io/lib/io.js
-var lib_io = __nccwpck_require__(7436);
-;// CONCATENATED MODULE: ./src/base64-helper.ts
-/**
- * Encode a string to base64.
- * @param input
- */
-function encode(input) {
-    return Buffer.from(input, 'utf-8').toString('base64');
-}
-/**
- * Decode a base64 encoded string.
- * @param input
- */
-function decode(input) {
-    return Buffer.from(input, 'base64').toString('utf-8');
-}
-
-;// CONCATENATED MODULE: ./src/git-helper.ts
-
-
-
-
-
-/**
- * Get the fetch URL for the repository.
- */
-function getFetchUrl() {
-    const encodedOwner = encodeURIComponent(lib_github.context.repo.owner);
-    const encodedName = encodeURIComponent(lib_github.context.repo.repo);
-    return `https://github.com/${encodedOwner}/${encodedName}`;
-}
-/**
- * Execute a Git command with the given arguments.
- * @param args
- */
-async function execGit(args) {
-    const stdout = [];
-    const stderr = [];
-    const options = {
-        listeners: {
-            stdout: (data) => {
-                stdout.push(data.toString());
-            },
-            stderr: (data) => {
-                stderr.push(data.toString());
-            }
-        }
-    };
-    await exec.exec('git', args, options);
-    return {
-        stdout: stdout.join('\n'),
-        stderr: stderr.join('\n')
-    };
-}
-/**
- * Display information about the Git installation.
- */
-async function displayInfo() {
-    const git = await io.which('git', true);
-    const gitVersionOutput = await execGit(['--version']);
-    const gitVersion = gitVersionOutput.stdout.match(/\d+\.\d+(\.\d+)?/);
-    core.startGroup('Git Info');
-    core.info(`Git Path: ${git}`);
-    core.info(`Git Version: ${gitVersion}`);
-    core.endGroup();
-}
-/**
- * Initialize and configure the repository.
- * @param token The security token to use for authentication.
- */
-async function init(token) {
-    const basicCredential = encode(`x-access-token:${token}`);
-    const gitInitOutput = await execGit(['init', '--initial-branch', 'main']);
-    lib_core.info(`Git Init: ${gitInitOutput.stdout}`);
-    await execGit(['remote', 'add', 'origin', getFetchUrl()]);
-    await execGit(['config', '--local', 'http.https://github.com/.extraheader', `AUTHORIZATION: Basic ${basicCredential}`]);
-    await execGit(['config', '--local', 'user.name', 'github-actions[bot]']);
-    await execGit(['config', '--local', 'user.email', '41898282+github-actions[bot]@users.noreply.github.com']);
-}
-/**
- * Clone the repository.
- */
-async function clone() {
-    const branch = lib_github.context.ref.substring('refs/heads/'.length);
-    const ref = `refs/remotes/origin/${branch}`;
-    const cloneOutput = await execGit(['fetch', '--no-tags', '--prune', '--depth', '1', 'origin', `+${lib_github.context.sha}:${ref}`]);
-    lib_core.info(`Git Fetch: ${cloneOutput.stdout}`);
-    const checkoutOutput = await execGit(['checkout', '-b', branch, ref]);
-    lib_core.info(`Git Branch: ${checkoutOutput.stdout}`);
-    return {
-        stderr: cloneOutput.stderr + checkoutOutput.stderr,
-        stdout: cloneOutput.stderr + checkoutOutput.stderr
-    };
-}
-/**
- * Fetch the specified remote branch.
- * @param name
- */
-async function fetchBranch(name) {
-    const output = await execGit(['fetch', '--no-tags', '--prune', '--depth', '1', 'origin', name]);
-    lib_core.info(`Git Fetch: ${output.stdout}`);
-    return output;
-}
-/**
- * Fetch the remote repository without a shallow clone.
- */
-async function fetchUnshallow() {
-    const output = await execGit(['fetch', '--no-tags', '--prune', '--unshallow']);
-    lib_core.info(`Git Fetch: ${output.stdout}`);
-    return output;
-}
-/**
- * Create a new branch.
- * @param name
- */
-async function createBranch(name) {
-    const output = await execGit(['checkout', '-b', name]);
-    core.info(`Git Branch: ${output.stdout}`);
-    return output;
-}
-/**
- * Switch to the specified branch.
- * @param name
- */
-async function switchBranch(name) {
-    const output = await execGit(['switch', name]);
-    lib_core.info(`Git Switch: ${output.stdout}`);
-    return output;
-}
-/**
- * Push the branch to the remote repository.
- * @param name
- * @param force
- */
-async function push(name, force = false) {
-    const output = await execGit(force ? ['push', '-f', '-u', 'origin', name] : ['push', '-u', 'origin', name]);
-    lib_core.info(`Git Push: ${output.stdout}`);
-    return output;
-}
-/**
- * Rebase the release branch.
- * @param branch
- */
-async function rebaseBranch(branch) {
-    const output = await execGit(['rebase', branch]);
-    lib_core.info(`Git Rebase: ${output.stdout}`);
-    return output;
-}
-
 // EXTERNAL MODULE: ./node_modules/brace-expansion/index.js
 var brace_expansion = __nccwpck_require__(3717);
 ;// CONCATENATED MODULE: ./node_modules/minimatch/dist/esm/assert-valid-pattern.js
@@ -53147,43 +51754,7 @@ minimatch.unescape = unescape_unescape;
 //# sourceMappingURL=index.js.map
 // EXTERNAL MODULE: ./node_modules/semver/index.js
 var semver = __nccwpck_require__(1383);
-;// CONCATENATED MODULE: ./src/version-helper.ts
-const semverVersionTypes = ['major', 'minor', 'patch'];
-/**
- * This function will take the contents of a package.json file and replace the version number with the next version number.
- * @param fileContents
- * @param nextVersion
- */
-function patchPackageJson(fileContents, nextVersion) {
-    return fileContents.replace(/"version": "(.*)"/, `"version": "${nextVersion}"`);
-}
-function isValidSemverVersionType(version) {
-    return semverVersionTypes.includes(version);
-}
-
-;// CONCATENATED MODULE: ./src/markdown.ts
-function note(message) {
-    return `> [!NOTE]\n> ${message}`;
-}
-function tip(message) {
-    return `> [!TIP]\n> ${message}`;
-}
-function important(message) {
-    return `> [!IMPORTANT]\n> ${message}`;
-}
-function warning(message) {
-    return `> [!WARNING]\n> ${message}`;
-}
-function caution(message) {
-    return `> [!CAUTION]\n> ${message}`;
-}
-function markdown_hidden(message) {
-    return `[//]: # (${message})`;
-}
-
 ;// CONCATENATED MODULE: ./src/github-helper.ts
-
-
 
 
 
@@ -53207,6 +51778,16 @@ function addReactionToIssueMutation() {
             }
             subject {
                 id
+            }
+        }
+    }`;
+}
+function createRefMutation() {
+    return `
+    mutation CreateRefMutation($repositoryId: ID!, $name: String!, $oid: GitObjectID!) {
+        createRef(input:{ repositoryId: $repositoryId, name: $name, oid: $oid }) {
+            ref {
+                name
             }
         }
     }`;
@@ -53237,22 +51818,33 @@ function addPullRequestCommentMutation() {
         }
     }`;
 }
-function findPullRequestsQuery() {
+function findRefQuery() {
     return `
-    query FindPullRequestID ($owner: String!, $repo: String!, $project: String!, $branch: String!, $labels: [String!]){
+    query FindRef($owner: String!, $repo: String!, $ref: String!) {
         repository(owner: $owner, name: $repo) {
-              tags: refs(first: 100, refPrefix: "refs/tags/", query: $project) {
+            ref(qualifiedName: $ref) {
+                name
+            }
+        }
+    }`;
+}
+function findDraftReleaseQuery() {
+    return `
+    query FindDraftRelease ($owner: String!, $repo: String!, $project: String!, $branch: String!, $labels: [String!]){
+        repository(owner: $owner, name: $repo) {
+              id
+              tags: refs(last: 20, refPrefix: "refs/tags/", query: $project) {
                   tag: nodes {
                       name
                   }
               }
-              branches: refs(first: 100, refPrefix: "refs/heads/", query: $branch) {
+              branches: refs(last: 20, refPrefix: "refs/heads/", query: $branch) {
                   branch: nodes {
                       name
                   }
               }
-              pullRequests(first: 1, labels: $labels, states: OPEN) {
-                  nodes {
+              pullRequests(last: 1, labels: $labels, states: OPEN) {
+                  pullRequest: nodes {
                       id
                       number
                       title
@@ -53320,14 +51912,14 @@ function getDefaultNextVersion() {
  */
 function getPullRequestBody(project, nextVersion, rebasing = false) {
     const body = [];
-    body.push(markdown_hidden(`krytenbot-project:${project}`));
+    body.push(hidden(`krytenbot-project:${project}`));
     body.push('\n');
     if (rebasing) {
-        body.push(markdown_hidden('krytenbot-start'));
+        body.push(hidden('krytenbot-start'));
         body.push('\n\n');
         body.push(important('Krytenbot is rebasing this PR'));
         body.push('\n\n');
-        body.push(markdown_hidden('krytenbot-end'));
+        body.push(hidden('krytenbot-end'));
         body.push('\n');
     }
     body.push(`
@@ -53359,19 +51951,19 @@ async function listPushCommitFiles(octokit, payload) {
     // get the list of files from the commit details.
     for (const commit of payload.commits) {
         if (commit.added || commit.modified || commit.removed) {
-            lib_core.debug(`Commit contained file details: ${JSON.stringify(commit, null, 2)}`);
+            core.debug(`Commit contained file details: ${JSON.stringify(commit, null, 2)}`);
             commit.added.forEach(file => files.add(file));
             commit.modified.forEach(file => files.add(file));
             commit.removed.forEach(file => files.add(file));
         }
         else {
-            lib_core.debug(`Commit contained no file details. Getting commit details for: ${payload.after}`);
+            core.debug(`Commit contained no file details. Getting commit details for: ${payload.after}`);
             const { data: commitDetails } = await octokit.rest.repos.getCommit({
-                owner: lib_github.context.repo.owner,
-                repo: lib_github.context.repo.repo,
+                owner: github.context.repo.owner,
+                repo: github.context.repo.repo,
                 ref: payload.after
             });
-            lib_core.debug(`Commit Details: ${JSON.stringify(commitDetails, null, 2)}`);
+            core.debug(`Commit Details: ${JSON.stringify(commitDetails, null, 2)}`);
             commitDetails.files?.forEach(file => files.add(file.filename));
         }
     }
@@ -53392,340 +51984,385 @@ async function listProjectsOfRelevance(files) {
     });
     return Array.from(relevantProjects);
 }
+// /**
+//  * Get the next version for the project.
+//  * @param octokit
+//  * @param project
+//  * @param versionType
+//  */
+// export async function getNextVersion(octokit: Octokit, project: string, versionType: Version): Promise<string> {
+//   // Check if there is an existing tag for the project
+//   const tags = await listTags(octokit, project)
+//   if (tags.length > 0) {
+//     const lastTag = tags[tags.length - 1]
+//     const lastTagName = lastTag.ref.substring('refs/tags/'.length)
+//     const lastTagVersion = lastTagName.substring(`${project}@v`.length)
+//
+//     // Check if there is an existing PR for the release branch
+//     // and if it has a set version command in the comments
+//     const releaseBranchPR = await findPullRequest(octokit, project)
+//     if (releaseBranchPR) {
+//       const comments: Comment[] = await listComments(octokit, releaseBranchPR.number)
+//       for (let i = comments.length - 1; i >= 0; i--) {
+//         const lastCommentBody = comments[i].body
+//         if (lastCommentBody?.startsWith(Commands.SetVersion)) {
+//           core.info(`Found setversion command in comment: ${lastCommentBody}`)
+//           const nextVersionType = lastCommentBody.split(' ')[2]
+//           const nextVersion = semver.inc(lastTagVersion, nextVersionType as Version)
+//           if (nextVersion) {
+//             return nextVersion
+//           }
+//         }
+//       }
+//     }
+//
+//     // Bump the version using semver
+//     const nextVersion = semver.inc(lastTagVersion, versionType)
+//     if (nextVersion) {
+//       return nextVersion
+//     } else {
+//       core.setFailed(`Invalid last tag version: ${lastTagVersion}. Must be of the format '${project}@vX.X.X'`)
+//     }
+//   }
+//
+//   core.warning(`No tags found for project: ${project}. Using default next version.`)
+//   return getDefaultNextVersion()
+// }
+//
+// /**
+//  * Update the version for the project.
+//  * @param octokit
+//  * @param project
+//  * @param branch
+//  * @param version
+//  */
+// export async function setVersion(octokit: Octokit, project: string, branch: string, version: string): Promise<void> {
+//   core.info(`Updating ${project} version to ${version}`)
+//   const { data: existingFile }: GetContentResponse = await octokit.rest.repos.getContent({
+//     owner: github.context.repo.owner,
+//     repo: github.context.repo.repo,
+//     path: `${project}/package.json`,
+//     ref: branch
+//   })
+//   core.debug(`Existing File: ${JSON.stringify(existingFile, null, 2)}`)
+//
+//   if (!Array.isArray(existingFile)) {
+//     if (existingFile.type === 'file' && existingFile.size > 0) {
+//       const existingFileContents = base64.decode(existingFile.content)
+//       const newFileContents = versions.patchPackageJson(existingFileContents, version)
+//
+//       if (core.isDebug()) {
+//         core.startGroup('File Contents')
+//         core.debug(`Existing File Contents: ${existingFileContents}`)
+//         core.debug(`New File Contents: ${newFileContents}`)
+//         core.endGroup()
+//       }
+//
+//       const newFile: CreateOrUpdateFileContentsResponse = await octokit.rest.repos.createOrUpdateFileContents({
+//         owner: github.context.repo.owner,
+//         repo: github.context.repo.repo,
+//         path: `${project}/package.json`,
+//         branch: branch,
+//         sha: existingFile.sha,
+//         message: `Update ${project} version to v${version}`,
+//         content: base64.encode(newFileContents)
+//       })
+//       core.debug(`Updated File: ${JSON.stringify(newFile, null, 2)}`)
+//     } else {
+//       core.setFailed('Existing file is not a file')
+//     }
+//   }
+// }
+//
+// /**
+//  * Check if the release branch exists for the project.
+//  * @param octokit
+//  * @param project
+//  */
+// export async function releaseBranchExists(octokit: Octokit, project: string): Promise<boolean> {
+//   const releaseBranch: string = getReleaseBranchName(project)
+//   const branches: ListBranchesResponse = await octokit.rest.repos.listBranches({
+//     owner: github.context.repo.owner,
+//     repo: github.context.repo.repo
+//   })
+//   return branches.data.some(branch => branch.name === releaseBranch)
+// }
+//
+// /**
+//  * Create a release branch for the project and commit the next version.
+//  * @param octokit
+//  * @param project
+//  */
+// export async function createReleaseBranch(octokit: Octokit, project: string): Promise<void> {
+//   const releaseBranch: string = getReleaseBranchName(project)
+//
+//   core.info(`Creating new branch: ${releaseBranch}`)
+//   const branch: CreateBranchResponse = await octokit.rest.git.createRef({
+//     owner: github.context.repo.owner,
+//     repo: github.context.repo.repo,
+//     ref: `refs/heads/${releaseBranch}`,
+//     sha: github.context.sha
+//   })
+//   core.debug(`Created Branch: ${JSON.stringify(branch, null, 2)}`)
+// }
+//
+// /**
+//  * Recreate a release branch for the project and commit the next version.
+//  * @param octokit
+//  * @param project
+//  */
+// export async function recreateReleaseBranch(octokit: Octokit, project: string): Promise<void> {
+//   const releaseBranch: string = getReleaseBranchName(project)
+//
+//   core.info(`Recreating existing branch: ${releaseBranch}`)
+//   const branch: UpdateBranchResponse = await octokit.rest.git.updateRef({
+//     owner: github.context.repo.owner,
+//     repo: github.context.repo.repo,
+//     ref: `heads/${releaseBranch}`,
+//     sha: github.context.sha,
+//     force: true
+//   })
+//   core.debug(`Recreated Branch: ${JSON.stringify(branch, null, 2)}`)
+// }
 /**
- * Get the next version for the project.
- * @param octokit
+ * Rebase the next calculated version.
  * @param project
+ * @param draftRelease
  * @param versionType
  */
-async function getNextVersion(octokit, project, versionType) {
-    // Check if there is an existing tag for the project
-    const tags = await listTags(octokit, project);
-    if (tags.length > 0) {
-        const lastTag = tags[tags.length - 1];
-        const lastTagName = lastTag.ref.substring('refs/tags/'.length);
-        const lastTagVersion = lastTagName.substring(`${project}@v`.length);
-        // Check if there is an existing PR for the release branch
-        // and if it has a set version command in the comments
-        const releaseBranchPR = await findPullRequest(octokit, project);
-        if (releaseBranchPR) {
-            const comments = await listComments(octokit, releaseBranchPR.number);
-            for (let i = comments.length - 1; i >= 0; i--) {
-                const lastCommentBody = comments[i].body;
-                if (lastCommentBody?.startsWith(Commands.SetVersion)) {
-                    lib_core.info(`Found setversion command in comment: ${lastCommentBody}`);
-                    const nextVersionType = lastCommentBody.split(' ')[2];
-                    const nextVersion = semver.inc(lastTagVersion, nextVersionType);
-                    if (nextVersion) {
-                        return nextVersion;
-                    }
+function getNextVersion(project, draftRelease, versionType) {
+    for (const tag of draftRelease.tags) {
+        const tagName = tag.name;
+        const tagVersion = tagName.substring(tagName.indexOf('@v') + 2);
+        for (const comment of draftRelease.pullRequests[0].comments) {
+            const commentBody = comment.body;
+            if (commentBody.startsWith(Commands.SetVersion)) {
+                const nextVersionType = commentBody.split(' ')[2];
+                const nextVersion = semver.inc(tagVersion, nextVersionType);
+                if (nextVersion) {
+                    return nextVersion;
                 }
             }
         }
-        // Bump the version using semver
-        const nextVersion = semver.inc(lastTagVersion, versionType);
+        const nextVersion = semver.inc(tagVersion, versionType);
         if (nextVersion) {
             return nextVersion;
         }
-        else {
-            lib_core.setFailed(`Invalid last tag version: ${lastTagVersion}. Must be of the format '${project}@vX.X.X'`);
-        }
     }
-    lib_core.warning(`No tags found for project: ${project}. Using default next version.`);
     return getDefaultNextVersion();
 }
 /**
- * Update the version for the project.
- * @param octokit
- * @param project
- * @param branch
- * @param version
- */
-async function setVersion(octokit, project, branch, version) {
-    lib_core.info(`Updating ${project} version to ${version}`);
-    const { data: existingFile } = await octokit.rest.repos.getContent({
-        owner: lib_github.context.repo.owner,
-        repo: lib_github.context.repo.repo,
-        path: `${project}/package.json`,
-        ref: branch
-    });
-    lib_core.debug(`Existing File: ${JSON.stringify(existingFile, null, 2)}`);
-    if (!Array.isArray(existingFile)) {
-        if (existingFile.type === 'file' && existingFile.size > 0) {
-            const existingFileContents = decode(existingFile.content);
-            const newFileContents = patchPackageJson(existingFileContents, version);
-            if (lib_core.isDebug()) {
-                lib_core.startGroup('File Contents');
-                lib_core.debug(`Existing File Contents: ${existingFileContents}`);
-                lib_core.debug(`New File Contents: ${newFileContents}`);
-                lib_core.endGroup();
-            }
-            const newFile = await octokit.rest.repos.createOrUpdateFileContents({
-                owner: lib_github.context.repo.owner,
-                repo: lib_github.context.repo.repo,
-                path: `${project}/package.json`,
-                branch: branch,
-                sha: existingFile.sha,
-                message: `Update ${project} version to v${version}`,
-                content: encode(newFileContents)
-            });
-            lib_core.debug(`Updated File: ${JSON.stringify(newFile, null, 2)}`);
-        }
-        else {
-            lib_core.setFailed('Existing file is not a file');
-        }
-    }
-}
-/**
- * Check if the release branch exists for the project.
+ * Find the details of the draft release.
  * @param octokit
  * @param project
  */
-async function releaseBranchExists(octokit, project) {
-    const releaseBranch = getReleaseBranchName(project);
-    const branches = await octokit.rest.repos.listBranches({
-        owner: github.context.repo.owner,
-        repo: github.context.repo.repo
-    });
-    return branches.data.some(branch => branch.name === releaseBranch);
-}
-/**
- * Create a release branch for the project and commit the next version.
- * @param octokit
- * @param project
- */
-async function createReleaseBranch(octokit, project) {
-    const releaseBranch = getReleaseBranchName(project);
-    core.info(`Creating new branch: ${releaseBranch}`);
-    const branch = await octokit.rest.git.createRef({
+async function findDraftRelease(octokit, project) {
+    const pullRequests = await octokit.graphql(findDraftReleaseQuery(), {
         owner: github.context.repo.owner,
         repo: github.context.repo.repo,
-        ref: `refs/heads/${releaseBranch}`,
-        sha: github.context.sha
-    });
-    core.debug(`Created Branch: ${JSON.stringify(branch, null, 2)}`);
-}
-/**
- * Recreate a release branch for the project and commit the next version.
- * @param octokit
- * @param project
- */
-async function recreateReleaseBranch(octokit, project) {
-    const releaseBranch = getReleaseBranchName(project);
-    lib_core.info(`Recreating existing branch: ${releaseBranch}`);
-    const branch = await octokit.rest.git.updateRef({
-        owner: lib_github.context.repo.owner,
-        repo: lib_github.context.repo.repo,
-        ref: `heads/${releaseBranch}`,
-        sha: lib_github.context.sha,
-        force: true
-    });
-    lib_core.debug(`Recreated Branch: ${JSON.stringify(branch, null, 2)}`);
-}
-/**
- * Find the PR for the release branch.
- * @param octokit
- * @param project
- */
-async function findPullRequest(octokit, project) {
-    // const releaseBranch: string = getReleaseBranchName(project)
-    // const pulls: ListPullRequestsResponse = await octokit.rest.pulls.list({
-    //   owner: github.context.repo.owner,
-    //   repo: github.context.repo.repo,
-    //   head: `${github.context.repo.owner}:${releaseBranch}`,
-    //   state: 'open'
-    // })
-    // core.debug(`Pulls: ${JSON.stringify(pulls, null, 2)}`)
-    const pullRequests = await octokit.graphql(findPullRequestsQuery(), {
-        owner: lib_github.context.repo.owner,
-        repo: lib_github.context.repo.repo,
         project: project,
         branch: getReleaseBranchName(project),
         labels: ['release', project]
     });
-    lib_core.info(`Pull Request: ${JSON.stringify(pullRequests, null, 2)}`);
-    // for (const pull of pulls.data) {
-    //   if (pull.labels.find(label => label.name === 'release')) {
-    //     core.info(`Found existing PR for branch: ${releaseBranch}`)
-    //     return pull
-    //   }
-    // }
-    return pullRequests.repository.pullRequests.nodes[0];
+    core.debug(`Pull Request: ${JSON.stringify(pullRequests, null, 2)}`);
+    return pullRequests.repository;
 }
 /**
- * Create a draft PR for the release branch.
+ * Create a new branch for the release.
  * @param octokit
  * @param project
+ * @param sha
  */
-async function createPullRequest(octokit, project) {
+async function createDraftReleaseBranch(octokit, project, sha) {
     const releaseBranch = getReleaseBranchName(project);
-    const branch = github.context.ref.substring('refs/heads/'.length);
-    core.info(`Creating new PR for branch: ${releaseBranch}`);
-    const nextVersion = await getNextVersion(octokit, project, 'patch');
-    const pull = await octokit.rest.pulls.create({
-        owner: github.context.repo.owner,
-        repo: github.context.repo.repo,
-        title: getPullRequestTitle(project, nextVersion),
-        body: getPullRequestBody(project, nextVersion),
-        head: releaseBranch,
-        base: branch,
-        draft: true
+    const branch = await octokit.graphql(createRefMutation(), {
+        repositoryId: github.context.repo.repo,
+        name: releaseBranch,
+        oid: sha
     });
-    core.debug(`Created Pull: ${JSON.stringify(pull, null, 2)}`);
-    const label = await octokit.rest.issues.addLabels({
-        owner: github.context.repo.owner,
-        repo: github.context.repo.repo,
-        issue_number: pull.data.number,
-        labels: ['release', project]
-    });
-    core.debug(`Added Label: ${JSON.stringify(label, null, 2)}`);
-    return pull.data;
+    core.debug(`Created Branch: ${JSON.stringify(branch, null, 2)}`);
 }
-/**
- * Update the PR for the release branch.
- * @param octokit
- * @param pull_number
- * @param project
- * @param nextVersion
- * @param rebasing
- */
-async function updatePullRequest(octokit, pull_number, project, nextVersion, rebasing = false) {
-    const releaseBranch = getReleaseBranchName(project);
-    const branch = lib_github.context.ref.substring('refs/heads/'.length);
-    lib_core.info(`Updating existing PR for branch: ${releaseBranch}`);
-    const pull = await octokit.rest.pulls.update({
-        owner: lib_github.context.repo.owner,
-        repo: lib_github.context.repo.repo,
-        pull_number: pull_number,
-        title: getPullRequestTitle(project, nextVersion),
-        body: getPullRequestBody(project, nextVersion, rebasing),
-        head: releaseBranch,
-        base: branch,
-        draft: true
-    });
-    lib_core.debug(`Updated Pull: ${JSON.stringify(pull, null, 2)}`);
-    const label = await octokit.rest.issues.addLabels({
-        owner: lib_github.context.repo.owner,
-        repo: lib_github.context.repo.repo,
-        issue_number: pull_number,
-        labels: ['release', project]
-    });
-    lib_core.debug(`Added Label: ${JSON.stringify(label, null, 2)}`);
-}
-/**
- * List all tags for the project.
- * @param octokit
- * @param project
- */
-async function listTags(octokit, project) {
-    const tags = await octokit.rest.git.listMatchingRefs({
-        owner: lib_github.context.repo.owner,
-        repo: lib_github.context.repo.repo,
-        ref: `tags/${project}`
-    });
-    return tags.data;
-}
-/**
- * Add a reaction to a comment.
- * @param octokit
- * @param comment_number
- * @param reaction
- */
-async function addReaction(octokit, comment_number, reaction) {
-    const response = await octokit.rest.reactions.createForIssueComment({
-        owner: lib_github.context.repo.owner,
-        repo: lib_github.context.repo.repo,
-        comment_id: comment_number,
-        content: reaction
-    });
-    lib_core.debug(`Added Reaction: ${JSON.stringify(response, null, 2)}`);
-}
-/**
- * Add or update a comment on a PR.
- * @param octokit
- * @param pull_number
- * @param body
- */
-async function addOrUpdateComment(octokit, pull_number, body) {
-    const comments = await listComments(octokit, pull_number);
-    if (comments.length > 0) {
-        const lastComment = comments[comments.length - 1];
-        if (lastComment.body === body) {
-            return await updateComment(octokit, lastComment.id, body);
-        }
-        else {
-            return await createComment(octokit, pull_number, body);
-        }
-    }
-    else {
-        return await createComment(octokit, pull_number, body);
-    }
-}
-/**
- * List all comments on a PR.
- * @param octokit
- * @param pull_number
- */
-async function listComments(octokit, pull_number) {
-    const comments = await octokit.rest.issues.listComments({
-        owner: lib_github.context.repo.owner,
-        repo: lib_github.context.repo.repo,
-        issue_number: pull_number
-    });
-    lib_core.debug(`List Comments: ${JSON.stringify(comments, null, 2)}`);
-    return comments.data;
-}
-/**
- * Add a comment to a PR.
- * @param octokit
- * @param pull_number
- * @param body
- */
-async function createComment(octokit, pull_number, body) {
-    const response = await octokit.rest.issues.createComment({
-        owner: lib_github.context.repo.owner,
-        repo: lib_github.context.repo.repo,
-        issue_number: pull_number,
-        body: body
-    });
-    lib_core.debug(`Added Comment: ${JSON.stringify(response, null, 2)}`);
-    return response.data;
-}
-/**
- * Update a comment on a PR.
- * @param octokit
- * @param comment_id
- * @param body
- */
-async function updateComment(octokit, comment_id, body) {
-    const response = await octokit.rest.issues.updateComment({
-        owner: github.context.repo.owner,
-        repo: github.context.repo.repo,
-        comment_id: comment_id,
-        body: body
-    });
-    core.debug(`Updated Comment: ${JSON.stringify(response, null, 2)}`);
-    return response.data;
-}
-/**
- * Delete a comment on a PR.
- * @param octokit
- * @param comment_id
- */
-async function deleteComment(octokit, comment_id) {
-    const response = await octokit.rest.issues.deleteComment({
-        owner: github.context.repo.owner,
-        repo: github.context.repo.repo,
-        comment_id: comment_id
-    });
-    core.debug(`Deleted Comment: ${JSON.stringify(response, null, 2)}`);
-}
+// /**
+//  * Create a draft PR for the release branch.
+//  * @param octokit
+//  * @param project
+//  */
+// export async function createPullRequest(octokit: Octokit, project: string): Promise<CreatedPullRequest> {
+//   const releaseBranch: string = getReleaseBranchName(project)
+//   const branch = github.context.ref.substring('refs/heads/'.length)
+//
+//   core.info(`Creating new PR for branch: ${releaseBranch}`)
+//   const nextVersion = await getNextVersion(octokit, project, 'patch')
+//   const pull: CreatePullRequestResponse = await octokit.rest.pulls.create({
+//     owner: github.context.repo.owner,
+//     repo: github.context.repo.repo,
+//     title: getPullRequestTitle(project, nextVersion),
+//     body: getPullRequestBody(project, nextVersion),
+//     head: releaseBranch,
+//     base: branch,
+//     draft: true
+//   })
+//   core.debug(`Created Pull: ${JSON.stringify(pull, null, 2)}`)
+//
+//   const label: AddLabelResponse = await octokit.rest.issues.addLabels({
+//     owner: github.context.repo.owner,
+//     repo: github.context.repo.repo,
+//     issue_number: pull.data.number,
+//     labels: ['release', project]
+//   })
+//   core.debug(`Added Label: ${JSON.stringify(label, null, 2)}`)
+//
+//   return pull.data
+// }
+//
+// /**
+//  * Update the PR for the release branch.
+//  * @param octokit
+//  * @param pull_number
+//  * @param project
+//  * @param nextVersion
+//  * @param rebasing
+//  */
+// export async function updatePullRequest(octokit: Octokit, pull_number: number, project: string, nextVersion: string, rebasing: boolean = false): Promise<void> {
+//   const releaseBranch: string = getReleaseBranchName(project)
+//   const branch = github.context.ref.substring('refs/heads/'.length)
+//
+//   core.info(`Updating existing PR for branch: ${releaseBranch}`)
+//   const pull = await octokit.rest.pulls.update({
+//     owner: github.context.repo.owner,
+//     repo: github.context.repo.repo,
+//     pull_number: pull_number,
+//     title: getPullRequestTitle(project, nextVersion),
+//     body: getPullRequestBody(project, nextVersion, rebasing),
+//     head: releaseBranch,
+//     base: branch,
+//     draft: true
+//   })
+//   core.debug(`Updated Pull: ${JSON.stringify(pull, null, 2)}`)
+//
+//   const label: AddLabelResponse = await octokit.rest.issues.addLabels({
+//     owner: github.context.repo.owner,
+//     repo: github.context.repo.repo,
+//     issue_number: pull_number,
+//     labels: ['release', project]
+//   })
+//   core.debug(`Added Label: ${JSON.stringify(label, null, 2)}`)
+// }
+//
+// /**
+//  * List all tags for the project.
+//  * @param octokit
+//  * @param project
+//  */
+// export async function listTags(octokit: Octokit, project: string): Promise<Tag[]> {
+//   const tags: ListTagsResponse = await octokit.rest.git.listMatchingRefs({
+//     owner: github.context.repo.owner,
+//     repo: github.context.repo.repo,
+//     ref: `tags/${project}`
+//   })
+//   return tags.data
+// }
+//
+// /**
+//  * Add a reaction to a comment.
+//  * @param octokit
+//  * @param comment_number
+//  * @param reaction
+//  */
+// export async function addReaction(octokit: Octokit, comment_number: number, reaction: Reaction): Promise<void> {
+//   const response: CreateReactionResponse = await octokit.rest.reactions.createForIssueComment({
+//     owner: github.context.repo.owner,
+//     repo: github.context.repo.repo,
+//     comment_id: comment_number,
+//     content: reaction
+//   })
+//   core.debug(`Added Reaction: ${JSON.stringify(response, null, 2)}`)
+// }
+//
+// /**
+//  * Add or update a comment on a PR.
+//  * @param octokit
+//  * @param pull_number
+//  * @param body
+//  */
+// export async function addOrUpdateComment(octokit: Octokit, pull_number: number, body: string): Promise<Comment> {
+//   const comments: Comment[] = await listComments(octokit, pull_number)
+//   if (comments.length > 0) {
+//     const lastComment = comments[comments.length - 1]
+//     if (lastComment.body === body) {
+//       return await updateComment(octokit, lastComment.id, body)
+//     } else {
+//       return await createComment(octokit, pull_number, body)
+//     }
+//   } else {
+//     return await createComment(octokit, pull_number, body)
+//   }
+// }
+//
+// /**
+//  * List all comments on a PR.
+//  * @param octokit
+//  * @param pull_number
+//  */
+// export async function listComments(octokit: Octokit, pull_number: number): Promise<Comment[]> {
+//   const comments: ListCommentsResponse = await octokit.rest.issues.listComments({
+//     owner: github.context.repo.owner,
+//     repo: github.context.repo.repo,
+//     issue_number: pull_number
+//   })
+//   core.debug(`List Comments: ${JSON.stringify(comments, null, 2)}`)
+//   return comments.data
+// }
+//
+// /**
+//  * Add a comment to a PR.
+//  * @param octokit
+//  * @param pull_number
+//  * @param body
+//  */
+// export async function createComment(octokit: Octokit, pull_number: number, body: string): Promise<Comment> {
+//   const response: CreateCommentResponse = await octokit.rest.issues.createComment({
+//     owner: github.context.repo.owner,
+//     repo: github.context.repo.repo,
+//     issue_number: pull_number,
+//     body: body
+//   })
+//   core.debug(`Added Comment: ${JSON.stringify(response, null, 2)}`)
+//   return response.data
+// }
+//
+// /**
+//  * Update a comment on a PR.
+//  * @param octokit
+//  * @param comment_id
+//  * @param body
+//  */
+// export async function updateComment(octokit: Octokit, comment_id: number, body: string): Promise<Comment> {
+//   const response: UpdateCommentResponse = await octokit.rest.issues.updateComment({
+//     owner: github.context.repo.owner,
+//     repo: github.context.repo.repo,
+//     comment_id: comment_id,
+//     body: body
+//   })
+//   core.debug(`Updated Comment: ${JSON.stringify(response, null, 2)}`)
+//   return response.data
+// }
+//
+// /**
+//  * Delete a comment on a PR.
+//  * @param octokit
+//  * @param comment_id
+//  */
+// export async function deleteComment(octokit: Octokit, comment_id: number): Promise<void> {
+//   const response: DeleteCommentResponse = await octokit.rest.issues.deleteComment({
+//     owner: github.context.repo.owner,
+//     repo: github.context.repo.repo,
+//     comment_id: comment_id
+//   })
+//   core.debug(`Deleted Comment: ${JSON.stringify(response, null, 2)}`)
+// }
 
 ;// CONCATENATED MODULE: ./src/main.ts
-
-
-
-
 
 
 
@@ -53752,12 +52389,12 @@ function daysBetween(d1, d2) {
  */
 async function run() {
     try {
-        const appId = lib_core.getInput('app_id');
-        const privateKey = lib_core.getInput('private_key');
+        const appId = core.getInput('app_id');
+        const privateKey = core.getInput('private_key');
         const app = new dist_bundle_App({ appId, privateKey });
         const { data: installation } = await app.octokit.rest.apps.getRepoInstallation({
-            owner: lib_github.context.repo.owner,
-            repo: lib_github.context.repo.repo
+            owner: github.context.repo.owner,
+            repo: github.context.repo.repo
         });
         const octokit = await app.getInstallationOctokit(installation.id);
         // const pullRequestId: GraphQlQueryResponseData = await octokit.graphql(findPullRequestIdQuery(), {
@@ -53792,24 +52429,24 @@ async function run() {
         //   }
         // )
         // core.info(`Repository: ${JSON.stringify(repository, null, 2)}`)
-        lib_core.debug(`Github Context: ${JSON.stringify(lib_github.context, null, 2)}`);
+        core.debug(`Github Context: ${JSON.stringify(github.context, null, 2)}`);
         /**
          * Handle commits being pushed to the branch we are monitoring
          */
-        if (lib_github.context.eventName === Events.Push) {
+        if (github.context.eventName === Events.Push) {
             await pushEvent(octokit);
         }
         /**
          * Handle PRs being commented on
          */
-        if (lib_github.context.eventName === Events.IssueComment) {
+        if (github.context.eventName === Events.IssueComment) {
             await issueCommentEvent(octokit);
         }
     }
     catch (error) {
         // Fail the workflow run if an error occurs
         if (error instanceof Error)
-            lib_core.setFailed(error.message);
+            core.setFailed(error.message);
     }
 }
 /**
@@ -53817,20 +52454,25 @@ async function run() {
  * @param octokit
  */
 async function pushEvent(octokit) {
-    const pushPayload = lib_github.context.payload;
-    lib_core.startGroup('Files Changed in Push');
+    const pushPayload = github.context.payload;
+    core.startGroup('Files Changed in Push');
     const files = await listPushCommitFiles(octokit, pushPayload);
-    files.forEach(file => lib_core.info(file));
-    lib_core.endGroup();
-    lib_core.startGroup('Projects of Relevance:');
+    files.forEach(file => core.info(file));
+    core.endGroup();
+    core.startGroup('Projects of Relevance:');
     const projectsOfRelevance = await listProjectsOfRelevance(files);
-    projectsOfRelevance.forEach(projectOfRelevance => lib_core.info(projectOfRelevance));
-    lib_core.endGroup();
+    projectsOfRelevance.forEach(projectOfRelevance => core.info(projectOfRelevance));
+    core.endGroup();
     for (const project of projectsOfRelevance) {
-        lib_core.startGroup('Checking for Branch');
+        core.startGroup('Checking for Branch');
         // const nextVersion = await getNextVersion(octokit, project, 'patch')
-        // const releaseBranch = `krytenbot-${project}`
-        const releaseBranchPR = await findPullRequest(octokit, project);
+        const releaseBranch = `krytenbot-${project}`;
+        const draftRelease = await findDraftRelease(octokit, project);
+        const nextVersion = getNextVersion(project, draftRelease, 'patch');
+        if (!draftRelease.branches.some(branch => branch.name === releaseBranch)) {
+            core.info(`Creating release branch for ${project}`);
+            await createDraftReleaseBranch(octokit, project, github.context.sha);
+        }
         // const releaseBranchExists = await githubapi.releaseBranchExists(octokit, project)
         // if (!releaseBranchExists) {
         //   await githubapi.createReleaseBranch(octokit, project)
@@ -53886,91 +52528,96 @@ async function pushEvent(octokit) {
  * @param octokit
  */
 async function issueCommentEvent(octokit) {
-    const commentPayload = lib_github.context.payload;
+    const commentPayload = github.context.payload;
     const project = extractProjectNameFromPR(commentPayload.issue.body);
     if (project) {
-        lib_core.info(`Issue comment found for: ${project}`);
-        if (commentPayload.comment.body.startsWith(Commands.SetVersion)) {
-            await issueCommentEventSetVersion(octokit, project, commentPayload);
-        }
-        if (commentPayload.comment.body.startsWith(Commands.Rebase)) {
-            await issueCommentEventRebase(octokit, project, commentPayload);
-        }
-        if (commentPayload.comment.body.startsWith(Commands.Recreate)) {
-            await issueCommentEventRecreate(octokit, project, commentPayload);
-        }
+        core.info(`Issue comment found for: ${project}`);
+        // if (commentPayload.comment.body.startsWith(Commands.SetVersion)) {
+        //   await issueCommentEventSetVersion(octokit, project, commentPayload)
+        // }
+        //
+        // if (commentPayload.comment.body.startsWith(Commands.Rebase)) {
+        //   await issueCommentEventRebase(octokit, project, commentPayload)
+        // }
+        //
+        // if (commentPayload.comment.body.startsWith(Commands.Recreate)) {
+        //   await issueCommentEventRecreate(octokit, project, commentPayload)
+        // }
     }
     else {
-        lib_core.warning('No issue for comment found');
+        core.warning('No issue for comment found');
     }
 }
-/**
- * Handles the issue comment event for setting the version.
- * @param octokit
- * @param project
- * @param comment
- */
-async function issueCommentEventSetVersion(octokit, project, comment) {
-    const versionType = comment.comment.body.split(' ')[2];
-    lib_core.debug(`Version Type: ${versionType}`);
-    if (isValidSemverVersionType(versionType)) {
-        const version = await getNextVersion(octokit, 'core', versionType);
-        const releaseBranch = `krytenbot-${project}`;
-        lib_core.startGroup('Setting new version');
-        await addReaction(octokit, comment.comment.id, '+1');
-        await setVersion(octokit, project, releaseBranch, version);
-        await updatePullRequest(octokit, comment.issue.number, project, version);
-        lib_core.endGroup();
-    }
-    else {
-        lib_core.setFailed(`Invalid version type: ${versionType}`);
-    }
-}
-/**
- * Handles the issue comment event for rebasing the branch.
- * @param octokit
- * @param project
- * @param comment
- */
-async function issueCommentEventRebase(octokit, project, comment) {
-    lib_core.startGroup('Rebasing');
-    const version = await getNextVersion(octokit, project, 'patch');
-    const releaseBranch = `krytenbot-${project}`;
-    await addReaction(octokit, comment.comment.id, '+1');
-    await updatePullRequest(octokit, comment.issue.number, project, version, true);
-    try {
-        const token = lib_core.getInput('token');
-        await init(token);
-        await clone();
-        await fetchBranch(releaseBranch);
-        await switchBranch(releaseBranch);
-        await fetchUnshallow();
-        await rebaseBranch('origin/main');
-        await push(releaseBranch, true);
-        await updatePullRequest(octokit, comment.issue.number, project, version);
-    }
-    catch (error) {
-        await createComment(octokit, comment.issue.number, caution('Failed to rebase the branch. Please either manually rebase it or use the `recreate` command.'));
-        if (error instanceof Error)
-            lib_core.setFailed(error.message);
-    }
-    lib_core.endGroup();
-}
-/**
- * Handles the issue comment event for recreating the branch.
- * @param octokit
- * @param project
- * @param comment
- */
-async function issueCommentEventRecreate(octokit, project, comment) {
-    lib_core.startGroup('Recreating Branch');
-    const version = await getNextVersion(octokit, project, 'patch');
-    await addReaction(octokit, comment.comment.id, '+1');
-    await recreateReleaseBranch(octokit, project);
-    await setVersion(octokit, project, `krytenbot-core`, version);
-    await updatePullRequest(octokit, comment.issue.number, project, version);
-    lib_core.endGroup();
-}
+// /**
+//  * Handles the issue comment event for setting the version.
+//  * @param octokit
+//  * @param project
+//  * @param comment
+//  */
+// async function issueCommentEventSetVersion(octokit: Octokit, project: string, comment: IssueCommentEvent): Promise<void> {
+//   const versionType = comment.comment.body.split(' ')[2]
+//   core.debug(`Version Type: ${versionType}`)
+//   if (versions.isValidSemverVersionType(versionType)) {
+//     const version = await githubapi.getNextVersion(octokit, 'core', versionType as Version)
+//     const releaseBranch = `krytenbot-${project}`
+//
+//     core.startGroup('Setting new version')
+//     await githubapi.addReaction(octokit, comment.comment.id, '+1')
+//     await githubapi.setVersion(octokit, project, releaseBranch, version)
+//     await githubapi.updatePullRequest(octokit, comment.issue.number, project, version)
+//     core.endGroup()
+//   } else {
+//     core.setFailed(`Invalid version type: ${versionType}`)
+//   }
+// }
+//
+// /**
+//  * Handles the issue comment event for rebasing the branch.
+//  * @param octokit
+//  * @param project
+//  * @param comment
+//  */
+// async function issueCommentEventRebase(octokit: Octokit, project: string, comment: IssueCommentEvent): Promise<void> {
+//   core.startGroup('Rebasing')
+//   const version = await getNextVersion(octokit, project, 'patch')
+//   const releaseBranch = `krytenbot-${project}`
+//
+//   await githubapi.addReaction(octokit, comment.comment.id, '+1')
+//   await githubapi.updatePullRequest(octokit, comment.issue.number, project, version, true)
+//
+//   try {
+//     const token = core.getInput('token')
+//     await git.init(token)
+//     await git.clone()
+//     await git.fetchBranch(releaseBranch)
+//     await git.switchBranch(releaseBranch)
+//     await git.fetchUnshallow()
+//     await git.rebaseBranch('origin/main')
+//     await git.push(releaseBranch, true)
+//     await githubapi.updatePullRequest(octokit, comment.issue.number, project, version)
+//   } catch (error) {
+//     await githubapi.createComment(octokit, comment.issue.number, caution('Failed to rebase the branch. Please either manually rebase it or use the `recreate` command.'))
+//     if (error instanceof Error) core.setFailed(error.message)
+//   }
+//
+//   core.endGroup()
+// }
+//
+// /**
+//  * Handles the issue comment event for recreating the branch.
+//  * @param octokit
+//  * @param project
+//  * @param comment
+//  */
+// async function issueCommentEventRecreate(octokit: Octokit, project: string, comment: IssueCommentEvent): Promise<void> {
+//   core.startGroup('Recreating Branch')
+//   const version = await getNextVersion(octokit, project, 'patch')
+//   await githubapi.addReaction(octokit, comment.comment.id, '+1')
+//   await githubapi.recreateReleaseBranch(octokit, project)
+//   await githubapi.setVersion(octokit, project, `krytenbot-core`, version)
+//   await githubapi.updatePullRequest(octokit, comment.issue.number, project, version)
+//   core.endGroup()
+// }
 
 ;// CONCATENATED MODULE: ./src/index.ts
 /**

@@ -6,7 +6,7 @@ import { IssueCommentEvent, PushEvent } from '@octokit/webhooks-types'
 import * as git from './git-helper'
 import * as githubapi from './github-helper'
 import * as versions from './version-helper'
-import { Commands, getNextVersion, setVersion, Version } from './github-helper'
+import { Commands, getNextVersion, Version } from './github-helper'
 import { note, caution } from './markdown'
 
 enum Events {
@@ -120,8 +120,15 @@ async function pushEvent(octokit: Octokit): Promise<void> {
   for (const project of projectsOfRelevance) {
     core.startGroup('Checking for Branch')
     // const nextVersion = await getNextVersion(octokit, project, 'patch')
-    // const releaseBranch = `krytenbot-${project}`
-    const releaseBranchPR = await githubapi.findPullRequest(octokit, project)
+    const releaseBranch = `krytenbot-${project}`
+
+    const draftRelease = await githubapi.findDraftRelease(octokit, project)
+    const nextVersion = githubapi.getNextVersion(project, draftRelease, 'patch')
+
+    if (!draftRelease.branches.some(branch => branch.name === releaseBranch)) {
+      core.info(`Creating release branch for ${project}`)
+      await githubapi.createDraftReleaseBranch(octokit, project, github.context.sha)
+    }
 
     // const releaseBranchExists = await githubapi.releaseBranchExists(octokit, project)
     // if (!releaseBranchExists) {
@@ -184,89 +191,89 @@ async function issueCommentEvent(octokit: Octokit): Promise<void> {
   const project = githubapi.extractProjectNameFromPR(commentPayload.issue.body!)
   if (project) {
     core.info(`Issue comment found for: ${project}`)
-    if (commentPayload.comment.body.startsWith(Commands.SetVersion)) {
-      await issueCommentEventSetVersion(octokit, project, commentPayload)
-    }
-
-    if (commentPayload.comment.body.startsWith(Commands.Rebase)) {
-      await issueCommentEventRebase(octokit, project, commentPayload)
-    }
-
-    if (commentPayload.comment.body.startsWith(Commands.Recreate)) {
-      await issueCommentEventRecreate(octokit, project, commentPayload)
-    }
+    // if (commentPayload.comment.body.startsWith(Commands.SetVersion)) {
+    //   await issueCommentEventSetVersion(octokit, project, commentPayload)
+    // }
+    //
+    // if (commentPayload.comment.body.startsWith(Commands.Rebase)) {
+    //   await issueCommentEventRebase(octokit, project, commentPayload)
+    // }
+    //
+    // if (commentPayload.comment.body.startsWith(Commands.Recreate)) {
+    //   await issueCommentEventRecreate(octokit, project, commentPayload)
+    // }
   } else {
     core.warning('No issue for comment found')
   }
 }
 
-/**
- * Handles the issue comment event for setting the version.
- * @param octokit
- * @param project
- * @param comment
- */
-async function issueCommentEventSetVersion(octokit: Octokit, project: string, comment: IssueCommentEvent): Promise<void> {
-  const versionType = comment.comment.body.split(' ')[2]
-  core.debug(`Version Type: ${versionType}`)
-  if (versions.isValidSemverVersionType(versionType)) {
-    const version = await githubapi.getNextVersion(octokit, 'core', versionType as Version)
-    const releaseBranch = `krytenbot-${project}`
-
-    core.startGroup('Setting new version')
-    await githubapi.addReaction(octokit, comment.comment.id, '+1')
-    await githubapi.setVersion(octokit, project, releaseBranch, version)
-    await githubapi.updatePullRequest(octokit, comment.issue.number, project, version)
-    core.endGroup()
-  } else {
-    core.setFailed(`Invalid version type: ${versionType}`)
-  }
-}
-
-/**
- * Handles the issue comment event for rebasing the branch.
- * @param octokit
- * @param project
- * @param comment
- */
-async function issueCommentEventRebase(octokit: Octokit, project: string, comment: IssueCommentEvent): Promise<void> {
-  core.startGroup('Rebasing')
-  const version = await getNextVersion(octokit, project, 'patch')
-  const releaseBranch = `krytenbot-${project}`
-
-  await githubapi.addReaction(octokit, comment.comment.id, '+1')
-  await githubapi.updatePullRequest(octokit, comment.issue.number, project, version, true)
-
-  try {
-    const token = core.getInput('token')
-    await git.init(token)
-    await git.clone()
-    await git.fetchBranch(releaseBranch)
-    await git.switchBranch(releaseBranch)
-    await git.fetchUnshallow()
-    await git.rebaseBranch('origin/main')
-    await git.push(releaseBranch, true)
-    await githubapi.updatePullRequest(octokit, comment.issue.number, project, version)
-  } catch (error) {
-    await githubapi.createComment(octokit, comment.issue.number, caution('Failed to rebase the branch. Please either manually rebase it or use the `recreate` command.'))
-    if (error instanceof Error) core.setFailed(error.message)
-  }
-
-  core.endGroup()
-}
-
-/**
- * Handles the issue comment event for recreating the branch.
- * @param octokit
- * @param project
- * @param comment
- */
-async function issueCommentEventRecreate(octokit: Octokit, project: string, comment: IssueCommentEvent): Promise<void> {
-  core.startGroup('Recreating Branch')
-  const version = await getNextVersion(octokit, project, 'patch')
-  await githubapi.addReaction(octokit, comment.comment.id, '+1')
-  await githubapi.recreateReleaseBranch(octokit, project)
-  await githubapi.setVersion(octokit, project, `krytenbot-core`, version)
-  await githubapi.updatePullRequest(octokit, comment.issue.number, project, version)
-  core.endGroup()
-}
+// /**
+//  * Handles the issue comment event for setting the version.
+//  * @param octokit
+//  * @param project
+//  * @param comment
+//  */
+// async function issueCommentEventSetVersion(octokit: Octokit, project: string, comment: IssueCommentEvent): Promise<void> {
+//   const versionType = comment.comment.body.split(' ')[2]
+//   core.debug(`Version Type: ${versionType}`)
+//   if (versions.isValidSemverVersionType(versionType)) {
+//     const version = await githubapi.getNextVersion(octokit, 'core', versionType as Version)
+//     const releaseBranch = `krytenbot-${project}`
+//
+//     core.startGroup('Setting new version')
+//     await githubapi.addReaction(octokit, comment.comment.id, '+1')
+//     await githubapi.setVersion(octokit, project, releaseBranch, version)
+//     await githubapi.updatePullRequest(octokit, comment.issue.number, project, version)
+//     core.endGroup()
+//   } else {
+//     core.setFailed(`Invalid version type: ${versionType}`)
+//   }
+// }
+//
+// /**
+//  * Handles the issue comment event for rebasing the branch.
+//  * @param octokit
+//  * @param project
+//  * @param comment
+//  */
+// async function issueCommentEventRebase(octokit: Octokit, project: string, comment: IssueCommentEvent): Promise<void> {
+//   core.startGroup('Rebasing')
+//   const version = await getNextVersion(octokit, project, 'patch')
+//   const releaseBranch = `krytenbot-${project}`
+//
+//   await githubapi.addReaction(octokit, comment.comment.id, '+1')
+//   await githubapi.updatePullRequest(octokit, comment.issue.number, project, version, true)
+//
+//   try {
+//     const token = core.getInput('token')
+//     await git.init(token)
+//     await git.clone()
+//     await git.fetchBranch(releaseBranch)
+//     await git.switchBranch(releaseBranch)
+//     await git.fetchUnshallow()
+//     await git.rebaseBranch('origin/main')
+//     await git.push(releaseBranch, true)
+//     await githubapi.updatePullRequest(octokit, comment.issue.number, project, version)
+//   } catch (error) {
+//     await githubapi.createComment(octokit, comment.issue.number, caution('Failed to rebase the branch. Please either manually rebase it or use the `recreate` command.'))
+//     if (error instanceof Error) core.setFailed(error.message)
+//   }
+//
+//   core.endGroup()
+// }
+//
+// /**
+//  * Handles the issue comment event for recreating the branch.
+//  * @param octokit
+//  * @param project
+//  * @param comment
+//  */
+// async function issueCommentEventRecreate(octokit: Octokit, project: string, comment: IssueCommentEvent): Promise<void> {
+//   core.startGroup('Recreating Branch')
+//   const version = await getNextVersion(octokit, project, 'patch')
+//   await githubapi.addReaction(octokit, comment.comment.id, '+1')
+//   await githubapi.recreateReleaseBranch(octokit, project)
+//   await githubapi.setVersion(octokit, project, `krytenbot-core`, version)
+//   await githubapi.updatePullRequest(octokit, comment.issue.number, project, version)
+//   core.endGroup()
+// }
