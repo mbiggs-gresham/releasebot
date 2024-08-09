@@ -450,17 +450,19 @@ export async function listProjectsOfRelevance(files: string[]): Promise<string[]
  * @param versionType
  */
 export function getNextVersion(project: string, draftRelease: KrytenbotDraftRelease, versionType: Version): string {
-  for (const tag of draftRelease.tags?.tags) {
+  for (const tag of draftRelease.tags.tags) {
     const tagName = tag.name
     const tagVersion = tagName.substring(tagName.indexOf('@v') + 2)
 
-    for (const comment of draftRelease.pullRequests?.pullRequests[0]?.comments) {
-      const commentBody = comment.body
-      if (commentBody.startsWith(Commands.SetVersion)) {
-        const nextVersionType = commentBody.split(' ')[2]
-        const nextVersion = semver.inc(tagVersion, nextVersionType as Version)
-        if (nextVersion) {
-          return nextVersion
+    if (draftRelease.pullRequests.pullRequests.length > 0) {
+      for (const comment of draftRelease.pullRequests.pullRequests[0]?.comments) {
+        const commentBody = comment.body
+        if (commentBody.startsWith(Commands.SetVersion)) {
+          const nextVersionType = commentBody.split(' ')[2]
+          const nextVersion = semver.inc(tagVersion, nextVersionType as Version)
+          if (nextVersion) {
+            return nextVersion
+          }
         }
       }
     }
