@@ -51836,12 +51836,7 @@ function findCommitQuery() {
                 ... on Commit {
                     oid
                     message
-                    changedFilesIfAvailable
-                    file {
-                        entries {
-                            name
-                        }
-                    }               
+                    changedFilesIfAvailable           
                     tree {
                        entries { 
                           name
