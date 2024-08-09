@@ -124,9 +124,12 @@ async function pushEvent(octokit: Octokit): Promise<void> {
     const draftRelease = await githubapi.findDraftRelease(octokit, project)
     core.info(`Draft Release: ${JSON.stringify(draftRelease, null, 2)}`)
 
+    core.info(`Calculating next version for '${project}'`)
     const nextVersion = githubapi.getNextVersion(draftRelease, 'patch')
+    core.info(`Next version for '${project}': ${nextVersion}`)
 
     // Create new branch with new version or rebase the existing one
+    core.info(`Checking for draft release branch for '${project}'`)
     if (!draftRelease.branches.branches.some(branch => branch.name === releaseBranch)) {
       core.info(`Creating draft release branch for '${project}'`)
       await githubapi.createDraftReleaseBranch(octokit, draftRelease, project)
@@ -135,6 +138,7 @@ async function pushEvent(octokit: Octokit): Promise<void> {
     }
 
     // Create pull request for new branch
+    core.info(`Checking for pull request for '${project}'`)
     if (draftRelease.pullRequests.pullRequests.length === 0) {
       core.info(`Creating pull request for '${project}'`)
       const branch = github.context.ref.substring('refs/heads/'.length)
