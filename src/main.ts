@@ -27,6 +27,20 @@ function daysBetween(d1: Date, d2: Date) {
   return diff / (1000 * 60 * 60 * 24)
 }
 
+function addReactionToIssueMutation(): string {
+  return `
+    mutation AddReactionToIssue($subjectId: ID!, $content: ReactionContent!) {
+        addReaction(input:{ subjectId:$subjectId, content: $content }) {
+            reaction {
+                content
+            }
+            subject {
+                id
+            }
+        }
+    }`
+}
+
 function updatePullRequestBranchMutation(): string {
   return `
     mutation UpdatePullRequestBranchMutation($pullRequestId: ID!, $expectedHeadOid: GitObjectID!) {
@@ -193,6 +207,7 @@ async function pushEvent(octokit: Octokit): Promise<void> {
               if (error instanceof GraphqlResponseError) {
                 core.setFailed(error.message)
               }
+              core.error(JSON.stringify(error, null, 2))
             }
 
             // try {

@@ -53650,6 +53650,19 @@ function daysBetween(d1, d2) {
     const diff = Math.abs(d1.getTime() - d2.getTime());
     return diff / (1000 * 60 * 60 * 24);
 }
+function addReactionToIssueMutation() {
+    return `
+    mutation AddReactionToIssue($subjectId: ID!, $content: ReactionContent!) {
+        addReaction(input:{ subjectId:$subjectId, content: $content }) {
+            reaction {
+                content
+            }
+            subject {
+                id
+            }
+        }
+    }`;
+}
 function updatePullRequestBranchMutation() {
     return `
     mutation UpdatePullRequestBranchMutation($pullRequestId: ID!, $expectedHeadOid: GitObjectID!) {
@@ -53803,6 +53816,7 @@ async function pushEvent(octokit) {
                             if (error instanceof GraphqlResponseError) {
                                 lib_core.setFailed(error.message);
                             }
+                            lib_core.error(JSON.stringify(error, null, 2));
                         }
                         // try {
                         //   const token = core.getInput('token')
