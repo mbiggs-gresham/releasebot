@@ -441,10 +441,8 @@ export async function setVersion(octokit: Octokit, project: string, branch: stri
   core.info(`Updating ${project} version to ${version}`)
 
   const {
-    contents: {
-      repository: {
-        file: { contents: existingFile }
-      }
+    repository: {
+      file: { contents: existingFile }
     }
   }: GraphQlQueryResponseData = await octokit.graphql(getFileContentQuery(), {
     owner: github.context.repo.owner,

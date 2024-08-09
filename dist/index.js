@@ -52144,7 +52144,7 @@ async function listProjectsOfRelevance(files) {
  */
 async function setVersion(octokit, project, branch, version, sha) {
     lib_core.info(`Updating ${project} version to ${version}`);
-    const { contents: { repository: { file: { contents: existingFile } } } } = await octokit.graphql(getFileContentQuery(), {
+    const { repository: { file: { contents: existingFile } } } = await octokit.graphql(getFileContentQuery(), {
         owner: github.context.repo.owner,
         repo: github.context.repo.repo,
         ref: `${branch}:${project}/package.json`
