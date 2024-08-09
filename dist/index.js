@@ -52170,7 +52170,7 @@ async function setVersion(octokit, project, branch, version, sha) {
                 core.endGroup();
             }
             const parameters = {
-                repositoryNameWithOwner: {
+                branch: {
                     repositoryNameWithOwner: `${github.context.repo.owner}/${github.context.repo.repo}`,
                     branchName: branch
                 },
@@ -52194,7 +52194,7 @@ async function setVersion(octokit, project, branch, version, sha) {
             };
             core.info(`Creating new commit using mutation: ${JSON.stringify(parameters, null, 2)}`);
             const createCommitOnBranch = await octokit.graphql(createCommitOnBranchMutation(), {
-                repositoryNameWithOwner: {
+                branch: {
                     repositoryNameWithOwner: `${github.context.repo.owner}/${github.context.repo.repo}`,
                     branchName: branch
                 },
