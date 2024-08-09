@@ -108,7 +108,7 @@ function findPullRequestsQuery(): string {
   return `
     query FindPullRequestID ($owner: String!, $repo: String!, $labels: [String!]){
         repository(owner:$owner, name:$repo) {
-            refs(first:100, refPrefix:"refs/heads/") {
+            branches: refs(first:100, refPrefix:"refs/heads/") {
                 nodes {
                     name
                 }
