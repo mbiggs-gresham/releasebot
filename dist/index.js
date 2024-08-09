@@ -51832,7 +51832,7 @@ function findCommitQuery() {
     return `
     query FindCommit($owner: String!, $repo: String!, $oid: GitObjectID!) {
         repository(owner: $owner, name: $repo) {
-            object(oid: $oid) {
+            object(expression: $oid) {
                 ... on Commit {
                     oid
                     message
