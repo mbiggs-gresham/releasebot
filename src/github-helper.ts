@@ -166,7 +166,7 @@ function getFileContentQuery(): string {
         repository(owner: $owner, name: $repo) {
               file: object(expression: $ref) {
                   ... on Blob {
-                      contents: text
+                      content: text
                   }
               }
         }
@@ -441,9 +441,7 @@ export async function setVersion(octokit: Octokit, project: string, branch: stri
   core.info(`Updating ${project} version to ${version}`)
 
   const {
-    repository: {
-      file: { contents: existingFile }
-    }
+    repository: { file: existingFile }
   }: GraphQlQueryResponseData = await octokit.graphql(getFileContentQuery(), {
     owner: github.context.repo.owner,
     repo: github.context.repo.repo,
