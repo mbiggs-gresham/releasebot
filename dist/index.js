@@ -35290,7 +35290,7 @@ var __webpack_exports__ = {};
 (() => {
 
 // EXTERNAL MODULE: ./node_modules/@actions/core/lib/core.js
-var core = __nccwpck_require__(2186);
+var lib_core = __nccwpck_require__(2186);
 // EXTERNAL MODULE: ./node_modules/@actions/github/lib/github.js
 var github = __nccwpck_require__(5438);
 ;// CONCATENATED MODULE: ./node_modules/octokit/node_modules/universal-user-agent/index.js
@@ -51784,26 +51784,6 @@ function decode(input) {
     return Buffer.from(input, 'base64').toString('utf-8');
 }
 
-;// CONCATENATED MODULE: ./src/markdown.ts
-function note(message) {
-    return `> [!NOTE]\n> ${message}`;
-}
-function tip(message) {
-    return `> [!TIP]\n> ${message}`;
-}
-function important(message) {
-    return `> [!IMPORTANT]\n> ${message}`;
-}
-function warning(message) {
-    return `> [!WARNING]\n> ${message}`;
-}
-function caution(message) {
-    return `> [!CAUTION]\n> ${message}`;
-}
-function markdown_hidden(message) {
-    return `[//]: # (${message})`;
-}
-
 ;// CONCATENATED MODULE: ./src/github-helper.ts
 
 
@@ -52021,14 +52001,14 @@ function getDefaultNextVersion() {
  */
 function getPullRequestBody(project, nextVersion, rebasing = false) {
     const body = [];
-    body.push(markdown_hidden(`krytenbot-project:${project}`));
+    body.push(hidden(`krytenbot-project:${project}`));
     body.push('\n');
     if (rebasing) {
-        body.push(markdown_hidden('krytenbot-start'));
+        body.push(hidden('krytenbot-start'));
         body.push('\n\n');
         body.push(important('Krytenbot is rebasing this PR'));
         body.push('\n\n');
-        body.push(markdown_hidden('krytenbot-end'));
+        body.push(hidden('krytenbot-end'));
         body.push('\n');
     }
     body.push(`
@@ -52060,13 +52040,13 @@ async function listPushCommitFiles(octokit, payload) {
     // get the list of files from the commit details.
     for (const commit of payload.commits) {
         if (commit.added || commit.modified || commit.removed) {
-            core.debug(`Commit contained file details: ${JSON.stringify(commit, null, 2)}`);
+            lib_core.debug(`Commit contained file details: ${JSON.stringify(commit, null, 2)}`);
             commit.added.forEach(file => files.add(file));
             commit.modified.forEach(file => files.add(file));
             commit.removed.forEach(file => files.add(file));
         }
         else {
-            core.debug(`Commit contained no file details. Getting commit details for: ${payload.after}`);
+            lib_core.debug(`Commit contained no file details. Getting commit details for: ${payload.after}`);
             const { data: commitDetails } = await octokit.rest.repos.getCommit({
                 owner: github.context.repo.owner,
                 repo: github.context.repo.repo,
@@ -52077,7 +52057,7 @@ async function listPushCommitFiles(octokit, payload) {
             //   repo: github.context.repo.repo,
             //   oid: payload.after
             // })
-            core.info(`Commit Details: ${JSON.stringify(commitDetails, null, 2)}`);
+            lib_core.info(`Commit Details: ${JSON.stringify(commitDetails, null, 2)}`);
             commitDetails.files?.forEach(file => files.add(file.filename));
         }
     }
@@ -52151,23 +52131,23 @@ async function listProjectsOfRelevance(files) {
  * @param sha
  */
 async function setVersion(octokit, project, branch, version, sha) {
-    core.info(`Updating ${project} version to ${version}`);
+    lib_core.info(`Updating ${project} version to ${version}`);
     const { data: existingFile } = await octokit.rest.repos.getContent({
         owner: github.context.repo.owner,
         repo: github.context.repo.repo,
         path: `${project}/package.json`,
         ref: branch
     });
-    core.debug(`Existing File: ${JSON.stringify(existingFile, null, 2)}`);
+    lib_core.debug(`Existing File: ${JSON.stringify(existingFile, null, 2)}`);
     if (!Array.isArray(existingFile)) {
         if (existingFile.type === 'file' && existingFile.size > 0) {
             const existingFileContents = decode(existingFile.content);
             const newFileContents = patchPackageJson(existingFileContents, version);
-            if (core.isDebug()) {
-                core.startGroup('File Contents');
-                core.debug(`Existing File Contents: ${existingFileContents}`);
-                core.debug(`New File Contents: ${newFileContents}`);
-                core.endGroup();
+            if (lib_core.isDebug()) {
+                lib_core.startGroup('File Contents');
+                lib_core.debug(`Existing File Contents: ${existingFileContents}`);
+                lib_core.debug(`New File Contents: ${newFileContents}`);
+                lib_core.endGroup();
             }
             const createCommitOnBranch = await octokit.graphql(createCommitOnBranchMutation(), {
                 branch: {
@@ -52177,17 +52157,17 @@ async function setVersion(octokit, project, branch, version, sha) {
                 message: { headline: `Update ${project} version to v${version}` },
                 expectedHeadOid: sha,
                 fileChanges: {
-                    deletions: [
+                    // deletions: [
+                    //   {
+                    //     path: `${project}/package.json`
+                    //   }
+                    // ],
+                    additions: [
                         {
-                            path: `${project}/package.json`
+                            path: `${project}/package.json`,
+                            contents: encode(newFileContents)
                         }
                     ]
-                    // additions: [
-                    //   {
-                    //     path: `${project}/package.json`,
-                    //     contents: base64.encode(newFileContents)
-                    //   }
-                    // ]
                 }
             });
             // const newFile: CreateOrUpdateFileContentsResponse = await octokit.rest.repos.createOrUpdateFileContents({
@@ -52199,10 +52179,10 @@ async function setVersion(octokit, project, branch, version, sha) {
             //   message: `Update ${project} version to v${version}`,
             //   content: base64.encode(newFileContents)
             // })
-            core.info(`Updated File: ${JSON.stringify(createCommitOnBranch, null, 2)}`);
+            lib_core.info(`Updated File: ${JSON.stringify(createCommitOnBranch, null, 2)}`);
         }
         else {
-            core.setFailed('Existing file is not a file');
+            lib_core.setFailed('Existing file is not a file');
         }
     }
 }
@@ -52297,7 +52277,7 @@ async function findDraftRelease(octokit, project) {
         branch: getReleaseBranchName(project),
         labels: ['release', project]
     });
-    core.debug(`Pull Request: ${JSON.stringify(pullRequests, null, 2)}`);
+    lib_core.debug(`Pull Request: ${JSON.stringify(pullRequests, null, 2)}`);
     return pullRequests.repository;
 }
 /**
@@ -52314,7 +52294,7 @@ async function createDraftReleaseBranch(octokit, draftRelease, project, sha) {
         name: `refs/heads/${releaseBranch}`,
         oid: sha
     });
-    core.info(`Created Branch: ${JSON.stringify(branch, null, 2)}`);
+    lib_core.info(`Created Branch: ${JSON.stringify(branch, null, 2)}`);
 }
 async function createDraftReleasePullRequest(octokit, draftRelease, project, branch, nextVersion) {
     const releaseBranch = getReleaseBranchName(project);
@@ -52553,8 +52533,8 @@ function daysBetween(d1, d2) {
  */
 async function run() {
     try {
-        const appId = core.getInput('app_id');
-        const privateKey = core.getInput('private_key');
+        const appId = lib_core.getInput('app_id');
+        const privateKey = lib_core.getInput('private_key');
         const app = new dist_bundle_App({ appId, privateKey });
         const { data: installation } = await app.octokit.rest.apps.getRepoInstallation({
             owner: github.context.repo.owner,
@@ -52593,7 +52573,7 @@ async function run() {
         //   }
         // )
         // core.info(`Repository: ${JSON.stringify(repository, null, 2)}`)
-        core.debug(`Github Context: ${JSON.stringify(github.context, null, 2)}`);
+        lib_core.debug(`Github Context: ${JSON.stringify(github.context, null, 2)}`);
         /**
          * Handle commits being pushed to the branch we are monitoring
          */
@@ -52610,7 +52590,7 @@ async function run() {
     catch (error) {
         // Fail the workflow run if an error occurs
         if (error instanceof Error)
-            core.setFailed(error.message);
+            lib_core.setFailed(error.message);
     }
 }
 /**
@@ -52619,30 +52599,30 @@ async function run() {
  */
 async function pushEvent(octokit) {
     const pushPayload = github.context.payload;
-    core.startGroup('Files Changed in Push');
+    lib_core.startGroup('Files Changed in Push');
     const files = await listPushCommitFiles(octokit, pushPayload);
-    files.forEach(file => core.info(file));
-    core.endGroup();
-    core.startGroup('Projects of Relevance:');
+    files.forEach(file => lib_core.info(file));
+    lib_core.endGroup();
+    lib_core.startGroup('Projects of Relevance:');
     const projectsOfRelevance = await listProjectsOfRelevance(files);
-    projectsOfRelevance.forEach(projectOfRelevance => core.info(projectOfRelevance));
-    core.endGroup();
+    projectsOfRelevance.forEach(projectOfRelevance => lib_core.info(projectOfRelevance));
+    lib_core.endGroup();
     for (const project of projectsOfRelevance) {
-        core.startGroup('Checking for Branch');
+        lib_core.startGroup('Checking for Branch');
         // const nextVersion = await getNextVersion(octokit, project, 'patch')
         const releaseBranch = `krytenbot-${project}`;
         const draftRelease = await findDraftRelease(octokit, project);
-        core.info(`Draft Release: ${JSON.stringify(draftRelease, null, 2)}`);
+        lib_core.info(`Draft Release: ${JSON.stringify(draftRelease, null, 2)}`);
         const nextVersion = getNextVersion(draftRelease, 'patch');
         if (!draftRelease.branches.branches.some(branch => branch.name === releaseBranch)) {
-            core.info(`Creating release branch for ${project}`);
+            lib_core.info(`Creating release branch for ${project}`);
             await createDraftReleaseBranch(octokit, draftRelease, project, github.context.sha);
             await setVersion(octokit, project, releaseBranch, nextVersion, github.context.sha);
         }
         if (draftRelease.pullRequests.pullRequests.length === 0) {
-            core.info(`Creating pull request for ${project}`);
+            lib_core.info(`Creating pull request for ${project}`);
             const branch = github.context.ref.substring('refs/heads/'.length);
-            await createDraftReleasePullRequest(octokit, draftRelease, project, branch, nextVersion);
+            // await githubapi.createDraftReleasePullRequest(octokit, draftRelease, project, branch, nextVersion)
         }
         // const releaseBranchExists = await githubapi.releaseBranchExists(octokit, project)
         // if (!releaseBranchExists) {
@@ -52702,7 +52682,7 @@ async function issueCommentEvent(octokit) {
     const commentPayload = github.context.payload;
     const project = extractProjectNameFromPR(commentPayload.issue.body);
     if (project) {
-        core.info(`Issue comment found for: ${project}`);
+        lib_core.info(`Issue comment found for: ${project}`);
         // if (commentPayload.comment.body.startsWith(Commands.SetVersion)) {
         //   await issueCommentEventSetVersion(octokit, project, commentPayload)
         // }
@@ -52716,7 +52696,7 @@ async function issueCommentEvent(octokit) {
         // }
     }
     else {
-        core.warning('No issue for comment found');
+        lib_core.warning('No issue for comment found');
     }
 }
 // /**

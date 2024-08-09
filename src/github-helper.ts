@@ -454,17 +454,17 @@ export async function setVersion(octokit: Octokit, project: string, branch: stri
         message: { headline: `Update ${project} version to v${version}` },
         expectedHeadOid: sha,
         fileChanges: {
-          deletions: [
+          // deletions: [
+          //   {
+          //     path: `${project}/package.json`
+          //   }
+          // ],
+          additions: [
             {
-              path: `${project}/package.json`
+              path: `${project}/package.json`,
+              contents: base64.encode(newFileContents)
             }
           ]
-          // additions: [
-          //   {
-          //     path: `${project}/package.json`,
-          //     contents: base64.encode(newFileContents)
-          //   }
-          // ]
         }
       })
 
