@@ -53805,7 +53805,7 @@ async function pushEvent(octokit) {
                         lib_core.info(`Pull Request ID: ${JSON.stringify(pullRequestId, null, 2)}`);
                         try {
                             const updatePR = await octokit.graphql(updatePullRequestBranchMutation(), {
-                                pullRequestId: pullRequestId.id
+                                pullRequestId: pullRequestId.repository.pullRequest.id
                             });
                             lib_core.info(`Update PR: ${JSON.stringify(updatePR, null, 2)}`);
                         }
