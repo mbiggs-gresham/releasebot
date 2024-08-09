@@ -53198,6 +53198,69 @@ var Commands;
 const projects = ['core', 'grid'];
 const projectsPaths = ['core/*', 'grid/*'];
 const projectsEcosystem = (/* unused pure expression or super */ null && (['npm', 'npm']));
+function addReactionToIssueMutation() {
+    return `
+    mutation AddReactionToIssue($subjectId: ID!, $content: ReactionContent!) {
+        addReaction(input:{ subjectId:$subjectId, content: $content }) {
+            reaction {
+                content
+            }
+            subject {
+                id
+            }
+        }
+    }`;
+}
+function updatePullRequestBranchMutation() {
+    return `
+    mutation UpdatePullRequestBranchMutation($pullRequestId: ID!) {
+        updatePullRequestBranch(input:{ clientMutationId: "krytenbot", pullRequestId: $pullRequestId, updateMethod: REBASE }) {
+            pullRequest {
+                id
+            }
+        }
+    }`;
+}
+function addPullRequestCommentMutation() {
+    return `
+    mutation AddPullRequestComment($subjectId: ID!, $body: String!) {
+        addComment(input:{ subjectId:$subjectId, body: $body }) {
+            commentEdge {
+                node {
+                    createdAt
+                    body
+                }
+            }
+            subject {
+                id
+            }
+        }
+    }`;
+}
+function findPullRequestsQuery() {
+    return `
+    query FindPullRequestID ($owner: String!, $repo: String!){
+        repository(owner:$owner, name:$repo) {
+            pullRequests() {
+              edges {
+                node {
+                    title
+                }        
+              }        
+            }
+        }
+    }`;
+}
+function findPullRequestIdQuery() {
+    return `
+    query FindPullRequestID ($owner: String!, $repo: String!, $pullNumber: Int!){
+        repository(owner:$owner, name:$repo) {
+            pullRequest(number:$pullNumber) {
+                id
+            }
+        }
+    }`;
+}
 function extractProjectNameFromPR(text) {
     const match = text.match(/\[\/\/]:\s#\s\(krytenbot-project:(\w+)\)/);
     return match ? match[1] : null;
@@ -53440,19 +53503,24 @@ async function recreateReleaseBranch(octokit, project) {
  */
 async function findPullRequest(octokit, project) {
     const releaseBranch = getReleaseBranchName(project);
-    const pulls = await octokit.rest.pulls.list({
+    // const pulls: ListPullRequestsResponse = await octokit.rest.pulls.list({
+    //   owner: github.context.repo.owner,
+    //   repo: github.context.repo.repo,
+    //   head: `${github.context.repo.owner}:${releaseBranch}`,
+    //   state: 'open'
+    // })
+    // core.debug(`Pulls: ${JSON.stringify(pulls, null, 2)}`)
+    const pullRequests = await octokit.graphql(findPullRequestsQuery(), {
         owner: lib_github.context.repo.owner,
-        repo: lib_github.context.repo.repo,
-        head: `${lib_github.context.repo.owner}:${releaseBranch}`,
-        state: 'open'
+        repo: lib_github.context.repo.repo
     });
-    lib_core.debug(`Pulls: ${JSON.stringify(pulls, null, 2)}`);
-    for (const pull of pulls.data) {
-        if (pull.labels.find(label => label.name === 'release')) {
-            lib_core.info(`Found existing PR for branch: ${releaseBranch}`);
-            return pull;
-        }
-    }
+    lib_core.info(`Pull Request ID: ${JSON.stringify(pullRequests, null, 2)}`);
+    // for (const pull of pulls.data) {
+    //   if (pull.labels.find(label => label.name === 'release')) {
+    //     core.info(`Found existing PR for branch: ${releaseBranch}`)
+    //     return pull
+    //   }
+    // }
     return undefined;
 }
 /**
@@ -53633,7 +53701,6 @@ async function deleteComment(octokit, comment_id) {
 
 
 
-
 var Events;
 (function (Events) {
     Events["Push"] = "push";
@@ -53649,55 +53716,6 @@ const main_projects = (/* unused pure expression or super */ null && (['core', '
 function daysBetween(d1, d2) {
     const diff = Math.abs(d1.getTime() - d2.getTime());
     return diff / (1000 * 60 * 60 * 24);
-}
-function addReactionToIssueMutation() {
-    return `
-    mutation AddReactionToIssue($subjectId: ID!, $content: ReactionContent!) {
-        addReaction(input:{ subjectId:$subjectId, content: $content }) {
-            reaction {
-                content
-            }
-            subject {
-                id
-            }
-        }
-    }`;
-}
-function updatePullRequestBranchMutation() {
-    return `
-    mutation UpdatePullRequestBranchMutation($pullRequestId: ID!) {
-        updatePullRequestBranch(input:{ clientMutationId: "krytenbot", pullRequestId: $pullRequestId, updateMethod: REBASE }) {
-            pullRequest {
-                id
-            }
-        }
-    }`;
-}
-function addPullRequestCommentMutation() {
-    return `
-    mutation AddPullRequestComment($subjectId: ID!, $body: String!) {
-        addComment(input:{ subjectId:$subjectId, body: $body }) {
-            commentEdge {
-                node {
-                    createdAt
-                    body
-                }
-            }
-            subject {
-                id
-            }
-        }
-    }`;
-}
-function findPullRequestIdQuery() {
-    return `
-    query FindPullRequestID ($owner: String!, $repo: String!, $pullNumber: Int!){
-        repository(owner:$owner, name:$repo) {
-            pullRequest(number:$pullNumber) {
-                id
-            }
-        }
-    }`;
 }
 /**
  * The main function for the action.
@@ -53797,36 +53815,23 @@ async function pushEvent(octokit) {
                     try {
                         // Update PR to indicate rebasing
                         await updatePullRequest(octokit, releaseBranchPR.number, project, nextVersion, true);
-                        const pullRequestId = await octokit.graphql(findPullRequestIdQuery(), {
-                            owner: lib_github.context.repo.owner,
-                            repo: lib_github.context.repo.repo,
-                            pullNumber: 6
-                        });
-                        lib_core.info(`Pull Request ID: ${JSON.stringify(pullRequestId, null, 2)}`);
-                        try {
-                            const updatePR = await octokit.graphql(updatePullRequestBranchMutation(), {
-                                pullRequestId: pullRequestId.repository.pullRequest.id
-                            });
-                            lib_core.info(`Update PR: ${JSON.stringify(updatePR, null, 2)}`);
-                        }
-                        catch (error) {
-                            if (error instanceof GraphqlResponseError) {
-                                lib_core.setFailed(error.message);
-                            }
-                            lib_core.error(JSON.stringify(error, null, 2));
-                        }
+                        // const pullRequestId: GraphQlQueryResponseData = await octokit.graphql(findPullRequestIdQuery(), {
+                        //   owner: github.context.repo.owner,
+                        //   repo: github.context.repo.repo,
+                        //   pullNumber: 6
+                        // })
+                        // core.info(`Pull Request ID: ${JSON.stringify(pullRequestId, null, 2)}`)
+                        //
                         // try {
-                        //   const token = core.getInput('token')
-                        //   await git.init(token)
-                        //   await git.clone()
-                        //   await git.fetchBranch(releaseBranch)
-                        //   await git.switchBranch(releaseBranch)
-                        //   await git.fetchUnshallow()
-                        //   await git.rebaseBranch('origin/main')
-                        //   await git.push(releaseBranch, true)
+                        //   const updatePR: GraphQlQueryResponseData = await octokit.graphql(updatePullRequestBranchMutation(), {
+                        //     pullRequestId: pullRequestId.repository.pullRequest.id
+                        //   })
+                        //   core.info(`Update PR: ${JSON.stringify(updatePR, null, 2)}`)
                         // } catch (error) {
-                        //   await githubapi.addOrUpdateComment(octokit, releaseBranchPR.number, caution('Failed to rebase the branch. Please either manually rebase it or use the `recreate` command.'))
-                        //   if (error instanceof Error) core.setFailed(error.message)
+                        //   if (error instanceof GraphqlResponseError) {
+                        //     core.setFailed(error.message)
+                        //   }
+                        //   core.error(JSON.stringify(error, null, 2))
                         // }
                     }
                     finally {

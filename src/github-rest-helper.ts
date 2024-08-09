@@ -8,7 +8,6 @@ import * as semver from 'semver'
 import * as versions from './version-helper'
 import * as base64 from './base64-helper'
 import { hidden, important } from './markdown'
-import { GraphQlQueryResponseData } from '@octokit/graphql'
 
 type AddLabelResponse = Endpoints['POST /repos/{owner}/{repo}/issues/{issue_number}/labels']['response']
 
@@ -49,74 +48,6 @@ export enum Commands {
 const projects = ['core', 'grid']
 const projectsPaths = ['core/*', 'grid/*']
 const projectsEcosystem = ['npm', 'npm']
-
-function addReactionToIssueMutation(): string {
-  return `
-    mutation AddReactionToIssue($subjectId: ID!, $content: ReactionContent!) {
-        addReaction(input:{ subjectId:$subjectId, content: $content }) {
-            reaction {
-                content
-            }
-            subject {
-                id
-            }
-        }
-    }`
-}
-
-function updatePullRequestBranchMutation(): string {
-  return `
-    mutation UpdatePullRequestBranchMutation($pullRequestId: ID!) {
-        updatePullRequestBranch(input:{ clientMutationId: "krytenbot", pullRequestId: $pullRequestId, updateMethod: REBASE }) {
-            pullRequest {
-                id
-            }
-        }
-    }`
-}
-
-function addPullRequestCommentMutation(): string {
-  return `
-    mutation AddPullRequestComment($subjectId: ID!, $body: String!) {
-        addComment(input:{ subjectId:$subjectId, body: $body }) {
-            commentEdge {
-                node {
-                    createdAt
-                    body
-                }
-            }
-            subject {
-                id
-            }
-        }
-    }`
-}
-
-function findPullRequestsQuery(): string {
-  return `
-    query FindPullRequestID ($owner: String!, $repo: String!){
-        repository(owner:$owner, name:$repo) {
-            pullRequests() {
-              edges {
-                node {
-                    title
-                }        
-              }        
-            }
-        }
-    }`
-}
-
-function findPullRequestIdQuery(): string {
-  return `
-    query FindPullRequestID ($owner: String!, $repo: String!, $pullNumber: Int!){
-        repository(owner:$owner, name:$repo) {
-            pullRequest(number:$pullNumber) {
-                id
-            }
-        }
-    }`
-}
 
 export function extractProjectNameFromPR(text: string): string | null {
   const match = text.match(/\[\/\/]:\s#\s\(krytenbot-project:(\w+)\)/)
@@ -384,26 +315,20 @@ export async function recreateReleaseBranch(octokit: Octokit, project: string): 
 export async function findPullRequest(octokit: Octokit, project: string): Promise<PullRequest | undefined> {
   const releaseBranch: string = getReleaseBranchName(project)
 
-  // const pulls: ListPullRequestsResponse = await octokit.rest.pulls.list({
-  //   owner: github.context.repo.owner,
-  //   repo: github.context.repo.repo,
-  //   head: `${github.context.repo.owner}:${releaseBranch}`,
-  //   state: 'open'
-  // })
-  // core.debug(`Pulls: ${JSON.stringify(pulls, null, 2)}`)
-
-  const pullRequests: GraphQlQueryResponseData = await octokit.graphql(findPullRequestsQuery(), {
+  const pulls: ListPullRequestsResponse = await octokit.rest.pulls.list({
     owner: github.context.repo.owner,
-    repo: github.context.repo.repo
+    repo: github.context.repo.repo,
+    head: `${github.context.repo.owner}:${releaseBranch}`,
+    state: 'open'
   })
-  core.info(`Pull Request ID: ${JSON.stringify(pullRequests, null, 2)}`)
+  core.debug(`Pulls: ${JSON.stringify(pulls, null, 2)}`)
 
-  // for (const pull of pulls.data) {
-  //   if (pull.labels.find(label => label.name === 'release')) {
-  //     core.info(`Found existing PR for branch: ${releaseBranch}`)
-  //     return pull
-  //   }
-  // }
+  for (const pull of pulls.data) {
+    if (pull.labels.find(label => label.name === 'release')) {
+      core.info(`Found existing PR for branch: ${releaseBranch}`)
+      return pull
+    }
+  }
 
   return undefined
 }

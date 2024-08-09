@@ -27,59 +27,6 @@ function daysBetween(d1: Date, d2: Date) {
   return diff / (1000 * 60 * 60 * 24)
 }
 
-function addReactionToIssueMutation(): string {
-  return `
-    mutation AddReactionToIssue($subjectId: ID!, $content: ReactionContent!) {
-        addReaction(input:{ subjectId:$subjectId, content: $content }) {
-            reaction {
-                content
-            }
-            subject {
-                id
-            }
-        }
-    }`
-}
-
-function updatePullRequestBranchMutation(): string {
-  return `
-    mutation UpdatePullRequestBranchMutation($pullRequestId: ID!) {
-        updatePullRequestBranch(input:{ clientMutationId: "krytenbot", pullRequestId: $pullRequestId, updateMethod: REBASE }) {
-            pullRequest {
-                id
-            }
-        }
-    }`
-}
-
-function addPullRequestCommentMutation(): string {
-  return `
-    mutation AddPullRequestComment($subjectId: ID!, $body: String!) {
-        addComment(input:{ subjectId:$subjectId, body: $body }) {
-            commentEdge {
-                node {
-                    createdAt
-                    body
-                }
-            }
-            subject {
-                id
-            }
-        }
-    }`
-}
-
-function findPullRequestIdQuery(): string {
-  return `
-    query FindPullRequestID ($owner: String!, $repo: String!, $pullNumber: Int!){
-        repository(owner:$owner, name:$repo) {
-            pullRequest(number:$pullNumber) {
-                id
-            }
-        }
-    }`
-}
-
 /**
  * The main function for the action.
  * @returns {Promise<void>} Resolves when the action is complete.
@@ -188,37 +135,23 @@ async function pushEvent(octokit: Octokit): Promise<void> {
             // Update PR to indicate rebasing
             await githubapi.updatePullRequest(octokit, releaseBranchPR.number, project, nextVersion, true)
 
-            const pullRequestId: GraphQlQueryResponseData = await octokit.graphql(findPullRequestIdQuery(), {
-              owner: github.context.repo.owner,
-              repo: github.context.repo.repo,
-              pullNumber: 6
-            })
-            core.info(`Pull Request ID: ${JSON.stringify(pullRequestId, null, 2)}`)
-
-            try {
-              const updatePR: GraphQlQueryResponseData = await octokit.graphql(updatePullRequestBranchMutation(), {
-                pullRequestId: pullRequestId.repository.pullRequest.id
-              })
-              core.info(`Update PR: ${JSON.stringify(updatePR, null, 2)}`)
-            } catch (error) {
-              if (error instanceof GraphqlResponseError) {
-                core.setFailed(error.message)
-              }
-              core.error(JSON.stringify(error, null, 2))
-            }
-
+            // const pullRequestId: GraphQlQueryResponseData = await octokit.graphql(findPullRequestIdQuery(), {
+            //   owner: github.context.repo.owner,
+            //   repo: github.context.repo.repo,
+            //   pullNumber: 6
+            // })
+            // core.info(`Pull Request ID: ${JSON.stringify(pullRequestId, null, 2)}`)
+            //
             // try {
-            //   const token = core.getInput('token')
-            //   await git.init(token)
-            //   await git.clone()
-            //   await git.fetchBranch(releaseBranch)
-            //   await git.switchBranch(releaseBranch)
-            //   await git.fetchUnshallow()
-            //   await git.rebaseBranch('origin/main')
-            //   await git.push(releaseBranch, true)
+            //   const updatePR: GraphQlQueryResponseData = await octokit.graphql(updatePullRequestBranchMutation(), {
+            //     pullRequestId: pullRequestId.repository.pullRequest.id
+            //   })
+            //   core.info(`Update PR: ${JSON.stringify(updatePR, null, 2)}`)
             // } catch (error) {
-            //   await githubapi.addOrUpdateComment(octokit, releaseBranchPR.number, caution('Failed to rebase the branch. Please either manually rebase it or use the `recreate` command.'))
-            //   if (error instanceof Error) core.setFailed(error.message)
+            //   if (error instanceof GraphqlResponseError) {
+            //     core.setFailed(error.message)
+            //   }
+            //   core.error(JSON.stringify(error, null, 2))
             // }
           } finally {
             // Update PR to indicate rebasing is complete
