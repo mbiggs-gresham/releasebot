@@ -6,7 +6,7 @@ import { IssueCommentEvent, PushEvent } from '@octokit/webhooks-types'
 import * as git from './git-helper'
 import * as githubapi from './github-helper'
 import * as versions from './version-helper'
-import { Commands, getNextVersion, Version } from './github-helper'
+import { Commands, getNextVersion, KrytenbotDraftRelease, Version } from './github-helper'
 import { note, caution } from './markdown'
 
 enum Events {
@@ -149,54 +149,6 @@ async function pushEvent(octokit: Octokit): Promise<void> {
     }
 
     core.endGroup()
-    // const releaseBranchExists = await githubapi.releaseBranchExists(octokit, project)
-    // if (!releaseBranchExists) {
-    //   await githubapi.createReleaseBranch(octokit, project)
-    //   await githubapi.setVersion(octokit, project, releaseBranch, nextVersion)
-    // } else {
-    //   if (releaseBranchPR) {
-    //     const daysOld = daysBetween(new Date(releaseBranchPR.created_at), new Date())
-    //     if (daysOld <= DAYS_OLD) {
-    //       core.info('Release branch already exists. Rebasing...')
-    //       try {
-    //         // Update PR to indicate rebasing
-    //         await githubapi.updatePullRequest(octokit, releaseBranchPR.number, project, nextVersion, true)
-    //
-    //         // const pullRequestId: GraphQlQueryResponseData = await octokit.graphql(findPullRequestIdQuery(), {
-    //         //   owner: github.context.repo.owner,
-    //         //   repo: github.context.repo.repo,
-    //         //   pullNumber: 6
-    //         // })
-    //         // core.info(`Pull Request ID: ${JSON.stringify(pullRequestId, null, 2)}`)
-    //         //
-    //         // try {
-    //         //   const updatePR: GraphQlQueryResponseData = await octokit.graphql(updatePullRequestBranchMutation(), {
-    //         //     pullRequestId: pullRequestId.repository.pullRequest.id
-    //         //   })
-    //         //   core.info(`Update PR: ${JSON.stringify(updatePR, null, 2)}`)
-    //         // } catch (error) {
-    //         //   if (error instanceof GraphqlResponseError) {
-    //         //     core.setFailed(error.message)
-    //         //   }
-    //         //   core.error(JSON.stringify(error, null, 2))
-    //         // }
-    //       } finally {
-    //         // Update PR to indicate rebasing is complete
-    //         await githubapi.updatePullRequest(octokit, releaseBranchPR.number, project, nextVersion)
-    //       }
-    //     } else {
-    //       await githubapi.addOrUpdateComment(octokit, releaseBranchPR.number, note(`Branch is now older than the ${DAYS_OLD} day limit. Please manually \`recreate\` and merge it when ready.`))
-    //       core.warning(`Release branch is ${daysOld} days old. Ignoring...`)
-    //     }
-    //   }
-    // }
-    // core.endGroup()
-    //
-    // if (!releaseBranchPR) {
-    //   core.startGroup('Checking for Pull Request')
-    //   await githubapi.createPullRequest(octokit, project)
-    //   core.endGroup()
-    // }
   }
 }
 
@@ -205,94 +157,109 @@ async function pushEvent(octokit: Octokit): Promise<void> {
  * @param octokit
  */
 async function issueCommentEvent(octokit: Octokit): Promise<void> {
-  const commentPayload = github.context.payload as IssueCommentEvent
+  const comment = github.context.payload as IssueCommentEvent
 
-  const project = githubapi.extractProjectNameFromPR(commentPayload.issue.body!)
+  const project = githubapi.extractProjectNameFromPR(comment.issue.body!)
   if (project) {
-    core.info(`Issue comment found for: ${project}`)
-    // if (commentPayload.comment.body.startsWith(Commands.SetVersion)) {
-    //   await issueCommentEventSetVersion(octokit, project, commentPayload)
-    // }
-    //
-    // if (commentPayload.comment.body.startsWith(Commands.Rebase)) {
-    //   await issueCommentEventRebase(octokit, project, commentPayload)
-    // }
-    //
-    // if (commentPayload.comment.body.startsWith(Commands.Recreate)) {
-    //   await issueCommentEventRecreate(octokit, project, commentPayload)
-    // }
+    core.info(`Issue comment found for '${project}'`)
+
+    const draftRelease = await githubapi.findDraftRelease(octokit, project)
+    core.info(`Draft Release: ${JSON.stringify(draftRelease, null, 2)}`)
+
+    core.info(`Calculating next version for '${project}'`)
+    const nextVersion = githubapi.getNextVersion(draftRelease, 'patch')
+    core.info(`Next version for '${project}': ${nextVersion}`)
+
+    if (comment.comment.body.startsWith(Commands.SetVersion)) {
+      await issueCommentEventSetVersion(octokit, draftRelease, project, comment)
+    }
+
+    if (comment.comment.body.startsWith(Commands.Rebase)) {
+      await issueCommentEventRebase(octokit, project, comment)
+    }
+
+    if (comment.comment.body.startsWith(Commands.Recreate)) {
+      await issueCommentEventRecreate(octokit, project, comment)
+    }
   } else {
-    core.warning('No issue for comment found')
+    core.warning('No project for pull request found')
   }
 }
 
-// /**
-//  * Handles the issue comment event for setting the version.
-//  * @param octokit
-//  * @param project
-//  * @param comment
-//  */
-// async function issueCommentEventSetVersion(octokit: Octokit, project: string, comment: IssueCommentEvent): Promise<void> {
-//   const versionType = comment.comment.body.split(' ')[2]
-//   core.debug(`Version Type: ${versionType}`)
-//   if (versions.isValidSemverVersionType(versionType)) {
-//     const version = await githubapi.getNextVersion(octokit, 'core', versionType as Version)
-//     const releaseBranch = `krytenbot-${project}`
-//
-//     core.startGroup('Setting new version')
-//     await githubapi.addReaction(octokit, comment.comment.id, '+1')
-//     await githubapi.setVersion(octokit, project, releaseBranch, version)
-//     await githubapi.updatePullRequest(octokit, comment.issue.number, project, version)
-//     core.endGroup()
-//   } else {
-//     core.setFailed(`Invalid version type: ${versionType}`)
-//   }
-// }
-//
-// /**
-//  * Handles the issue comment event for rebasing the branch.
-//  * @param octokit
-//  * @param project
-//  * @param comment
-//  */
-// async function issueCommentEventRebase(octokit: Octokit, project: string, comment: IssueCommentEvent): Promise<void> {
-//   core.startGroup('Rebasing')
-//   const version = await getNextVersion(octokit, project, 'patch')
-//   const releaseBranch = `krytenbot-${project}`
-//
-//   await githubapi.addReaction(octokit, comment.comment.id, '+1')
-//   await githubapi.updatePullRequest(octokit, comment.issue.number, project, version, true)
-//
-//   try {
-//     const token = core.getInput('token')
-//     await git.init(token)
-//     await git.clone()
-//     await git.fetchBranch(releaseBranch)
-//     await git.switchBranch(releaseBranch)
-//     await git.fetchUnshallow()
-//     await git.rebaseBranch('origin/main')
-//     await git.push(releaseBranch, true)
-//     await githubapi.updatePullRequest(octokit, comment.issue.number, project, version)
-//   } catch (error) {
-//     await githubapi.createComment(octokit, comment.issue.number, caution('Failed to rebase the branch. Please either manually rebase it or use the `recreate` command.'))
-//     if (error instanceof Error) core.setFailed(error.message)
-//   }
-//
-//   core.endGroup()
-// }
-//
-// /**
-//  * Handles the issue comment event for recreating the branch.
-//  * @param octokit
-//  * @param project
-//  * @param comment
-//  */
-// async function issueCommentEventRecreate(octokit: Octokit, project: string, comment: IssueCommentEvent): Promise<void> {
-//   core.startGroup('Recreating Branch')
-//   const version = await getNextVersion(octokit, project, 'patch')
-//   await githubapi.addReaction(octokit, comment.comment.id, '+1')
-//   await githubapi.recreateReleaseBranch(octokit, project)
-//   await githubapi.setVersion(octokit, project, `krytenbot-core`, version)
-//   await githubapi.updatePullRequest(octokit, comment.issue.number, project, version)
-//   core.endGroup()
-// }
+/**
+ * Handles the issue comment event for setting the version.
+ * @param octokit
+ * @param draftRelease
+ * @param project
+ * @param comment
+ */
+async function issueCommentEventSetVersion(octokit: Octokit, draftRelease: KrytenbotDraftRelease, project: string, comment: IssueCommentEvent): Promise<void> {
+  const versionType = comment.comment.body.split(' ')[2]
+  core.debug(`Version Type: ${versionType}`)
+  if (versions.isValidSemverVersionType(versionType)) {
+    core.info(`Calculating next version for '${project}'`)
+    const nextVersion = githubapi.getNextVersion(draftRelease, versionType as Version)
+    core.info(`Next version for '${project}': ${nextVersion}`)
+
+    // const releaseBranch = `krytenbot-${project}`
+    //
+    // core.startGroup('Setting new version')
+    // await githubapi.addReaction(octokit, comment.comment.id, '+1')
+    // await githubapi.setVersion(octokit, project, releaseBranch, version)
+    // await githubapi.updatePullRequest(octokit, comment.issue.number, project, version)
+    // core.endGroup()
+
+    core.info(`Updating '${project}' version to ${nextVersion}`)
+    await githubapi.setDraftReleaseBranchVersion(octokit, project, nextVersion)
+  } else {
+    core.setFailed(`Invalid version type: ${versionType}`)
+  }
+}
+
+/**
+ * Handles the issue comment event for rebasing the branch.
+ * @param octokit
+ * @param project
+ * @param comment
+ */
+async function issueCommentEventRebase(octokit: Octokit, project: string, comment: IssueCommentEvent): Promise<void> {
+  // core.startGroup('Rebasing')
+  // const version = await getNextVersion(octokit, project, 'patch')
+  // const releaseBranch = `krytenbot-${project}`
+  //
+  // await githubapi.addReaction(octokit, comment.comment.id, '+1')
+  // await githubapi.updatePullRequest(octokit, comment.issue.number, project, version, true)
+  //
+  // try {
+  //   const token = core.getInput('token')
+  //   await git.init(token)
+  //   await git.clone()
+  //   await git.fetchBranch(releaseBranch)
+  //   await git.switchBranch(releaseBranch)
+  //   await git.fetchUnshallow()
+  //   await git.rebaseBranch('origin/main')
+  //   await git.push(releaseBranch, true)
+  //   await githubapi.updatePullRequest(octokit, comment.issue.number, project, version)
+  // } catch (error) {
+  //   await githubapi.createComment(octokit, comment.issue.number, caution('Failed to rebase the branch. Please either manually rebase it or use the `recreate` command.'))
+  //   if (error instanceof Error) core.setFailed(error.message)
+  // }
+  //
+  // core.endGroup()
+}
+
+/**
+ * Handles the issue comment event for recreating the branch.
+ * @param octokit
+ * @param project
+ * @param comment
+ */
+async function issueCommentEventRecreate(octokit: Octokit, project: string, comment: IssueCommentEvent): Promise<void> {
+  // core.startGroup('Recreating Branch')
+  // const version = await getNextVersion(octokit, project, 'patch')
+  // await githubapi.addReaction(octokit, comment.comment.id, '+1')
+  // await githubapi.recreateReleaseBranch(octokit, project)
+  // await githubapi.setVersion(octokit, project, `krytenbot-core`, version)
+  // await githubapi.updatePullRequest(octokit, comment.issue.number, project, version)
+  // core.endGroup()
+}

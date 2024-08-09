@@ -10,39 +10,39 @@ import * as base64 from './base64-helper'
 import { hidden, important } from './markdown'
 import { GraphQlQueryResponseData, GraphqlResponseError } from '@octokit/graphql'
 
-interface Branch {
+export interface Branch {
   name: string
 }
 
-interface Branches {
+export interface Branches {
   branches: Branch[]
 }
 
-interface Tag {
+export interface Tag {
   name: string
 }
 
-interface Tags {
+export interface Tags {
   tags: Tag[]
 }
 
-interface Label {
+export interface Label {
   id: string
   name: string
 }
 
-interface Comment {
+export interface Comment {
   author: {
     login: string
   }
   body: string
 }
 
-interface Comments {
+export interface Comments {
   comments: Comment[]
 }
 
-interface PullRequest {
+export interface PullRequest {
   id: string
   number: number
   title: string
@@ -54,11 +54,11 @@ interface PullRequest {
   comments: Comments
 }
 
-interface PullRequests {
+export interface PullRequests {
   pullRequests: PullRequest[]
 }
 
-interface KrytenbotDraftRelease {
+export interface KrytenbotDraftRelease {
   id: string
   tags: Tags
   branches: Branches
