@@ -505,7 +505,7 @@ export async function setVersion(octokit: Octokit, project: string, branch: stri
       //   message: `Update ${project} version to v${version}`,
       //   content: base64.encode(newFileContents)
       // })
-      core.debug(`Updated File: ${JSON.stringify(createCommitOnBranch, null, 2)}`)
+      core.info(`Updated File: ${JSON.stringify(createCommitOnBranch, null, 2)}`)
     } else {
       core.setFailed('Existing file is not a file')
     }
