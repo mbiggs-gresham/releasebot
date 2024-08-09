@@ -124,11 +124,11 @@ async function pushEvent(octokit: Octokit): Promise<void> {
 
     const draftRelease = await githubapi.findDraftRelease(octokit, project)
     core.info(`Draft Release: ${JSON.stringify(draftRelease, null, 2)}`)
-    const nextVersion = githubapi.getNextVersion(project, draftRelease, 'patch')
+    const nextVersion = githubapi.getNextVersion(draftRelease, 'patch')
 
     if (!draftRelease.branches.branches.some(branch => branch.name === releaseBranch)) {
       core.info(`Creating release branch for ${project}`)
-      await githubapi.createDraftReleaseBranch(octokit, project, github.context.sha)
+      await githubapi.createDraftReleaseBranch(octokit, draftRelease, project, github.context.sha)
     }
 
     // const releaseBranchExists = await githubapi.releaseBranchExists(octokit, project)

@@ -52126,11 +52126,10 @@ async function listProjectsOfRelevance(files) {
 // }
 /**
  * Rebase the next calculated version.
- * @param project
  * @param draftRelease
  * @param versionType
  */
-function getNextVersion(project, draftRelease, versionType) {
+function getNextVersion(draftRelease, versionType) {
     for (const tag of draftRelease.tags.tags) {
         const tagName = tag.name;
         const tagVersion = tagName.substring(tagName.indexOf('@v') + 2);
@@ -52172,13 +52171,14 @@ async function findDraftRelease(octokit, project) {
 /**
  * Create a new branch for the release.
  * @param octokit
+ * @param draftRelease
  * @param project
  * @param sha
  */
-async function createDraftReleaseBranch(octokit, project, sha) {
+async function createDraftReleaseBranch(octokit, draftRelease, project, sha) {
     const releaseBranch = getReleaseBranchName(project);
     const branch = await octokit.graphql(createRefMutation(), {
-        repositoryId: github.context.repo.repo,
+        repositoryId: draftRelease.id,
         name: releaseBranch,
         oid: sha
     });
@@ -52471,10 +52471,10 @@ async function pushEvent(octokit) {
         const releaseBranch = `krytenbot-${project}`;
         const draftRelease = await findDraftRelease(octokit, project);
         core.info(`Draft Release: ${JSON.stringify(draftRelease, null, 2)}`);
-        const nextVersion = getNextVersion(project, draftRelease, 'patch');
+        const nextVersion = getNextVersion(draftRelease, 'patch');
         if (!draftRelease.branches.branches.some(branch => branch.name === releaseBranch)) {
             core.info(`Creating release branch for ${project}`);
-            await createDraftReleaseBranch(octokit, project, github.context.sha);
+            await createDraftReleaseBranch(octokit, draftRelease, project, github.context.sha);
         }
         // const releaseBranchExists = await githubapi.releaseBranchExists(octokit, project)
         // if (!releaseBranchExists) {

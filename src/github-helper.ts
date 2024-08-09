@@ -50,6 +50,7 @@ interface PullRequests {
 }
 
 interface KrytenbotDraftRelease {
+  id: string
   tags: Tags
   branches: Branches
   pullRequests: PullRequests
@@ -445,11 +446,10 @@ export async function listProjectsOfRelevance(files: string[]): Promise<string[]
 
 /**
  * Rebase the next calculated version.
- * @param project
  * @param draftRelease
  * @param versionType
  */
-export function getNextVersion(project: string, draftRelease: KrytenbotDraftRelease, versionType: Version): string {
+export function getNextVersion(draftRelease: KrytenbotDraftRelease, versionType: Version): string {
   for (const tag of draftRelease.tags.tags) {
     const tagName = tag.name
     const tagVersion = tagName.substring(tagName.indexOf('@v') + 2)
@@ -496,13 +496,14 @@ export async function findDraftRelease(octokit: Octokit, project: string): Promi
 /**
  * Create a new branch for the release.
  * @param octokit
+ * @param draftRelease
  * @param project
  * @param sha
  */
-export async function createDraftReleaseBranch(octokit: Octokit, project: string, sha: string): Promise<void> {
+export async function createDraftReleaseBranch(octokit: Octokit, draftRelease: KrytenbotDraftRelease, project: string, sha: string): Promise<void> {
   const releaseBranch: string = getReleaseBranchName(project)
   const branch: GraphQlQueryResponseData = await octokit.graphql(createRefMutation(), {
-    repositoryId: github.context.repo.repo,
+    repositoryId: draftRelease.id,
     name: releaseBranch,
     oid: sha
   })
