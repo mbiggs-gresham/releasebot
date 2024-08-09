@@ -245,11 +245,11 @@ function findDraftReleaseQuery(): string {
                   }
               }
               labels {
-                  release: label("release") {
+                  release: label(name: "release") {
                       id
                       name
                   }
-                  project: label($project) {
+                  project: label(name: $project) {
                       id
                       name
                   }
