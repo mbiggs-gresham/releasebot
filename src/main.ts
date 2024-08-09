@@ -123,6 +123,7 @@ async function pushEvent(octokit: Octokit): Promise<void> {
     const releaseBranch = `krytenbot-${project}`
 
     const draftRelease = await githubapi.findDraftRelease(octokit, project)
+    core.info(`Draft Release: ${JSON.stringify(draftRelease, null, 2)}`)
     const nextVersion = githubapi.getNextVersion(project, draftRelease, 'patch')
 
     if (!draftRelease.branches.some(branch => branch.name === releaseBranch)) {

@@ -52468,6 +52468,7 @@ async function pushEvent(octokit) {
         // const nextVersion = await getNextVersion(octokit, project, 'patch')
         const releaseBranch = `krytenbot-${project}`;
         const draftRelease = await findDraftRelease(octokit, project);
+        core.info(`Draft Release: ${JSON.stringify(draftRelease, null, 2)}`);
         const nextVersion = getNextVersion(project, draftRelease, 'patch');
         if (!draftRelease.branches.some(branch => branch.name === releaseBranch)) {
             core.info(`Creating release branch for ${project}`);
