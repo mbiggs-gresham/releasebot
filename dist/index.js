@@ -53253,9 +53253,13 @@ function findPullRequestsQuery() {
                     name
                   }
                 }
-                baseRef
+                baseRef {
+                  id
+                }
                 baseRefName
-                headRef
+                headRef {
+                  id
+                }
                 headRefName
               }
               edges {
@@ -53265,8 +53269,6 @@ function findPullRequestsQuery() {
                   title
                   body
                   createdAt
-                  baseRef
-                  baseRefName
                 }
               }    
             }
