@@ -118,22 +118,22 @@ async function pushEvent(octokit: Octokit): Promise<void> {
   core.endGroup()
 
   for (const project of projectsOfRelevance) {
-    core.startGroup('Checking for Branch')
+    core.startGroup('Checking for draft release info')
     // const nextVersion = await getNextVersion(octokit, project, 'patch')
     const releaseBranch = `krytenbot-${project}`
 
     const draftRelease = await githubapi.findDraftRelease(octokit, project)
-    core.info(`Draft Release: ${JSON.stringify(draftRelease, null, 2)}`)
+    core.debug(`Draft Release: ${JSON.stringify(draftRelease, null, 2)}`)
     const nextVersion = githubapi.getNextVersion(draftRelease, 'patch')
 
     if (!draftRelease.branches.branches.some(branch => branch.name === releaseBranch)) {
-      core.info(`Creating release branch for ${project}`)
+      core.info(`Creating draft release branch for '${project}'`)
       await githubapi.createDraftReleaseBranch(octokit, draftRelease, project, github.context.sha)
       await githubapi.setVersion(octokit, project, releaseBranch, nextVersion, github.context.sha)
     }
 
     if (draftRelease.pullRequests.pullRequests.length === 0) {
-      core.info(`Creating pull request for ${project}`)
+      core.info(`Creating pull request for '${project}'`)
       const branch = github.context.ref.substring('refs/heads/'.length)
       // await githubapi.createDraftReleasePullRequest(octokit, draftRelease, project, branch, nextVersion)
     }

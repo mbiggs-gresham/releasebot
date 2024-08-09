@@ -449,9 +449,8 @@ export async function setVersion(octokit: Octokit, project: string, branch: stri
   })
   core.info(`Existing File: ${JSON.stringify(existingFile, null, 2)}`)
 
-  const existingFileContents = base64.decode(existingFile.content)
-  const newFileContents = versions.patchPackageJson(existingFileContents, version)
-
+  // const existingFileContents = base64.decode(existingFile.content)
+  const newFileContents = versions.patchPackageJson(existingFile.content, version)
   const createCommitOnBranch: GraphQlQueryResponseData = await octokit.graphql(createCommitOnBranchMutation(), {
     branch: {
       repositoryNameWithOwner: `${github.context.repo.owner}/${github.context.repo.repo}`,
@@ -586,7 +585,7 @@ export async function createDraftReleaseBranch(octokit: Octokit, draftRelease: K
     name: `refs/heads/${releaseBranch}`,
     oid: sha
   })
-  core.info(`Created Branch: ${JSON.stringify(branch, null, 2)}`)
+  core.debug(`Created Branch: ${JSON.stringify(branch, null, 2)}`)
 }
 
 export async function createDraftReleasePullRequest(octokit: Octokit, draftRelease: KrytenbotDraftRelease, project: string, branch: string, nextVersion: string): Promise<void> {

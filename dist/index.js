@@ -52150,8 +52150,8 @@ async function setVersion(octokit, project, branch, version, sha) {
         ref: `${branch}:${project}/package.json`
     });
     lib_core.info(`Existing File: ${JSON.stringify(existingFile, null, 2)}`);
-    const existingFileContents = decode(existingFile.content);
-    const newFileContents = patchPackageJson(existingFileContents, version);
+    // const existingFileContents = base64.decode(existingFile.content)
+    const newFileContents = patchPackageJson(existingFile.content, version);
     const createCommitOnBranch = await octokit.graphql(createCommitOnBranchMutation(), {
         branch: {
             repositoryNameWithOwner: `${github.context.repo.owner}/${github.context.repo.repo}`,
@@ -52278,7 +52278,7 @@ async function createDraftReleaseBranch(octokit, draftRelease, project, sha) {
         name: `refs/heads/${releaseBranch}`,
         oid: sha
     });
-    lib_core.info(`Created Branch: ${JSON.stringify(branch, null, 2)}`);
+    lib_core.debug(`Created Branch: ${JSON.stringify(branch, null, 2)}`);
 }
 async function createDraftReleasePullRequest(octokit, draftRelease, project, branch, nextVersion) {
     const releaseBranch = getReleaseBranchName(project);
@@ -52592,19 +52592,19 @@ async function pushEvent(octokit) {
     projectsOfRelevance.forEach(projectOfRelevance => lib_core.info(projectOfRelevance));
     lib_core.endGroup();
     for (const project of projectsOfRelevance) {
-        lib_core.startGroup('Checking for Branch');
+        lib_core.startGroup('Checking for draft release info');
         // const nextVersion = await getNextVersion(octokit, project, 'patch')
         const releaseBranch = `krytenbot-${project}`;
         const draftRelease = await findDraftRelease(octokit, project);
-        lib_core.info(`Draft Release: ${JSON.stringify(draftRelease, null, 2)}`);
+        lib_core.debug(`Draft Release: ${JSON.stringify(draftRelease, null, 2)}`);
         const nextVersion = getNextVersion(draftRelease, 'patch');
         if (!draftRelease.branches.branches.some(branch => branch.name === releaseBranch)) {
-            lib_core.info(`Creating release branch for ${project}`);
+            lib_core.info(`Creating draft release branch for '${project}'`);
             await createDraftReleaseBranch(octokit, draftRelease, project, github.context.sha);
             await setVersion(octokit, project, releaseBranch, nextVersion, github.context.sha);
         }
         if (draftRelease.pullRequests.pullRequests.length === 0) {
-            lib_core.info(`Creating pull request for ${project}`);
+            lib_core.info(`Creating pull request for '${project}'`);
             const branch = github.context.ref.substring('refs/heads/'.length);
             // await githubapi.createDraftReleasePullRequest(octokit, draftRelease, project, branch, nextVersion)
         }
