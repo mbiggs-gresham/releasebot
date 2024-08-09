@@ -133,6 +133,20 @@ function findRefQuery(): string {
     }`
 }
 
+function findCommitQuery(): string {
+  return `
+    query FindCommit($owner: String!, $repo: String!, $oid: String!) {
+        repository(owner: $owner, name: $repo) {
+            object(oid: $oid) {
+                ... on Commit {
+                    oid
+                    message
+                }
+            }
+        }
+    }`
+}
+
 function findDraftReleaseQuery(): string {
   return `
     query FindDraftRelease ($owner: String!, $repo: String!, $project: String!, $branch: String!, $labels: [String!]){
@@ -274,13 +288,19 @@ export async function listPushCommitFiles(octokit: Octokit, payload: PushEvent):
       commit.removed.forEach(file => files.add(file))
     } else {
       core.debug(`Commit contained no file details. Getting commit details for: ${payload.after}`)
-      const { data: commitDetails } = await octokit.rest.repos.getCommit({
+      // const { data: commitDetails } = await octokit.rest.repos.getCommit({
+      //   owner: github.context.repo.owner,
+      //   repo: github.context.repo.repo,
+      //   ref: payload.after
+      // })
+      const commitDetails = await octokit.graphql(findCommitQuery(), {
         owner: github.context.repo.owner,
         repo: github.context.repo.repo,
-        ref: payload.after
+        oid: payload.after
       })
-      core.debug(`Commit Details: ${JSON.stringify(commitDetails, null, 2)}`)
-      commitDetails.files?.forEach(file => files.add(file.filename))
+
+      core.info(`Commit Details: ${JSON.stringify(commitDetails, null, 2)}`)
+      // commitDetails.files?.forEach(file => files.add(file.filename))
     }
   }
 
@@ -489,7 +509,7 @@ export async function findDraftRelease(octokit: Octokit, project: string): Promi
     branch: getReleaseBranchName(project),
     labels: ['release', project]
   })
-  core.info(`Pull Request: ${JSON.stringify(pullRequests, null, 2)}`)
+  core.debug(`Pull Request: ${JSON.stringify(pullRequests, null, 2)}`)
   return pullRequests.repository
 }
 
