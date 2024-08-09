@@ -50,7 +50,9 @@ export interface PullRequest {
   createdAt: string
   lastEditedAt: string
   baseRefName: string
+  baseRefOid: string
   headRefName: string
+  headRefOid: string
   comments: Comments
 }
 
@@ -464,8 +466,9 @@ export async function listProjectsOfRelevance(files: string[]): Promise<string[]
  * @param octokit
  * @param project
  * @param version
+ * @param sha
  */
-export async function setDraftReleaseBranchVersion(octokit: Octokit, project: string, version: string): Promise<void> {
+export async function setDraftReleaseBranchVersion(octokit: Octokit, project: string, version: string, sha: string): Promise<void> {
   const branch: string = getReleaseBranchName(project)
 
   const {
@@ -484,7 +487,7 @@ export async function setDraftReleaseBranchVersion(octokit: Octokit, project: st
       branchName: branch
     },
     message: { headline: `Update ${project} version to v${version}` },
-    expectedHeadOid: github.context.sha,
+    expectedHeadOid: sha,
     fileChanges: {
       additions: [
         {

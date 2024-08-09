@@ -99,7 +99,7 @@ async function pushEvent(octokit: Octokit): Promise<void> {
       core.info(`Creating draft release branch for '${project}'`)
       await githubapi.createDraftReleaseBranch(octokit, draftRelease, project)
       core.info(`Updating '${project}' version to ${nextVersion}`)
-      await githubapi.setDraftReleaseBranchVersion(octokit, project, nextVersion)
+      await githubapi.setDraftReleaseBranchVersion(octokit, project, nextVersion, github.context.sha)
     }
 
     // Create pull request for new branch
@@ -171,7 +171,7 @@ async function issueCommentEventSetVersion(octokit: Octokit, draftRelease: Kryte
     // core.endGroup()
 
     core.info(`Updating '${project}' version to ${nextVersion}`)
-    await githubapi.setDraftReleaseBranchVersion(octokit, project, nextVersion)
+    await githubapi.setDraftReleaseBranchVersion(octokit, project, nextVersion, draftRelease.pullRequests.pullRequests[0].headRefOid)
   } else {
     core.setFailed(`Invalid version type: ${versionType}`)
   }

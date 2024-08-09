@@ -52179,8 +52179,9 @@ async function listProjectsOfRelevance(files) {
  * @param octokit
  * @param project
  * @param version
+ * @param sha
  */
-async function setDraftReleaseBranchVersion(octokit, project, version) {
+async function setDraftReleaseBranchVersion(octokit, project, version, sha) {
     const branch = getReleaseBranchName(project);
     const { repository: { file: existingFile } } = await octokit.graphql(getFileContentQuery(), {
         owner: github.context.repo.owner,
@@ -52195,7 +52196,7 @@ async function setDraftReleaseBranchVersion(octokit, project, version) {
             branchName: branch
         },
         message: { headline: `Update ${project} version to v${version}` },
-        expectedHeadOid: github.context.sha,
+        expectedHeadOid: sha,
         fileChanges: {
             additions: [
                 {
@@ -52619,7 +52620,7 @@ async function pushEvent(octokit) {
             core.info(`Creating draft release branch for '${project}'`);
             await createDraftReleaseBranch(octokit, draftRelease, project);
             core.info(`Updating '${project}' version to ${nextVersion}`);
-            await setDraftReleaseBranchVersion(octokit, project, nextVersion);
+            await setDraftReleaseBranchVersion(octokit, project, nextVersion, github.context.sha);
         }
         // Create pull request for new branch
         core.info(`Checking for pull request for '${project}'`);
@@ -52682,7 +52683,7 @@ async function issueCommentEventSetVersion(octokit, draftRelease, project, comme
         // await githubapi.updatePullRequest(octokit, comment.issue.number, project, version)
         // core.endGroup()
         core.info(`Updating '${project}' version to ${nextVersion}`);
-        await setDraftReleaseBranchVersion(octokit, project, nextVersion);
+        await setDraftReleaseBranchVersion(octokit, project, nextVersion, draftRelease.pullRequests.pullRequests[0].headRefOid);
     }
     else {
         core.setFailed(`Invalid version type: ${versionType}`);
