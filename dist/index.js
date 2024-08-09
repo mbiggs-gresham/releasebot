@@ -53239,14 +53239,14 @@ function addPullRequestCommentMutation() {
 }
 function findPullRequestsQuery() {
     return `
-    query FindPullRequestID ($owner: String!, $repo: String!, $project: String!, $labels: [String!]){
+    query FindPullRequestID ($owner: String!, $repo: String!, $project: String!, $branch: String!, $labels: [String!]){
         repository(owner: $owner, name: $repo) {
             tags: refs(first: 100, refPrefix: "refs/tags/", query: $project) {
                 tag: nodes {
                     name
                 }
             }
-            branches: refs(first: 100, refPrefix: "refs/heads/", query: "krytenbot-" + $project) {
+            branches: refs(first: 100, refPrefix: "refs/heads/", query: $branch) {
                 branch: nodes {
                     name
                 }
@@ -53539,6 +53539,7 @@ async function findPullRequest(octokit, project) {
         owner: lib_github.context.repo.owner,
         repo: lib_github.context.repo.repo,
         project: project,
+        branch: getReleaseBranchName(project),
         labels: ['release', project]
     });
     lib_core.info(`Pull Request: ${JSON.stringify(pullRequests, null, 2)}`);
