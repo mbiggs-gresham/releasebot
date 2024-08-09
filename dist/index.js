@@ -51974,15 +51974,13 @@ function findDraftReleaseQuery() {
                       name
                   }
               }
-              relevantLabels: relevantLabels {
-                  release: label(name: "release") {
-                      id
-                      name
-                  }
-                  project: label(name: $project) {
-                      id
-                      name
-                  }
+              releaseLabel: label(name: "release") {
+                  id
+                  name
+              }
+              projectLabel: label(name: $project) {
+                  id
+                  name
               }
               pullRequests(last: 1, labels: $labels, states: OPEN) {
                   pullRequests: nodes {
