@@ -51834,12 +51834,12 @@ function findDraftReleaseQuery() {
         repository(owner: $owner, name: $repo) {
               id
               tags: refs(last: 20, refPrefix: "refs/tags/", query: $project) {
-                  tag: nodes {
+                  tags: nodes {
                       name
                   }
               }
               branches: refs(last: 20, refPrefix: "refs/heads/", query: $branch) {
-                  branch: nodes {
+                  branches: nodes {
                       name
                   }
               }
@@ -52131,7 +52131,7 @@ async function listProjectsOfRelevance(files) {
  * @param versionType
  */
 function getNextVersion(project, draftRelease, versionType) {
-    for (const tag of draftRelease.tags) {
+    for (const tag of draftRelease.tags.tags) {
         const tagName = tag.name;
         const tagVersion = tagName.substring(tagName.indexOf('@v') + 2);
         for (const comment of draftRelease.pullRequests[0].comments) {
@@ -52470,7 +52470,7 @@ async function pushEvent(octokit) {
         const draftRelease = await findDraftRelease(octokit, project);
         core.info(`Draft Release: ${JSON.stringify(draftRelease, null, 2)}`);
         const nextVersion = getNextVersion(project, draftRelease, 'patch');
-        if (!draftRelease.branches.some(branch => branch.name === releaseBranch)) {
+        if (!draftRelease.branches.branches.some(branch => branch.name === releaseBranch)) {
             core.info(`Creating release branch for ${project}`);
             await createDraftReleaseBranch(octokit, project, github.context.sha);
         }

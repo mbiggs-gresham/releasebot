@@ -14,8 +14,16 @@ interface Branch {
   name: string
 }
 
+interface Branches {
+  branches: Branch[]
+}
+
 interface Tag {
   name: string
+}
+
+interface Tags {
+  tags: Tag[]
 }
 
 interface Comment {
@@ -38,8 +46,8 @@ interface PullRequest {
 }
 
 interface KrytenbotDraftRelease {
-  tags: Tag[]
-  branches: Branch[]
+  tags: Tags
+  branches: Branches
   pullRequests: PullRequest[]
 }
 
@@ -126,12 +134,12 @@ function findDraftReleaseQuery(): string {
         repository(owner: $owner, name: $repo) {
               id
               tags: refs(last: 20, refPrefix: "refs/tags/", query: $project) {
-                  tag: nodes {
+                  tags: nodes {
                       name
                   }
               }
               branches: refs(last: 20, refPrefix: "refs/heads/", query: $branch) {
-                  branch: nodes {
+                  branches: nodes {
                       name
                   }
               }
@@ -438,7 +446,7 @@ export async function listProjectsOfRelevance(files: string[]): Promise<string[]
  * @param versionType
  */
 export function getNextVersion(project: string, draftRelease: KrytenbotDraftRelease, versionType: Version): string {
-  for (const tag of draftRelease.tags) {
+  for (const tag of draftRelease.tags.tags) {
     const tagName = tag.name
     const tagVersion = tagName.substring(tagName.indexOf('@v') + 2)
 
