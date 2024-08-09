@@ -6,7 +6,7 @@ import { IssueCommentEvent, PushEvent } from '@octokit/webhooks-types'
 import * as git from './git-helper'
 import * as githubapi from './github-helper'
 import * as versions from './version-helper'
-import { Commands, getNextVersion, KrytenbotDraftRelease, Version } from './github-helper'
+import { Commands, getNextVersion, KrytenbotDraftRelease, Reaction, Version } from './github-helper'
 import { note, caution } from './markdown'
 
 enum Events {
@@ -171,7 +171,7 @@ async function issueCommentEventSetVersion(octokit: Octokit, draftRelease: Kryte
     // core.endGroup()
 
     core.info(`Updating '${project}' version to ${nextVersion}`)
-    await githubapi.addCommentReaction(octokit, String(comment.comment.id), 'THUMBS_UP ')
+    await githubapi.addCommentReaction(octokit, String(comment.comment.id), 'THUMBS_UP')
     await githubapi.setDraftReleaseBranchVersion(octokit, project, nextVersion, draftRelease.pullRequests.pullRequests[0].headRefOid)
     await githubapi.updatePullRequestTitle(octokit, draftRelease, project, nextVersion)
   } else {

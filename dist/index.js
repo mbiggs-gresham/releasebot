@@ -51824,7 +51824,7 @@ const projectsEcosystem = (/* unused pure expression or super */ null && (['npm'
 function addReactionToIssueMutation() {
     return `
     mutation AddReaction($subjectId: ID!, $content: ReactionContent!) {
-        addReaction(input:{ subjectId:$subjectId, content: $content }) {
+        addReaction(input:{ clientMutationId: "krytenbot", subjectId: $subjectId, content: $content }) {
             reaction {
                 content
             }
@@ -52721,7 +52721,7 @@ async function issueCommentEventSetVersion(octokit, draftRelease, project, comme
         // await githubapi.updatePullRequest(octokit, comment.issue.number, project, version)
         // core.endGroup()
         core.info(`Updating '${project}' version to ${nextVersion}`);
-        await addCommentReaction(octokit, String(comment.comment.id), 'THUMBS_UP ');
+        await addCommentReaction(octokit, String(comment.comment.id), 'THUMBS_UP');
         await setDraftReleaseBranchVersion(octokit, project, nextVersion, draftRelease.pullRequests.pullRequests[0].headRefOid);
         await updatePullRequestTitle(octokit, draftRelease, project, nextVersion);
     }

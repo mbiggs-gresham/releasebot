@@ -71,7 +71,7 @@ export interface KrytenbotDraftRelease {
 }
 
 export type Version = 'major' | 'minor' | 'patch'
-export type Reaction = 'THUMBS_UP ' | 'THUMBS_DOWN' | 'LAUGH' | 'HOORAY' | 'CONFUSED' | 'HEART' | 'ROCKET' | 'EYES'
+export type Reaction = 'THUMBS_UP' | 'THUMBS_DOWN' | 'LAUGH' | 'HOORAY' | 'CONFUSED' | 'HEART' | 'ROCKET' | 'EYES'
 
 export enum Commands {
   Rebase = '@krytenbot rebase',
@@ -86,7 +86,7 @@ const projectsEcosystem = ['npm', 'npm']
 function addReactionToIssueMutation(): string {
   return `
     mutation AddReaction($subjectId: ID!, $content: ReactionContent!) {
-        addReaction(input:{ subjectId:$subjectId, content: $content }) {
+        addReaction(input:{ clientMutationId: "krytenbot", subjectId: $subjectId, content: $content }) {
             reaction {
                 content
             }
