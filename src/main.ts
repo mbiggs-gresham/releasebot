@@ -171,7 +171,7 @@ async function issueCommentEventSetVersion(octokit: Octokit, draftRelease: Kryte
     // core.endGroup()
 
     core.info(`Updating '${project}' version to ${nextVersion}`)
-    await githubapi.addCommentReaction(octokit, String(comment.comment.id), 'THUMBS_UP')
+    await githubapi.addCommentReaction(octokit, String(comment.comment.node_id), 'THUMBS_UP')
     await githubapi.setDraftReleaseBranchVersion(octokit, project, nextVersion, draftRelease.pullRequests.pullRequests[0].headRefOid)
     await githubapi.updatePullRequestTitle(octokit, draftRelease, project, nextVersion)
   } else {

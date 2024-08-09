@@ -52721,7 +52721,7 @@ async function issueCommentEventSetVersion(octokit, draftRelease, project, comme
         // await githubapi.updatePullRequest(octokit, comment.issue.number, project, version)
         // core.endGroup()
         core.info(`Updating '${project}' version to ${nextVersion}`);
-        await addCommentReaction(octokit, String(comment.comment.id), 'THUMBS_UP');
+        await addCommentReaction(octokit, String(comment.comment.node_id), 'THUMBS_UP');
         await setDraftReleaseBranchVersion(octokit, project, nextVersion, draftRelease.pullRequests.pullRequests[0].headRefOid);
         await updatePullRequestTitle(octokit, draftRelease, project, nextVersion);
     }
