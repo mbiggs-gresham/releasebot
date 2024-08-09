@@ -52676,9 +52676,6 @@ async function issueCommentEvent(octokit) {
         core.info(`Issue comment found for '${project}'`);
         const draftRelease = await findDraftRelease(octokit, project);
         core.info(`Draft Release: ${JSON.stringify(draftRelease, null, 2)}`);
-        core.info(`Calculating next version for '${project}'`);
-        const nextVersion = getNextVersion(draftRelease, 'patch');
-        core.info(`Next version for '${project}': ${nextVersion}`);
         if (comment.comment.body.startsWith(Commands.SetVersion)) {
             await issueCommentEventSetVersion(octokit, draftRelease, project, comment);
         }

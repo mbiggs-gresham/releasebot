@@ -166,10 +166,6 @@ async function issueCommentEvent(octokit: Octokit): Promise<void> {
     const draftRelease = await githubapi.findDraftRelease(octokit, project)
     core.info(`Draft Release: ${JSON.stringify(draftRelease, null, 2)}`)
 
-    core.info(`Calculating next version for '${project}'`)
-    const nextVersion = githubapi.getNextVersion(draftRelease, 'patch')
-    core.info(`Next version for '${project}': ${nextVersion}`)
-
     if (comment.comment.body.startsWith(Commands.SetVersion)) {
       await issueCommentEventSetVersion(octokit, draftRelease, project, comment)
     }
