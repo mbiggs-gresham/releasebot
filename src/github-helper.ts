@@ -96,7 +96,7 @@ function createRefMutation(): string {
 
 function createPullRequestMutation(): string {
   return `
-    mutation CreatePullRequestMutation($repositoryId: ID!, $baseRefName: String!, $headRefname: String!, $title: String!, $body: String!) {
+    mutation CreatePullRequestMutation($repositoryId: ID!, $baseRefName: String!, $headRefName: String!, $title: String!, $body: String!) {
         createPullRequest(input:{ clientMutationId: "krytenbot", repositoryId: $repositoryId, baseRefName: $baseRefName, headRefName: $headRefName, title: $title, body: $body, draft: true }) {
             pullRequest {
                 id
