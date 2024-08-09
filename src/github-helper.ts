@@ -8,7 +8,7 @@ import * as semver from 'semver'
 import * as versions from './version-helper'
 import * as base64 from './base64-helper'
 import { hidden, important } from './markdown'
-import { GraphQlQueryResponseData } from '@octokit/graphql'
+import { GraphQlQueryResponseData, GraphqlResponseError } from '@octokit/graphql'
 
 interface Branch {
   name: string
@@ -24,6 +24,15 @@ interface Tag {
 
 interface Tags {
   tags: Tag[]
+}
+
+interface Label {
+  id: string
+  name: string
+}
+
+interface Labels {
+  labels: Label[]
 }
 
 interface Comment {
@@ -53,6 +62,7 @@ interface KrytenbotDraftRelease {
   id: string
   tags: Tags
   branches: Branches
+  labels: Labels
   pullRequests: PullRequests
 }
 
@@ -114,6 +124,17 @@ function createPullRequestMutation(): string {
   return `
     mutation CreatePullRequest($repositoryId: ID!, $baseRefName: String!, $headRefName: String!, $title: String!, $body: String!) {
         createPullRequest(input:{ clientMutationId: "krytenbot", repositoryId: $repositoryId, baseRefName: $baseRefName, headRefName: $headRefName, title: $title, body: $body, draft: true }) {
+            pullRequest {
+                id
+            }
+        }
+    }`
+}
+
+function updatePullRequestLabelsMutation(): string {
+  return `
+    mutation UpdatePullRequestLabels($pullRequestId: ID!, labelIds: [ID!]) {
+        updatePullRequest(input:{ clientMutationId: "krytenbot", pullRequestId: $pullRequestId, labelIds: $labelIds }) {
             pullRequest {
                 id
             }
@@ -223,8 +244,12 @@ function findDraftReleaseQuery(): string {
                       name
                   }
               }
-              labels(last: 20, query: "release") {
-                  labels: nodes {
+              labels {
+                  release: label("release") {
+                      id
+                      name
+                  }
+                  project: label($project) {
                       id
                       name
                   }
@@ -615,6 +640,7 @@ export async function createDraftReleasePullRequest(octokit: Octokit, draftRelea
   const releaseBranch: string = getReleaseBranchName(project)
 
   core.info(`Creating new PR for branch: ${releaseBranch}`)
+
   const pullRequest: GraphQlQueryResponseData = await octokit.graphql(createPullRequestMutation(), {
     repositoryId: draftRelease.id,
     baseRefName: branch,
@@ -622,16 +648,13 @@ export async function createDraftReleasePullRequest(octokit: Octokit, draftRelea
     title: getPullRequestTitle(project, nextVersion),
     body: getPullRequestBody(project, nextVersion)
   })
-
   core.debug(`Created Pull: ${JSON.stringify(pullRequest, null, 2)}`)
 
-  // const label: Endpoints['POST /repos/{owner}/{repo}/issues/{issue_number}/labels']['response'] = await octokit.rest.issues.addLabels({
-  //   owner: github.context.repo.owner,
-  //   repo: github.context.repo.repo,
-  //   issue_number: pull.data.number,
-  //   labels: ['release', project]
-  // })
-  // core.debug(`Added Label: ${JSON.stringify(label, null, 2)}`)
+  const pullRequestLabels: GraphQlQueryResponseData = await octokit.graphql(updatePullRequestLabelsMutation(), {
+    pullRequestId: pullRequest.createPullRequest.pullRequest.id,
+    labelIds: draftRelease.labels.labels.map(label => label.id)
+  })
+  core.debug(`Updated Labels: ${JSON.stringify(pullRequestLabels, null, 2)}`)
 }
 
 // /**

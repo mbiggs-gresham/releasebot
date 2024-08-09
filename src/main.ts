@@ -132,9 +132,6 @@ async function pushEvent(octokit: Octokit): Promise<void> {
       await githubapi.createDraftReleaseBranch(octokit, draftRelease, project)
       core.info(`Updating '${project}' version to ${nextVersion}`)
       await githubapi.setDraftReleaseBranchVersion(octokit, project, nextVersion)
-    } else {
-      core.info(`Updating draft release branch for '${project}'`)
-      await githubapi.updateDraftReleaseBranch(octokit, draftRelease, project)
     }
 
     // Create pull request for new branch
@@ -142,6 +139,9 @@ async function pushEvent(octokit: Octokit): Promise<void> {
       core.info(`Creating pull request for '${project}'`)
       const branch = github.context.ref.substring('refs/heads/'.length)
       await githubapi.createDraftReleasePullRequest(octokit, draftRelease, project, branch, nextVersion)
+    } else {
+      core.info(`Updating draft release branch for '${project}'`)
+      await githubapi.updateDraftReleaseBranch(octokit, draftRelease, project)
     }
 
     // const releaseBranchExists = await githubapi.releaseBranchExists(octokit, project)

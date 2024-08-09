@@ -51867,6 +51867,16 @@ function createPullRequestMutation() {
         }
     }`;
 }
+function updatePullRequestLabelsMutation() {
+    return `
+    mutation UpdatePullRequestLabels($pullRequestId: ID!, labelIds: [ID!]) {
+        updatePullRequest(input:{ clientMutationId: "krytenbot", pullRequestId: $pullRequestId, labelIds: $labelIds }) {
+            pullRequest {
+                id
+            }
+        }
+    }`;
+}
 function updatePullRequestBranchMutation() {
     return `
     mutation UpdatePullRequestBranch($pullRequestId: ID!) {
@@ -51964,8 +51974,12 @@ function findDraftReleaseQuery() {
                       name
                   }
               }
-              labels(last: 20, query: "release") {
-                  labels: nodes {
+              labels {
+                  release: label("release") {
+                      id
+                      name
+                  }
+                  project: label($project) {
                       id
                       name
                   }
@@ -52334,13 +52348,11 @@ async function createDraftReleasePullRequest(octokit, draftRelease, project, bra
         body: getPullRequestBody(project, nextVersion)
     });
     core.debug(`Created Pull: ${JSON.stringify(pullRequest, null, 2)}`);
-    // const label: Endpoints['POST /repos/{owner}/{repo}/issues/{issue_number}/labels']['response'] = await octokit.rest.issues.addLabels({
-    //   owner: github.context.repo.owner,
-    //   repo: github.context.repo.repo,
-    //   issue_number: pull.data.number,
-    //   labels: ['release', project]
-    // })
-    // core.debug(`Added Label: ${JSON.stringify(label, null, 2)}`)
+    const pullRequestLabels = await octokit.graphql(updatePullRequestLabelsMutation(), {
+        pullRequestId: pullRequest.createPullRequest.pullRequest.id,
+        labelIds: draftRelease.labels.labels.map(label => label.id)
+    });
+    core.debug(`Updated Labels: ${JSON.stringify(pullRequestLabels, null, 2)}`);
 }
 // /**
 //  * Create a draft PR for the release branch.
@@ -52636,15 +52648,15 @@ async function pushEvent(octokit) {
             core.info(`Updating '${project}' version to ${nextVersion}`);
             await setDraftReleaseBranchVersion(octokit, project, nextVersion);
         }
-        else {
-            core.info(`Updating draft release branch for '${project}'`);
-            await updateDraftReleaseBranch(octokit, draftRelease, project);
-        }
         // Create pull request for new branch
         if (draftRelease.pullRequests.pullRequests.length === 0) {
             core.info(`Creating pull request for '${project}'`);
             const branch = github.context.ref.substring('refs/heads/'.length);
             await createDraftReleasePullRequest(octokit, draftRelease, project, branch, nextVersion);
+        }
+        else {
+            core.info(`Updating draft release branch for '${project}'`);
+            await updateDraftReleaseBranch(octokit, draftRelease, project);
         }
         // const releaseBranchExists = await githubapi.releaseBranchExists(octokit, project)
         // if (!releaseBranchExists) {
