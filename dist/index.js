@@ -53253,7 +53253,8 @@ function findPullRequestsQuery() {
               }
               edges {
                 node {
-                    title
+                  number
+                  title
                 }
               }    
             }

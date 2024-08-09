@@ -108,7 +108,8 @@ function findPullRequestsQuery(): string {
               }
               edges {
                 node {
-                    title
+                  number
+                  title
                 }
               }    
             }
