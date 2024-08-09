@@ -51964,7 +51964,7 @@ function findDraftReleaseQuery() {
                       name
                   }
               }
-              labels(last: 20, query: $labels) {
+              labels(last: 20, query: "release") {
                   labels: nodes {
                       id
                       name
