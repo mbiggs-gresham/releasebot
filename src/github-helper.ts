@@ -31,10 +31,6 @@ interface Label {
   name: string
 }
 
-interface Labels {
-  labels: Label[]
-}
-
 interface Comment {
   author: {
     login: string
@@ -62,7 +58,8 @@ interface KrytenbotDraftRelease {
   id: string
   tags: Tags
   branches: Branches
-  labels: Labels
+  releaseLabel: Label
+  projectLabel: Label
   pullRequests: PullRequests
 }
 
@@ -650,7 +647,7 @@ export async function createDraftReleasePullRequest(octokit: Octokit, draftRelea
 
   const pullRequestLabels: GraphQlQueryResponseData = await octokit.graphql(updatePullRequestLabelsMutation(), {
     pullRequestId: pullRequest.createPullRequest.pullRequest.id,
-    labelIds: draftRelease.labels.labels.map(label => label.id)
+    labelIds: [draftRelease.releaseLabel.id, draftRelease.projectLabel.id]
   })
   core.debug(`Updated Labels: ${JSON.stringify(pullRequestLabels, null, 2)}`)
 }

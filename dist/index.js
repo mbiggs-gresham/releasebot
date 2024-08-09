@@ -52348,7 +52348,7 @@ async function createDraftReleasePullRequest(octokit, draftRelease, project, bra
     core.debug(`Created Pull: ${JSON.stringify(pullRequest, null, 2)}`);
     const pullRequestLabels = await octokit.graphql(updatePullRequestLabelsMutation(), {
         pullRequestId: pullRequest.createPullRequest.pullRequest.id,
-        labelIds: draftRelease.labels.labels.map(label => label.id)
+        labelIds: [draftRelease.releaseLabel.id, draftRelease.projectLabel.id]
     });
     core.debug(`Updated Labels: ${JSON.stringify(pullRequestLabels, null, 2)}`);
 }
