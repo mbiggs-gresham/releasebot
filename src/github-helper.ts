@@ -87,7 +87,7 @@ function addReactionToIssueMutation(): string {
 
 function createRefMutation(): string {
   return `
-    mutation CreateRefMutation($repositoryId: ID!, $name: String!, $oid: GitObjectID!) {
+    mutation CreateRef($repositoryId: ID!, $name: String!, $oid: GitObjectID!) {
         createRef(input:{ repositoryId: $repositoryId, name: $name, oid: $oid }) {
             ref {
                 name
@@ -101,7 +101,7 @@ function createRefMutation(): string {
 
 function createCommitOnBranchMutation(): string {
   return `
-    mutation CreateCommitOnBranchMutation($branch: CommittableBranch!, $message: CommitMessage!, $expectedHeadOid: GitObjectID!, $fileChanges: FileChanges) {
+    mutation CreateCommitOnBranch($branch: CommittableBranch!, $message: CommitMessage!, $expectedHeadOid: GitObjectID!, $fileChanges: FileChanges) {
         createCommitOnBranch(input:{ clientMutationId: "krytenbot", branch: $branch, message: $message, expectedHeadOid: $expectedHeadOid, fileChanges: $fileChanges }) {
             commit {
                 oid
@@ -112,7 +112,7 @@ function createCommitOnBranchMutation(): string {
 
 function createPullRequestMutation(): string {
   return `
-    mutation CreatePullRequestMutation($repositoryId: ID!, $baseRefName: String!, $headRefName: String!, $title: String!, $body: String!) {
+    mutation CreatePullRequest($repositoryId: ID!, $baseRefName: String!, $headRefName: String!, $title: String!, $body: String!) {
         createPullRequest(input:{ clientMutationId: "krytenbot", repositoryId: $repositoryId, baseRefName: $baseRefName, headRefName: $headRefName, title: $title, body: $body, draft: true }) {
             pullRequest {
                 id
@@ -123,7 +123,7 @@ function createPullRequestMutation(): string {
 
 function updatePullRequestBranchMutation(): string {
   return `
-    mutation UpdatePullRequestBranchMutation($pullRequestId: ID!) {
+    mutation UpdatePullRequestBranch($pullRequestId: ID!) {
         updatePullRequestBranch(input:{ clientMutationId: "krytenbot", pullRequestId: $pullRequestId, updateMethod: REBASE }) {
             pullRequest {
                 id
@@ -220,6 +220,12 @@ function findDraftReleaseQuery(): string {
               }
               branches: refs(last: 20, refPrefix: "refs/heads/", query: $branch) {
                   branches: nodes {
+                      name
+                  }
+              }
+              labels(last: 20, query: $labels) {
+                  labels: nodes {
+                      id
                       name
                   }
               }
@@ -433,12 +439,10 @@ export async function listProjectsOfRelevance(files: string[]): Promise<string[]
  * Update the version for the project.
  * @param octokit
  * @param project
- * @param branch
  * @param version
- * @param sha
  */
-export async function setVersion(octokit: Octokit, project: string, branch: string, version: string, sha: string): Promise<void> {
-  core.info(`Updating ${project} version to ${version}`)
+export async function setDraftReleaseBranchVersion(octokit: Octokit, project: string, version: string): Promise<void> {
+  const branch: string = getReleaseBranchName(project)
 
   const {
     repository: { file: existingFile }
@@ -447,9 +451,8 @@ export async function setVersion(octokit: Octokit, project: string, branch: stri
     repo: github.context.repo.repo,
     ref: `${branch}:${project}/package.json`
   })
-  core.info(`Existing File: ${JSON.stringify(existingFile, null, 2)}`)
+  core.debug(`Existing File: ${JSON.stringify(existingFile, null, 2)}`)
 
-  // const existingFileContents = base64.decode(existingFile.content)
   const newFileContents = versions.patchPackageJson(existingFile.content, version)
   const createCommitOnBranch: GraphQlQueryResponseData = await octokit.graphql(createCommitOnBranchMutation(), {
     branch: {
@@ -457,7 +460,7 @@ export async function setVersion(octokit: Octokit, project: string, branch: stri
       branchName: branch
     },
     message: { headline: `Update ${project} version to v${version}` },
-    expectedHeadOid: sha,
+    expectedHeadOid: github.context.sha,
     fileChanges: {
       additions: [
         {
@@ -467,8 +470,7 @@ export async function setVersion(octokit: Octokit, project: string, branch: stri
       ]
     }
   })
-
-  core.info(`Updated File: ${JSON.stringify(createCommitOnBranch, null, 2)}`)
+  core.debug(`Updated File: ${JSON.stringify(createCommitOnBranch, null, 2)}`)
 }
 
 // /**
@@ -576,21 +578,41 @@ export async function findDraftRelease(octokit: Octokit, project: string): Promi
  * @param octokit
  * @param draftRelease
  * @param project
- * @param sha
  */
-export async function createDraftReleaseBranch(octokit: Octokit, draftRelease: KrytenbotDraftRelease, project: string, sha: string): Promise<void> {
+export async function createDraftReleaseBranch(octokit: Octokit, draftRelease: KrytenbotDraftRelease, project: string): Promise<void> {
   const releaseBranch: string = getReleaseBranchName(project)
   const branch: GraphQlQueryResponseData = await octokit.graphql(createRefMutation(), {
     repositoryId: draftRelease.id,
     name: `refs/heads/${releaseBranch}`,
-    oid: sha
+    oid: github.context.sha
   })
   core.debug(`Created Branch: ${JSON.stringify(branch, null, 2)}`)
 }
 
+/**
+ * Update the draft release branch by rebasing it.
+ * @param octokit
+ * @param draftRelease
+ * @param project
+ */
+export async function updateDraftReleaseBranch(octokit: Octokit, draftRelease: KrytenbotDraftRelease, project: string): Promise<void> {
+  const releaseBranch: string = getReleaseBranchName(project)
+  const branch: GraphQlQueryResponseData = await octokit.graphql(updatePullRequestBranchMutation(), {
+    pullRequestId: draftRelease.pullRequests.pullRequests[0].id
+  })
+  core.debug(`Updated Branch: ${JSON.stringify(branch, null, 2)}`)
+}
+
+/**
+ * Create draft release pull request.
+ * @param octokit
+ * @param draftRelease
+ * @param project
+ * @param branch
+ * @param nextVersion
+ */
 export async function createDraftReleasePullRequest(octokit: Octokit, draftRelease: KrytenbotDraftRelease, project: string, branch: string, nextVersion: string): Promise<void> {
   const releaseBranch: string = getReleaseBranchName(project)
-  // const branch = github.context.ref.substring('refs/heads/'.length)
 
   core.info(`Creating new PR for branch: ${releaseBranch}`)
   const pullRequest: GraphQlQueryResponseData = await octokit.graphql(createPullRequestMutation(), {
@@ -601,17 +623,8 @@ export async function createDraftReleasePullRequest(octokit: Octokit, draftRelea
     body: getPullRequestBody(project, nextVersion)
   })
 
-  // const pull: Endpoints['POST /repos/{owner}/{repo}/pulls']['response'] = await octokit.rest.pulls.create({
-  //   owner: github.context.repo.owner,
-  //   repo: github.context.repo.repo,
-  //   title: getPullRequestTitle(project, nextVersion),
-  //   body: getPullRequestBody(project, nextVersion),
-  //   head: releaseBranch,
-  //   base: branch,
-  //   draft: true
-  // })
   core.debug(`Created Pull: ${JSON.stringify(pullRequest, null, 2)}`)
-  //
+
   // const label: Endpoints['POST /repos/{owner}/{repo}/issues/{issue_number}/labels']['response'] = await octokit.rest.issues.addLabels({
   //   owner: github.context.repo.owner,
   //   repo: github.context.repo.repo,

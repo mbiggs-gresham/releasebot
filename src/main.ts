@@ -119,23 +119,29 @@ async function pushEvent(octokit: Octokit): Promise<void> {
 
   for (const project of projectsOfRelevance) {
     core.startGroup('Checking for draft release info')
-    // const nextVersion = await getNextVersion(octokit, project, 'patch')
-    const releaseBranch = `krytenbot-${project}`
 
+    const releaseBranch = `krytenbot-${project}`
     const draftRelease = await githubapi.findDraftRelease(octokit, project)
-    core.debug(`Draft Release: ${JSON.stringify(draftRelease, null, 2)}`)
+    core.info(`Draft Release: ${JSON.stringify(draftRelease, null, 2)}`)
+
     const nextVersion = githubapi.getNextVersion(draftRelease, 'patch')
 
+    // Create new branch with new version or rebase the existing one
     if (!draftRelease.branches.branches.some(branch => branch.name === releaseBranch)) {
       core.info(`Creating draft release branch for '${project}'`)
-      await githubapi.createDraftReleaseBranch(octokit, draftRelease, project, github.context.sha)
-      await githubapi.setVersion(octokit, project, releaseBranch, nextVersion, github.context.sha)
+      await githubapi.createDraftReleaseBranch(octokit, draftRelease, project)
+      core.info(`Updating '${project}' version to ${nextVersion}`)
+      await githubapi.setDraftReleaseBranchVersion(octokit, project, nextVersion)
+    } else {
+      core.info(`Updating draft release branch for '${project}'`)
+      await githubapi.updateDraftReleaseBranch(octokit, draftRelease, project)
     }
 
+    // Create pull request for new branch
     if (draftRelease.pullRequests.pullRequests.length === 0) {
       core.info(`Creating pull request for '${project}'`)
       const branch = github.context.ref.substring('refs/heads/'.length)
-      // await githubapi.createDraftReleasePullRequest(octokit, draftRelease, project, branch, nextVersion)
+      await githubapi.createDraftReleasePullRequest(octokit, draftRelease, project, branch, nextVersion)
     }
 
     // const releaseBranchExists = await githubapi.releaseBranchExists(octokit, project)
