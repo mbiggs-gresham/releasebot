@@ -51974,7 +51974,7 @@ function findDraftReleaseQuery() {
                       name
                   }
               }
-              labels {
+              relevantLabels: {
                   release: label(name: "release") {
                       id
                       name
