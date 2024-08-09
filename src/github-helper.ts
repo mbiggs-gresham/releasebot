@@ -82,7 +82,7 @@ const projects = ['core', 'grid']
 const projectsPaths = ['core/*', 'grid/*']
 const projectsEcosystem = ['npm', 'npm']
 
-function addReactionToIssueMutation(): string {
+function addReactionMutation(): string {
   return `
     mutation AddReaction($subjectId: ID!, $content: ReactionContent!) {
         addReaction(input:{ clientMutationId: "krytenbot", subjectId: $subjectId, content: $content }) {
@@ -165,16 +165,10 @@ function updatePullRequestBranchMutation(): string {
     }`
 }
 
-function addPullRequestCommentMutation(): string {
+function addCommentMutation(): string {
   return `
     mutation AddPullRequestComment($subjectId: ID!, $body: String!) {
-        addComment(input:{ subjectId:$subjectId, body: $body }) {
-            commentEdge {
-                node {
-                    createdAt
-                    body
-                }
-            }
+        addComment(input:{ subjectId: $subjectId, body: $body }) {            
             subject {
                 id
             }
@@ -480,7 +474,7 @@ export async function listProjectsOfRelevance(files: string[]): Promise<string[]
  * @param version
  * @param sha
  */
-export async function setDraftReleaseBranchVersion(octokit: Octokit, project: string, version: string, sha: string): Promise<void> {
+export async function setReleaseBranchVersion(octokit: Octokit, project: string, version: string, sha: string): Promise<void> {
   const branch: string = getReleaseBranchName(project)
 
   const {
@@ -618,7 +612,7 @@ export async function findDraftRelease(octokit: Octokit, project: string): Promi
  * @param draftRelease
  * @param project
  */
-export async function createDraftReleaseBranch(octokit: Octokit, draftRelease: KrytenbotDraftRelease, project: string): Promise<void> {
+export async function createReleaseBranch(octokit: Octokit, draftRelease: KrytenbotDraftRelease, project: string): Promise<void> {
   const releaseBranch: string = getReleaseBranchName(project)
   const branch: GraphQlQueryResponseData = await octokit.graphql(createRefMutation(), {
     repositoryId: draftRelease.id,
@@ -633,7 +627,7 @@ export async function createDraftReleaseBranch(octokit: Octokit, draftRelease: K
  * @param octokit
  * @param draftRelease
  */
-export async function updateDraftReleaseBranch(octokit: Octokit, draftRelease: KrytenbotDraftRelease): Promise<void> {
+export async function updateReleaseBranch(octokit: Octokit, draftRelease: KrytenbotDraftRelease): Promise<void> {
   const branch: GraphQlQueryResponseData = await octokit.graphql(updatePullRequestBranchMutation(), {
     pullRequestId: draftRelease.pullRequests.pullRequests[0].id
   })
@@ -648,7 +642,7 @@ export async function updateDraftReleaseBranch(octokit: Octokit, draftRelease: K
  * @param branch
  * @param nextVersion
  */
-export async function createDraftReleasePullRequest(octokit: Octokit, draftRelease: KrytenbotDraftRelease, project: string, branch: string, nextVersion: string): Promise<void> {
+export async function createPullRequest(octokit: Octokit, draftRelease: KrytenbotDraftRelease, project: string, branch: string, nextVersion: string): Promise<void> {
   const releaseBranch: string = getReleaseBranchName(project)
 
   const pullRequest: GraphQlQueryResponseData = await octokit.graphql(createPullRequestMutation(), {
@@ -668,13 +662,27 @@ export async function createDraftReleasePullRequest(octokit: Octokit, draftRelea
 }
 
 /**
+ * Add a comment to the pull request.
+ * @param octokit
+ * @param commentId
+ * @param body
+ */
+export async function addComment(octokit: Octokit, commentId: string, body: string): Promise<void> {
+  const response: GraphQlQueryResponseData = await octokit.graphql(addCommentMutation(), {
+    subjectId: commentId,
+    body: body
+  })
+  core.debug(`Added comment: ${JSON.stringify(response, null, 2)}`)
+}
+
+/**
  * Add a reaction to a comment.
  * @param octokit
  * @param commentId
  * @param reaction
  */
 export async function addCommentReaction(octokit: Octokit, commentId: string, reaction: Reaction): Promise<void> {
-  const response: GraphQlQueryResponseData = await octokit.graphql(addReactionToIssueMutation(), {
+  const response: GraphQlQueryResponseData = await octokit.graphql(addReactionMutation(), {
     subjectId: commentId,
     content: reaction
   })

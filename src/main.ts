@@ -92,12 +92,12 @@ async function pushEvent(octokit: Octokit): Promise<void> {
     core.info(`Next version for '${project}': ${nextVersion}`)
 
     // Create new branch with new version or rebase the existing one
-    core.info(`Checking for draft release branch for '${project}'`)
+    core.info(`Checking for release branch for '${project}'`)
     if (!draftRelease.branches.branches.some(branch => branch.name === releaseBranch)) {
-      core.info(`Creating draft release branch for '${project}'`)
-      await githubapi.createDraftReleaseBranch(octokit, draftRelease, project)
+      core.info(`Creating release branch for '${project}'`)
+      await githubapi.createReleaseBranch(octokit, draftRelease, project)
       core.info(`Updating '${project}' version to ${nextVersion}`)
-      await githubapi.setDraftReleaseBranchVersion(octokit, project, nextVersion, github.context.sha)
+      await githubapi.setReleaseBranchVersion(octokit, project, nextVersion, github.context.sha)
     }
 
     // Create pull request for new branch
@@ -105,10 +105,10 @@ async function pushEvent(octokit: Octokit): Promise<void> {
     if (draftRelease.pullRequests.pullRequests.length === 0) {
       core.info(`Creating pull request for '${project}'`)
       const branch = github.context.ref.substring('refs/heads/'.length)
-      await githubapi.createDraftReleasePullRequest(octokit, draftRelease, project, branch, nextVersion)
+      await githubapi.createPullRequest(octokit, draftRelease, project, branch, nextVersion)
     } else {
-      core.info(`Updating draft release branch for '${project}'`)
-      await githubapi.updateDraftReleaseBranch(octokit, draftRelease)
+      core.info(`Updating release branch for '${project}'`)
+      await githubapi.updateReleaseBranch(octokit, draftRelease)
     }
 
     core.endGroup()
@@ -134,7 +134,7 @@ async function issueCommentEvent(octokit: Octokit): Promise<void> {
     }
 
     if (comment.comment.body.startsWith(Commands.Rebase)) {
-      await issueCommentEventRebase(octokit, project, comment)
+      await issueCommentEventRebase(octokit, draftRelease, project, comment)
     }
 
     if (comment.comment.body.startsWith(Commands.Recreate)) {
@@ -158,20 +158,17 @@ async function issueCommentEventSetVersion(octokit: Octokit, draftRelease: Kryte
   if (versions.isValidSemverVersionType(versionType)) {
     core.info(`Calculating new version for '${project}'`)
     const nextVersion = githubapi.getNextVersion(draftRelease, versionType as Version)
-    core.info(`Next version for '${project}': ${nextVersion}`)
-
-    // const releaseBranch = `krytenbot-${project}`
-    //
-    // core.startGroup('Setting new version')
-    // await githubapi.addReaction(octokit, comment.comment.id, '+1')
-    // await githubapi.setVersion(octokit, project, releaseBranch, version)
-    // await githubapi.updatePullRequest(octokit, comment.issue.number, project, version)
-    // core.endGroup()
+    core.info(`New version for '${project}': ${nextVersion}`)
 
     core.info(`Updating '${project}' version to ${nextVersion}`)
-    await githubapi.addCommentReaction(octokit, String(comment.comment.node_id), 'THUMBS_UP')
-    await githubapi.setDraftReleaseBranchVersion(octokit, project, nextVersion, draftRelease.pullRequests.pullRequests[0].headRefOid)
-    await githubapi.updatePullRequestTitle(octokit, draftRelease, project, nextVersion)
+    try {
+      await githubapi.addCommentReaction(octokit, String(comment.comment.node_id), 'THUMBS_UP')
+      await githubapi.setReleaseBranchVersion(octokit, project, nextVersion, draftRelease.pullRequests.pullRequests[0].headRefOid)
+      await githubapi.updatePullRequestTitle(octokit, draftRelease, project, nextVersion)
+    } catch (error) {
+      await githubapi.addComment(octokit, comment.issue.node_id, caution('Failed to set the version. Please check the logs for more details.'))
+      if (error instanceof Error) core.setFailed(error.message)
+    }
   } else {
     core.setFailed(`Invalid version type: ${versionType}`)
   }
@@ -180,33 +177,19 @@ async function issueCommentEventSetVersion(octokit: Octokit, draftRelease: Kryte
 /**
  * Handles the issue comment event for rebasing the branch.
  * @param octokit
+ * @param draftRelease
  * @param project
  * @param comment
  */
-async function issueCommentEventRebase(octokit: Octokit, project: string, comment: IssueCommentEvent): Promise<void> {
-  // core.startGroup('Rebasing')
-  // const version = await getNextVersion(octokit, project, 'patch')
-  // const releaseBranch = `krytenbot-${project}`
-  //
-  // await githubapi.addReaction(octokit, comment.comment.id, '+1')
-  // await githubapi.updatePullRequest(octokit, comment.issue.number, project, version, true)
-  //
-  // try {
-  //   const token = core.getInput('token')
-  //   await git.init(token)
-  //   await git.clone()
-  //   await git.fetchBranch(releaseBranch)
-  //   await git.switchBranch(releaseBranch)
-  //   await git.fetchUnshallow()
-  //   await git.rebaseBranch('origin/main')
-  //   await git.push(releaseBranch, true)
-  //   await githubapi.updatePullRequest(octokit, comment.issue.number, project, version)
-  // } catch (error) {
-  //   await githubapi.createComment(octokit, comment.issue.number, caution('Failed to rebase the branch. Please either manually rebase it or use the `recreate` command.'))
-  //   if (error instanceof Error) core.setFailed(error.message)
-  // }
-  //
-  // core.endGroup()
+async function issueCommentEventRebase(octokit: Octokit, draftRelease: KrytenbotDraftRelease, project: string, comment: IssueCommentEvent): Promise<void> {
+  core.info(`Updating release branch for '${project}'`)
+  try {
+    await githubapi.addCommentReaction(octokit, String(comment.comment.node_id), 'THUMBS_UP')
+    await githubapi.updateReleaseBranch(octokit, draftRelease)
+  } catch (error) {
+    await githubapi.addComment(octokit, comment.issue.node_id, caution('Failed to rebase the branch. Please either manually rebase it or use the `recreate` command.'))
+    if (error instanceof Error) core.setFailed(error.message)
+  }
 }
 
 /**

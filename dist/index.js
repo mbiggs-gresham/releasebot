@@ -51821,7 +51821,7 @@ var Commands;
 const projects = ['core', 'grid'];
 const projectsPaths = ['core/*', 'grid/*'];
 const projectsEcosystem = (/* unused pure expression or super */ null && (['npm', 'npm']));
-function addReactionToIssueMutation() {
+function addReactionMutation() {
     return `
     mutation AddReaction($subjectId: ID!, $content: ReactionContent!) {
         addReaction(input:{ clientMutationId: "krytenbot", subjectId: $subjectId, content: $content }) {
@@ -51897,16 +51897,10 @@ function updatePullRequestBranchMutation() {
         }
     }`;
 }
-function addPullRequestCommentMutation() {
+function addCommentMutation() {
     return `
     mutation AddPullRequestComment($subjectId: ID!, $body: String!) {
-        addComment(input:{ subjectId:$subjectId, body: $body }) {
-            commentEdge {
-                node {
-                    createdAt
-                    body
-                }
-            }
+        addComment(input:{ subjectId: $subjectId, body: $body }) {            
             subject {
                 id
             }
@@ -52192,7 +52186,7 @@ async function listProjectsOfRelevance(files) {
  * @param version
  * @param sha
  */
-async function setDraftReleaseBranchVersion(octokit, project, version, sha) {
+async function setReleaseBranchVersion(octokit, project, version, sha) {
     const branch = getReleaseBranchName(project);
     const { repository: { file: existingFile } } = await octokit.graphql(getFileContentQuery(), {
         owner: github.context.repo.owner,
@@ -52319,7 +52313,7 @@ async function findDraftRelease(octokit, project) {
  * @param draftRelease
  * @param project
  */
-async function createDraftReleaseBranch(octokit, draftRelease, project) {
+async function createReleaseBranch(octokit, draftRelease, project) {
     const releaseBranch = getReleaseBranchName(project);
     const branch = await octokit.graphql(createRefMutation(), {
         repositoryId: draftRelease.id,
@@ -52333,7 +52327,7 @@ async function createDraftReleaseBranch(octokit, draftRelease, project) {
  * @param octokit
  * @param draftRelease
  */
-async function updateDraftReleaseBranch(octokit, draftRelease) {
+async function updateReleaseBranch(octokit, draftRelease) {
     const branch = await octokit.graphql(updatePullRequestBranchMutation(), {
         pullRequestId: draftRelease.pullRequests.pullRequests[0].id
     });
@@ -52347,7 +52341,7 @@ async function updateDraftReleaseBranch(octokit, draftRelease) {
  * @param branch
  * @param nextVersion
  */
-async function createDraftReleasePullRequest(octokit, draftRelease, project, branch, nextVersion) {
+async function createPullRequest(octokit, draftRelease, project, branch, nextVersion) {
     const releaseBranch = getReleaseBranchName(project);
     const pullRequest = await octokit.graphql(createPullRequestMutation(), {
         repositoryId: draftRelease.id,
@@ -52364,13 +52358,26 @@ async function createDraftReleasePullRequest(octokit, draftRelease, project, bra
     core.debug(`Updated pull requeust labels: ${JSON.stringify(pullRequestLabels, null, 2)}`);
 }
 /**
+ * Add a comment to the pull request.
+ * @param octokit
+ * @param commentId
+ * @param body
+ */
+async function addComment(octokit, commentId, body) {
+    const response = await octokit.graphql(addCommentMutation(), {
+        subjectId: commentId,
+        body: body
+    });
+    core.debug(`Added comment: ${JSON.stringify(response, null, 2)}`);
+}
+/**
  * Add a reaction to a comment.
  * @param octokit
  * @param commentId
  * @param reaction
  */
 async function addCommentReaction(octokit, commentId, reaction) {
-    const response = await octokit.graphql(addReactionToIssueMutation(), {
+    const response = await octokit.graphql(addReactionMutation(), {
         subjectId: commentId,
         content: reaction
     });
@@ -52577,6 +52584,7 @@ async function updatePullRequestTitle(octokit, draftRelease, project, nextVersio
 
 
 
+
 var Events;
 (function (Events) {
     Events["Push"] = "push";
@@ -52650,23 +52658,23 @@ async function pushEvent(octokit) {
         const nextVersion = getNextVersion(draftRelease, 'patch');
         core.info(`Next version for '${project}': ${nextVersion}`);
         // Create new branch with new version or rebase the existing one
-        core.info(`Checking for draft release branch for '${project}'`);
+        core.info(`Checking for release branch for '${project}'`);
         if (!draftRelease.branches.branches.some(branch => branch.name === releaseBranch)) {
-            core.info(`Creating draft release branch for '${project}'`);
-            await createDraftReleaseBranch(octokit, draftRelease, project);
+            core.info(`Creating release branch for '${project}'`);
+            await createReleaseBranch(octokit, draftRelease, project);
             core.info(`Updating '${project}' version to ${nextVersion}`);
-            await setDraftReleaseBranchVersion(octokit, project, nextVersion, github.context.sha);
+            await setReleaseBranchVersion(octokit, project, nextVersion, github.context.sha);
         }
         // Create pull request for new branch
         core.info(`Checking for pull request for '${project}'`);
         if (draftRelease.pullRequests.pullRequests.length === 0) {
             core.info(`Creating pull request for '${project}'`);
             const branch = github.context.ref.substring('refs/heads/'.length);
-            await createDraftReleasePullRequest(octokit, draftRelease, project, branch, nextVersion);
+            await createPullRequest(octokit, draftRelease, project, branch, nextVersion);
         }
         else {
-            core.info(`Updating draft release branch for '${project}'`);
-            await updateDraftReleaseBranch(octokit, draftRelease);
+            core.info(`Updating release branch for '${project}'`);
+            await updateReleaseBranch(octokit, draftRelease);
         }
         core.endGroup();
     }
@@ -52686,7 +52694,7 @@ async function issueCommentEvent(octokit) {
             await issueCommentEventSetVersion(octokit, draftRelease, project, comment);
         }
         if (comment.comment.body.startsWith(Commands.Rebase)) {
-            await issueCommentEventRebase(octokit, project, comment);
+            await issueCommentEventRebase(octokit, draftRelease, project, comment);
         }
         if (comment.comment.body.startsWith(Commands.Recreate)) {
             await issueCommentEventRecreate(octokit, project, comment);
@@ -52709,18 +52717,18 @@ async function issueCommentEventSetVersion(octokit, draftRelease, project, comme
     if (isValidSemverVersionType(versionType)) {
         core.info(`Calculating new version for '${project}'`);
         const nextVersion = getNextVersion(draftRelease, versionType);
-        core.info(`Next version for '${project}': ${nextVersion}`);
-        // const releaseBranch = `krytenbot-${project}`
-        //
-        // core.startGroup('Setting new version')
-        // await githubapi.addReaction(octokit, comment.comment.id, '+1')
-        // await githubapi.setVersion(octokit, project, releaseBranch, version)
-        // await githubapi.updatePullRequest(octokit, comment.issue.number, project, version)
-        // core.endGroup()
+        core.info(`New version for '${project}': ${nextVersion}`);
         core.info(`Updating '${project}' version to ${nextVersion}`);
-        await addCommentReaction(octokit, String(comment.comment.node_id), 'THUMBS_UP');
-        await setDraftReleaseBranchVersion(octokit, project, nextVersion, draftRelease.pullRequests.pullRequests[0].headRefOid);
-        await updatePullRequestTitle(octokit, draftRelease, project, nextVersion);
+        try {
+            await addCommentReaction(octokit, String(comment.comment.node_id), 'THUMBS_UP');
+            await setReleaseBranchVersion(octokit, project, nextVersion, draftRelease.pullRequests.pullRequests[0].headRefOid);
+            await updatePullRequestTitle(octokit, draftRelease, project, nextVersion);
+        }
+        catch (error) {
+            await addComment(octokit, comment.issue.node_id, caution('Failed to set the version. Please check the logs for more details.'));
+            if (error instanceof Error)
+                core.setFailed(error.message);
+        }
     }
     else {
         core.setFailed(`Invalid version type: ${versionType}`);
@@ -52729,33 +52737,21 @@ async function issueCommentEventSetVersion(octokit, draftRelease, project, comme
 /**
  * Handles the issue comment event for rebasing the branch.
  * @param octokit
+ * @param draftRelease
  * @param project
  * @param comment
  */
-async function issueCommentEventRebase(octokit, project, comment) {
-    // core.startGroup('Rebasing')
-    // const version = await getNextVersion(octokit, project, 'patch')
-    // const releaseBranch = `krytenbot-${project}`
-    //
-    // await githubapi.addReaction(octokit, comment.comment.id, '+1')
-    // await githubapi.updatePullRequest(octokit, comment.issue.number, project, version, true)
-    //
-    // try {
-    //   const token = core.getInput('token')
-    //   await git.init(token)
-    //   await git.clone()
-    //   await git.fetchBranch(releaseBranch)
-    //   await git.switchBranch(releaseBranch)
-    //   await git.fetchUnshallow()
-    //   await git.rebaseBranch('origin/main')
-    //   await git.push(releaseBranch, true)
-    //   await githubapi.updatePullRequest(octokit, comment.issue.number, project, version)
-    // } catch (error) {
-    //   await githubapi.createComment(octokit, comment.issue.number, caution('Failed to rebase the branch. Please either manually rebase it or use the `recreate` command.'))
-    //   if (error instanceof Error) core.setFailed(error.message)
-    // }
-    //
-    // core.endGroup()
+async function issueCommentEventRebase(octokit, draftRelease, project, comment) {
+    core.info(`Updating release branch for '${project}'`);
+    try {
+        await addCommentReaction(octokit, String(comment.comment.node_id), 'THUMBS_UP');
+        await updateReleaseBranch(octokit, draftRelease);
+    }
+    catch (error) {
+        await addComment(octokit, comment.issue.node_id, caution('Failed to rebase the branch. Please either manually rebase it or use the `recreate` command.'));
+        if (error instanceof Error)
+            core.setFailed(error.message);
+    }
 }
 /**
  * Handles the issue comment event for recreating the branch.
