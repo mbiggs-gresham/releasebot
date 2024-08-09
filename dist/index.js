@@ -52176,21 +52176,19 @@ async function setVersion(octokit, project, branch, version, sha) {
                 },
                 message: { headline: `Update ${project} version to v${version}` },
                 expectedHeadOid: sha,
-                fileChanges: [
-                    {
-                        deletions: [
-                            {
-                                path: `${project}/package.json`
-                            }
-                        ],
-                        additions: [
-                            {
-                                path: `${project}/package.json`,
-                                contents: encode(newFileContents)
-                            }
-                        ]
-                    }
-                ]
+                fileChanges: {
+                    deletions: [
+                        {
+                            path: `${project}/package.json`
+                        }
+                    ],
+                    additions: [
+                        {
+                            path: `${project}/package.json`,
+                            contents: encode(newFileContents)
+                        }
+                    ]
+                }
             });
             // const newFile: CreateOrUpdateFileContentsResponse = await octokit.rest.repos.createOrUpdateFileContents({
             //   owner: github.context.repo.owner,
