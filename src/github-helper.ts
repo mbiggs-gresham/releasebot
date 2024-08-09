@@ -114,7 +114,7 @@ function createRefMutation(): string {
 
 function updateRefMutation(): string {
   return `
-    mutation UpdateRef($repositoryId: ID!, $refId: ID!, $oid: GitObjectID!) {
+    mutation UpdateRef($refId: ID!, $oid: GitObjectID!) {
         updateRef(input:{ clientMutationId: "krytenbot", refId: $refId, oid: $oid, force: false }) {
             ref {
                 name
