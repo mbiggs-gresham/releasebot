@@ -53239,9 +53239,9 @@ function addPullRequestCommentMutation() {
 }
 function findPullRequestsQuery() {
     return `
-    query FindPullRequestID ($owner: String!, $repo: String!){
+    query FindPullRequestID ($owner: String!, $repo: String!, $labels: [String!]){
         repository(owner:$owner, name:$repo) {
-            pullRequests() {
+            pullRequests(labels:$labels, states:OPEN) {
               edges {
                 node {
                     title
@@ -53455,11 +53455,11 @@ async function setVersion(octokit, project, branch, version) {
  * @param octokit
  * @param project
  */
-async function github_helper_releaseBranchExists(octokit, project) {
+async function releaseBranchExists(octokit, project) {
     const releaseBranch = getReleaseBranchName(project);
     const branches = await octokit.rest.repos.listBranches({
-        owner: lib_github.context.repo.owner,
-        repo: lib_github.context.repo.repo
+        owner: github.context.repo.owner,
+        repo: github.context.repo.repo
     });
     return branches.data.some(branch => branch.name === releaseBranch);
 }
@@ -53470,14 +53470,14 @@ async function github_helper_releaseBranchExists(octokit, project) {
  */
 async function createReleaseBranch(octokit, project) {
     const releaseBranch = getReleaseBranchName(project);
-    lib_core.info(`Creating new branch: ${releaseBranch}`);
+    core.info(`Creating new branch: ${releaseBranch}`);
     const branch = await octokit.rest.git.createRef({
-        owner: lib_github.context.repo.owner,
-        repo: lib_github.context.repo.repo,
+        owner: github.context.repo.owner,
+        repo: github.context.repo.repo,
         ref: `refs/heads/${releaseBranch}`,
-        sha: lib_github.context.sha
+        sha: github.context.sha
     });
-    lib_core.debug(`Created Branch: ${JSON.stringify(branch, null, 2)}`);
+    core.debug(`Created Branch: ${JSON.stringify(branch, null, 2)}`);
 }
 /**
  * Recreate a release branch for the project and commit the next version.
@@ -53502,7 +53502,7 @@ async function recreateReleaseBranch(octokit, project) {
  * @param project
  */
 async function findPullRequest(octokit, project) {
-    const releaseBranch = getReleaseBranchName(project);
+    // const releaseBranch: string = getReleaseBranchName(project)
     // const pulls: ListPullRequestsResponse = await octokit.rest.pulls.list({
     //   owner: github.context.repo.owner,
     //   repo: github.context.repo.repo,
@@ -53512,7 +53512,8 @@ async function findPullRequest(octokit, project) {
     // core.debug(`Pulls: ${JSON.stringify(pulls, null, 2)}`)
     const pullRequests = await octokit.graphql(findPullRequestsQuery(), {
         owner: lib_github.context.repo.owner,
-        repo: lib_github.context.repo.repo
+        repo: lib_github.context.repo.repo,
+        labels: ['release', project]
     });
     lib_core.info(`Pull Request ID: ${JSON.stringify(pullRequests, null, 2)}`);
     // for (const pull of pulls.data) {
@@ -53530,26 +53531,26 @@ async function findPullRequest(octokit, project) {
  */
 async function createPullRequest(octokit, project) {
     const releaseBranch = getReleaseBranchName(project);
-    const branch = lib_github.context.ref.substring('refs/heads/'.length);
-    lib_core.info(`Creating new PR for branch: ${releaseBranch}`);
+    const branch = github.context.ref.substring('refs/heads/'.length);
+    core.info(`Creating new PR for branch: ${releaseBranch}`);
     const nextVersion = await getNextVersion(octokit, project, 'patch');
     const pull = await octokit.rest.pulls.create({
-        owner: lib_github.context.repo.owner,
-        repo: lib_github.context.repo.repo,
+        owner: github.context.repo.owner,
+        repo: github.context.repo.repo,
         title: getPullRequestTitle(project, nextVersion),
         body: getPullRequestBody(project, nextVersion),
         head: releaseBranch,
         base: branch,
         draft: true
     });
-    lib_core.debug(`Created Pull: ${JSON.stringify(pull, null, 2)}`);
+    core.debug(`Created Pull: ${JSON.stringify(pull, null, 2)}`);
     const label = await octokit.rest.issues.addLabels({
-        owner: lib_github.context.repo.owner,
-        repo: lib_github.context.repo.repo,
+        owner: github.context.repo.owner,
+        repo: github.context.repo.repo,
         issue_number: pull.data.number,
         labels: ['release', project]
     });
-    lib_core.debug(`Added Label: ${JSON.stringify(label, null, 2)}`);
+    core.debug(`Added Label: ${JSON.stringify(label, null, 2)}`);
     return pull.data;
 }
 /**
@@ -53670,12 +53671,12 @@ async function createComment(octokit, pull_number, body) {
  */
 async function updateComment(octokit, comment_id, body) {
     const response = await octokit.rest.issues.updateComment({
-        owner: lib_github.context.repo.owner,
-        repo: lib_github.context.repo.repo,
+        owner: github.context.repo.owner,
+        repo: github.context.repo.repo,
         comment_id: comment_id,
         body: body
     });
-    lib_core.debug(`Updated Comment: ${JSON.stringify(response, null, 2)}`);
+    core.debug(`Updated Comment: ${JSON.stringify(response, null, 2)}`);
     return response.data;
 }
 /**
@@ -53763,7 +53764,7 @@ async function run() {
         //   }
         // )
         // core.info(`Repository: ${JSON.stringify(repository, null, 2)}`)
-        lib_core.info(`Github Context: ${JSON.stringify(lib_github.context, null, 2)}`);
+        lib_core.debug(`Github Context: ${JSON.stringify(lib_github.context, null, 2)}`);
         /**
          * Handle commits being pushed to the branch we are monitoring
          */
@@ -53799,58 +53800,57 @@ async function pushEvent(octokit) {
     lib_core.endGroup();
     for (const project of projectsOfRelevance) {
         lib_core.startGroup('Checking for Branch');
-        const nextVersion = await getNextVersion(octokit, project, 'patch');
-        const releaseBranch = `krytenbot-${project}`;
+        // const nextVersion = await getNextVersion(octokit, project, 'patch')
+        // const releaseBranch = `krytenbot-${project}`
         const releaseBranchPR = await findPullRequest(octokit, project);
-        const releaseBranchExists = await github_helper_releaseBranchExists(octokit, project);
-        if (!releaseBranchExists) {
-            await createReleaseBranch(octokit, project);
-            await setVersion(octokit, project, releaseBranch, nextVersion);
-        }
-        else {
-            if (releaseBranchPR) {
-                const daysOld = daysBetween(new Date(releaseBranchPR.created_at), new Date());
-                if (daysOld <= DAYS_OLD) {
-                    lib_core.info('Release branch already exists. Rebasing...');
-                    try {
-                        // Update PR to indicate rebasing
-                        await updatePullRequest(octokit, releaseBranchPR.number, project, nextVersion, true);
-                        // const pullRequestId: GraphQlQueryResponseData = await octokit.graphql(findPullRequestIdQuery(), {
-                        //   owner: github.context.repo.owner,
-                        //   repo: github.context.repo.repo,
-                        //   pullNumber: 6
-                        // })
-                        // core.info(`Pull Request ID: ${JSON.stringify(pullRequestId, null, 2)}`)
-                        //
-                        // try {
-                        //   const updatePR: GraphQlQueryResponseData = await octokit.graphql(updatePullRequestBranchMutation(), {
-                        //     pullRequestId: pullRequestId.repository.pullRequest.id
-                        //   })
-                        //   core.info(`Update PR: ${JSON.stringify(updatePR, null, 2)}`)
-                        // } catch (error) {
-                        //   if (error instanceof GraphqlResponseError) {
-                        //     core.setFailed(error.message)
-                        //   }
-                        //   core.error(JSON.stringify(error, null, 2))
-                        // }
-                    }
-                    finally {
-                        // Update PR to indicate rebasing is complete
-                        await updatePullRequest(octokit, releaseBranchPR.number, project, nextVersion);
-                    }
-                }
-                else {
-                    await addOrUpdateComment(octokit, releaseBranchPR.number, note(`Branch is now older than the ${DAYS_OLD} day limit. Please manually \`recreate\` and merge it when ready.`));
-                    lib_core.warning(`Release branch is ${daysOld} days old. Ignoring...`);
-                }
-            }
-        }
-        lib_core.endGroup();
-        if (!releaseBranchPR) {
-            lib_core.startGroup('Checking for Pull Request');
-            await createPullRequest(octokit, project);
-            lib_core.endGroup();
-        }
+        // const releaseBranchExists = await githubapi.releaseBranchExists(octokit, project)
+        // if (!releaseBranchExists) {
+        //   await githubapi.createReleaseBranch(octokit, project)
+        //   await githubapi.setVersion(octokit, project, releaseBranch, nextVersion)
+        // } else {
+        //   if (releaseBranchPR) {
+        //     const daysOld = daysBetween(new Date(releaseBranchPR.created_at), new Date())
+        //     if (daysOld <= DAYS_OLD) {
+        //       core.info('Release branch already exists. Rebasing...')
+        //       try {
+        //         // Update PR to indicate rebasing
+        //         await githubapi.updatePullRequest(octokit, releaseBranchPR.number, project, nextVersion, true)
+        //
+        //         // const pullRequestId: GraphQlQueryResponseData = await octokit.graphql(findPullRequestIdQuery(), {
+        //         //   owner: github.context.repo.owner,
+        //         //   repo: github.context.repo.repo,
+        //         //   pullNumber: 6
+        //         // })
+        //         // core.info(`Pull Request ID: ${JSON.stringify(pullRequestId, null, 2)}`)
+        //         //
+        //         // try {
+        //         //   const updatePR: GraphQlQueryResponseData = await octokit.graphql(updatePullRequestBranchMutation(), {
+        //         //     pullRequestId: pullRequestId.repository.pullRequest.id
+        //         //   })
+        //         //   core.info(`Update PR: ${JSON.stringify(updatePR, null, 2)}`)
+        //         // } catch (error) {
+        //         //   if (error instanceof GraphqlResponseError) {
+        //         //     core.setFailed(error.message)
+        //         //   }
+        //         //   core.error(JSON.stringify(error, null, 2))
+        //         // }
+        //       } finally {
+        //         // Update PR to indicate rebasing is complete
+        //         await githubapi.updatePullRequest(octokit, releaseBranchPR.number, project, nextVersion)
+        //       }
+        //     } else {
+        //       await githubapi.addOrUpdateComment(octokit, releaseBranchPR.number, note(`Branch is now older than the ${DAYS_OLD} day limit. Please manually \`recreate\` and merge it when ready.`))
+        //       core.warning(`Release branch is ${daysOld} days old. Ignoring...`)
+        //     }
+        //   }
+        // }
+        // core.endGroup()
+        //
+        // if (!releaseBranchPR) {
+        //   core.startGroup('Checking for Pull Request')
+        //   await githubapi.createPullRequest(octokit, project)
+        //   core.endGroup()
+        // }
     }
 }
 /**

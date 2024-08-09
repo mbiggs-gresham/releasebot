@@ -94,9 +94,9 @@ function addPullRequestCommentMutation(): string {
 
 function findPullRequestsQuery(): string {
   return `
-    query FindPullRequestID ($owner: String!, $repo: String!){
+    query FindPullRequestID ($owner: String!, $repo: String!, $labels: [String!]){
         repository(owner:$owner, name:$repo) {
-            pullRequests() {
+            pullRequests(labels:$labels, states:OPEN) {
               edges {
                 node {
                     title
@@ -382,7 +382,7 @@ export async function recreateReleaseBranch(octokit: Octokit, project: string): 
  * @param project
  */
 export async function findPullRequest(octokit: Octokit, project: string): Promise<PullRequest | undefined> {
-  const releaseBranch: string = getReleaseBranchName(project)
+  // const releaseBranch: string = getReleaseBranchName(project)
 
   // const pulls: ListPullRequestsResponse = await octokit.rest.pulls.list({
   //   owner: github.context.repo.owner,
@@ -394,7 +394,8 @@ export async function findPullRequest(octokit: Octokit, project: string): Promis
 
   const pullRequests: GraphQlQueryResponseData = await octokit.graphql(findPullRequestsQuery(), {
     owner: github.context.repo.owner,
-    repo: github.context.repo.repo
+    repo: github.context.repo.repo,
+    labels: ['release', project]
   })
   core.info(`Pull Request ID: ${JSON.stringify(pullRequests, null, 2)}`)
 
