@@ -51889,7 +51889,7 @@ function getFileContentQuery() {
         repository(owner: $owner, name: $repo) {
               file: object(expression: $ref) {
                   ... on Blob {
-                      content: text
+                      contents: text
                   }
               }
         }
