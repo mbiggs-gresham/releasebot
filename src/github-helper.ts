@@ -141,6 +141,12 @@ function findCommitQuery(): string {
                 ... on Commit {
                     oid
                     message
+                    changedFilesIfAvailable
+                    file {
+                        entries {
+                            name
+                        }
+                    }               
                     tree {
                        entries { 
                           name
