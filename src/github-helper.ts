@@ -45,10 +45,14 @@ interface PullRequest {
   comments: Comment[]
 }
 
+interface PullRequests {
+  pullRequests: PullRequest[]
+}
+
 interface KrytenbotDraftRelease {
   tags: Tags
   branches: Branches
-  pullRequests: PullRequest[]
+  pullRequests: PullRequests
 }
 
 export type Version = 'major' | 'minor' | 'patch'
@@ -144,7 +148,7 @@ function findDraftReleaseQuery(): string {
                   }
               }
               pullRequests(last: 1, labels: $labels, states: OPEN) {
-                  pullRequest: nodes {
+                  pullRequests: nodes {
                       id
                       number
                       title
@@ -446,11 +450,11 @@ export async function listProjectsOfRelevance(files: string[]): Promise<string[]
  * @param versionType
  */
 export function getNextVersion(project: string, draftRelease: KrytenbotDraftRelease, versionType: Version): string {
-  for (const tag of draftRelease.tags.tags) {
+  for (const tag of draftRelease.tags?.tags) {
     const tagName = tag.name
     const tagVersion = tagName.substring(tagName.indexOf('@v') + 2)
 
-    for (const comment of draftRelease.pullRequests[0].comments) {
+    for (const comment of draftRelease.pullRequests?.pullRequests[0]?.comments) {
       const commentBody = comment.body
       if (commentBody.startsWith(Commands.SetVersion)) {
         const nextVersionType = commentBody.split(' ')[2]

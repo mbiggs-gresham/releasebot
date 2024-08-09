@@ -51844,7 +51844,7 @@ function findDraftReleaseQuery() {
                   }
               }
               pullRequests(last: 1, labels: $labels, states: OPEN) {
-                  pullRequest: nodes {
+                  pullRequests: nodes {
                       id
                       number
                       title
@@ -52131,10 +52131,10 @@ async function listProjectsOfRelevance(files) {
  * @param versionType
  */
 function getNextVersion(project, draftRelease, versionType) {
-    for (const tag of draftRelease.tags.tags) {
+    for (const tag of draftRelease.tags?.tags) {
         const tagName = tag.name;
         const tagVersion = tagName.substring(tagName.indexOf('@v') + 2);
-        for (const comment of draftRelease.pullRequests[0].comments) {
+        for (const comment of draftRelease.pullRequests?.pullRequests[0]?.comments) {
             const commentBody = comment.body;
             if (commentBody.startsWith(Commands.SetVersion)) {
                 const nextVersionType = commentBody.split(' ')[2];
