@@ -108,39 +108,45 @@ function findPullRequestsQuery(): string {
   return `
     query FindPullRequestID ($owner: String!, $repo: String!, $project: String!, $branch: String!, $labels: [String!]){
         repository(owner: $owner, name: $repo) {
-            tags: refs(first: 100, refPrefix: "refs/tags/", query: $project) {
-                tag: nodes {
-                    name
-                }
-            }
-            branches: refs(first: 100, refPrefix: "refs/heads/", query: $branch) {
-                branch: nodes {
-                    name
-                }
-            }
-            pullRequests(first: 1, labels: $labels, states: OPEN) {
-              nodes {
-                id
-                number
-                title
-                body
-                createdAt
-                labels(first:10) {
-                  nodes {
-                    name
+              tags: refs(first: 100, refPrefix: "refs/tags/", query: $project) {
+                  tag: nodes {
+                      name
                   }
-                }
-                baseRef {
-                  id
-                }
-                baseRefName
-                headRef {
-                  id
-                }
-                headRefName
               }
-            }
-        }
+              branches: refs(first: 100, refPrefix: "refs/heads/", query: $branch) {
+                  branch: nodes {
+                      name
+                  }
+              }
+              pullRequests(first: 1, labels: $labels, states: OPEN) {
+                  nodes {
+                      id
+                      number
+                      title
+                      body
+                      createdAt
+                      lastEditedAt
+                      baseRefName
+                      headRefName
+                      author {
+                          login
+                      }
+                      labels(first:10) {
+                          label {
+                              name
+                          }
+                      }
+                      comments(last: 10) {
+                          comment: nodes {
+                              author {
+                                  login
+                              }
+                              body
+                          }
+                      }
+                  }
+              }
+          }
     }`
 }
 
