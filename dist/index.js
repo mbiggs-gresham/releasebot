@@ -51870,7 +51870,7 @@ function createPullRequestMutation() {
 function updatePullRequestLabelsMutation() {
     return `
     mutation UpdatePullRequestLabels($pullRequestId: ID!, labelIds: [ID!]) {
-        updatePullRequest(input:{ clientMutationId: "krytenbot", pullRequestId: $pullRequestId, labelIds: [$labelIds!] }) {
+        updatePullRequest(input:{ clientMutationId: "krytenbot", pullRequestId: $pullRequestId, labelIds: $labelIds }) {
             pullRequest {
                 id
             }

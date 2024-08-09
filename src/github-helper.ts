@@ -76,8 +76,6 @@ const projects = ['core', 'grid']
 const projectsPaths = ['core/*', 'grid/*']
 const projectsEcosystem = ['npm', 'npm']
 
-type GetContentResponse = Endpoints['GET /repos/{owner}/{repo}/contents/{path}']['response']
-
 function addReactionToIssueMutation(): string {
   return `
     mutation AddReactionToIssue($subjectId: ID!, $content: ReactionContent!) {
@@ -131,7 +129,7 @@ function createPullRequestMutation(): string {
 function updatePullRequestLabelsMutation(): string {
   return `
     mutation UpdatePullRequestLabels($pullRequestId: ID!, labelIds: [ID!]) {
-        updatePullRequest(input:{ clientMutationId: "krytenbot", pullRequestId: $pullRequestId, labelIds: [$labelIds!] }) {
+        updatePullRequest(input:{ clientMutationId: "krytenbot", pullRequestId: $pullRequestId, labelIds: $labelIds }) {
             pullRequest {
                 id
             }
