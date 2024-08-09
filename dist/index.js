@@ -53241,7 +53241,7 @@ function findPullRequestsQuery() {
     return `
     query FindPullRequestID ($owner: String!, $repo: String!, $labels: [String!]){
         repository(owner:$owner, name:$repo) {
-            pullRequests(labels:$labels, states:OPEN) {
+            pullRequests(first:10, labels:$labels, states:OPEN) {
               edges {
                 node {
                     title
