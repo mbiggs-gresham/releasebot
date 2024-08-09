@@ -53264,11 +53264,6 @@ function findPullRequestsQuery() {
                       author {
                           login
                       }
-                      labels(first:10) {
-                          label {
-                              name
-                          }
-                      }
                       comments(last: 10) {
                           comment: nodes {
                               author {
