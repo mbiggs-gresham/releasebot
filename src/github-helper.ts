@@ -143,7 +143,8 @@ function findCommitQuery(): string {
                     message
                     tree {
                        entries { 
-                          name 
+                          name
+                          path
                        }
                     }
                 }

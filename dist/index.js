@@ -51838,7 +51838,8 @@ function findCommitQuery() {
                     message
                     tree {
                        entries { 
-                          name 
+                          name
+                          path
                        }
                     }
                 }
