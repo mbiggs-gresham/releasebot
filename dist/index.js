@@ -53243,18 +53243,30 @@ function findPullRequestsQuery() {
         repository(owner:$owner, name:$repo) {
             pullRequests(first:10, labels:$labels, states:OPEN) {
               nodes {
+                id
                 number
                 title
+                body
+                createdAt
                 labels(first:10) {
                   nodes {
                     name
                   }
                 }
+                baseRef
+                baseRefName
+                headRef
+                headRefName
               }
               edges {
                 node {
+                  id
                   number
                   title
+                  body
+                  createdAt
+                  baseRef
+                  baseRefName
                 }
               }    
             }
