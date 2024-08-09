@@ -109,12 +109,12 @@ function findPullRequestsQuery(): string {
     query FindPullRequestID ($owner: String!, $repo: String!, $labels: [String!]){
         repository(owner:$owner, name:$repo) {
             tags: refs(first:100, refPrefix:"refs/tags/") {
-                nodes {
+                tag: nodes {
                     name
                 }
             }
-            branches: refs(first:100, refPrefix:"refs/heads/") {
-                nodes {
+            branches: refs(first:100, refPrefix:"refs/heads/", query:"krytenbot-") {
+                branch: nodes {
                     name
                 }
             }
