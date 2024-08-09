@@ -458,13 +458,13 @@ export async function setVersion(octokit: Octokit, project: string, branch: stri
             {
               path: `${project}/package.json`
             }
-          ],
-          additions: [
-            {
-              path: `${project}/package.json`,
-              contents: base64.encode(newFileContents)
-            }
           ]
+          // additions: [
+          //   {
+          //     path: `${project}/package.json`,
+          //     contents: base64.encode(newFileContents)
+          //   }
+          // ]
         }
       })
 

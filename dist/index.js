@@ -52181,13 +52181,13 @@ async function setVersion(octokit, project, branch, version, sha) {
                         {
                             path: `${project}/package.json`
                         }
-                    ],
-                    additions: [
-                        {
-                            path: `${project}/package.json`,
-                            contents: encode(newFileContents)
-                        }
                     ]
+                    // additions: [
+                    //   {
+                    //     path: `${project}/package.json`,
+                    //     contents: base64.encode(newFileContents)
+                    //   }
+                    // ]
                 }
             });
             // const newFile: CreateOrUpdateFileContentsResponse = await octokit.rest.repos.createOrUpdateFileContents({
