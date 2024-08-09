@@ -91,6 +91,9 @@ function createRefMutation(): string {
         createRef(input:{ repositoryId: $repositoryId, name: $name, oid: $oid }) {
             ref {
                 name
+                target {
+                    oid
+                }
             }
         }
     }`
@@ -597,7 +600,7 @@ export async function createDraftReleaseBranch(octokit: Octokit, draftRelease: K
     name: `refs/heads/${releaseBranch}`,
     oid: sha
   })
-  core.debug(`Created Branch: ${JSON.stringify(branch, null, 2)}`)
+  core.info(`Created Branch: ${JSON.stringify(branch, null, 2)}`)
 }
 
 export async function createDraftReleasePullRequest(octokit: Octokit, draftRelease: KrytenbotDraftRelease, project: string, branch: string, nextVersion: string): Promise<void> {

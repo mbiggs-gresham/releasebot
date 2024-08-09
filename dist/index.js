@@ -51840,6 +51840,9 @@ function createRefMutation() {
         createRef(input:{ repositoryId: $repositoryId, name: $name, oid: $oid }) {
             ref {
                 name
+                target {
+                    oid
+                }
             }
         }
     }`;
@@ -52313,7 +52316,7 @@ async function createDraftReleaseBranch(octokit, draftRelease, project, sha) {
         name: `refs/heads/${releaseBranch}`,
         oid: sha
     });
-    core.debug(`Created Branch: ${JSON.stringify(branch, null, 2)}`);
+    core.info(`Created Branch: ${JSON.stringify(branch, null, 2)}`);
 }
 async function createDraftReleasePullRequest(octokit, draftRelease, project, branch, nextVersion) {
     const releaseBranch = getReleaseBranchName(project);
